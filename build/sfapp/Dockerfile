@@ -18,6 +18,9 @@ ARG USER_ID
 ARG GROUP_NAME
 ARG GROUP_ID
 
+# Install NodeJS and NPM packages as root, for all users
+RUN apt update && apt install npm nodejs -y
+
 # Create system user to run Composer and PHP Commands
 RUN if [ ! -z ${USER_NAME} ] && [ ! -z ${GROUP_NAME} ] && [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ] ; then \
     useradd -G www-data,root -u $USER_ID -d /home/$USER_NAME $USER_NAME && \
