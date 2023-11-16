@@ -9,8 +9,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class InfraController extends AbstractController
 {
-    #[Route('/infra/dispositifs', name: 'infra_liste_dispositfs')]
-    public function index(ManagerRegistry $managerRegistry): Response
+    
+    #[Route('/infra/systeme-acquisition', name: 'infra_liste_systeme-acquisition')]
+    public function systemesAcquisition(ManagerRegistry $managerRegistry): Response
     {
         $entityManager = $managerRegistry->getManager();
         $dispositifsRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
@@ -19,6 +20,21 @@ class InfraController extends AbstractController
 
         return $this->render('infra/liste-dispositifs.html.twig', [
             'dispositifs' => $listeDispositifs
+        ]);
+    }
+
+    #[Route('/infra/batiments-et-salles', name: 'app_infra_batiments-et-salles')]
+    public function batimentsEtSalles(ManagerRegistry $doctrine): Response
+    {
+
+        $entityManager = $doctrine->getManager();
+
+        $repository = $entityManager->getRepository('App\Entity\Salle');
+
+        $listeSalles = $repository->findAll();
+
+        return $this->render('infra/batiments-et-salles.html.twig', [
+            'listeSalles' => $listeSalles
         ]);
     }
 }
