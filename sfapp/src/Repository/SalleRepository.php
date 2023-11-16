@@ -21,6 +21,24 @@ class SalleRepository extends ServiceEntityRepository
         parent::__construct($registry, Salle::class);
     }
 
+    public function add(Salle $salle, bool $flush = false)
+    {
+        $this->getEntityManager()->persist($salle);
+
+        if($flush){
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Salle $salle, bool $flush = false)
+    {
+        $this->getEntityManager()->remove($salle);
+
+        if($flush){
+            $this->getEntityManager()->flush();
+        }
+    }
+
 //    /**
 //     * @return Salle[] Returns an array of Salle objects
 //     */
