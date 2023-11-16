@@ -72,6 +72,11 @@ class AppFixtures extends Fixture
 
         $manager->persist($sa3);
 
+        $sa4 = new SystemeAcquisition();
+        $sa4->setAdresseMac("00:00:00:00:00:04");
+
+        $manager->persist($sa4);
+
         $manager->flush();
     }
 }
