@@ -23,6 +23,28 @@ class InfraController extends AbstractController
         ]);
     }
 
+    #[Route('/infra/systemes-acquisition/modifier/{id}', name: 'infra-modifier-systemes-acquisition')]
+    public function modifierSystemesAcquisition(ManagerRegistry $managerRegistry, int $id) : Response
+    {
+        $entityManager = $managerRegistry->getManager();
+
+        $dispositifsRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
+        $batimentRepository = $entityManager->getRepository('App\Entity\Batiment');
+        $sallesRepository = $entityManager->getRepository('App\Entity\Salle');
+
+        $dispositif = $dispositifsRepository->find($id);
+
+        $listeBatiments = $batimentRepository->findAll();
+        $listeSalles = $sallesRepository->findAll();
+
+        return $this->render('infra/modifier-sa.html.twig', [
+            'id' => $id,
+            'dispositf' => $dispositif,
+            'listeBatiments' => $listeBatiments,
+            'listeSalles' => $listeSalles
+        ]);
+    }
+
     #[Route('/infra/batiments-et-salles', name: 'app_infra_batiments-et-salles')]
     public function batimentsEtSalles(ManagerRegistry $doctrine): Response
     {
