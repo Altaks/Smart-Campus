@@ -40,7 +40,7 @@
                 {% else %}
                     <label for="salle" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Salle associée</label>
                 {% endif %}
-                <select id="salle" name="salle" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <select id="salle" onchange="onSalleChange()" name="salle" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="-1" selected>Choisissez d'abord un bâtiment</option>
                 </select>
                 {% if erreur is not null and erreur['code'] == 1 %}
@@ -49,12 +49,31 @@
 
             </div>
         </div>
-        <button type="submit" class="float-left text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Valider</button>
+        <button type="submit" id="submitButton" class="float-right focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Valider</button>
     </form>
 
 </div>
 
 <script>
+    function enableSubmitButton(){
+
+        let button = document.getElementById("submitButton");
+
+        if (button.disabled){
+            button.disabled = false;
+            button.classList.remove("cursor-not-allowed");
+        }
+    }
+
+    function disableSubmitButton(){
+        // text-white bg-blue-400 dark:bg-blue-500 cursor-not-allowed font-medium rounded-lg text-sm px-5 py-2.5 text-center
+        let button = document.getElementById("submitButton");
+        if (!button.disabled){
+            button.disabled = true;
+            button.classList.add("cursor-not-allowed");
+        }
+    }
+
     function onBatimentChange() {
         let batiment = document.getElementById('batiment');
         let salles = document.getElementById('salle');
@@ -71,7 +90,7 @@
         {
             if (nbSalles == 0){
                 salles.options.add(new Option("Choisissez une salle", -1));
-                salles.disabled = false;
+                disableSubmitButton();
             }
             salles.options.add(new Option('{{ salle.numero }}', {{ salle.id }}));
             nbSalles++;
@@ -83,6 +102,17 @@
             salles.options.add(new Option("Aucune salle trouvée", -1));
         }
 
+    }
+
+    function onSalleChange(){
+        let salles = document.getElementById('salle');
+
+        if (salles.value == -1){
+            disableSubmitButton();
+        }
+        else{
+            enableSubmitButton();
+        }
     }
 </script>
 

@@ -53,16 +53,16 @@ class InfraController extends AbstractController
                 $erreur = ['code' => 2, 'mac' => $_POST['adresseMac']];
             }
             else {
-                $tempSysteme = $systemeAcquisitionRepository->findBy(
+                $tempSysteme = $systemeAcquisitionRepository->findOneBy(
                     array('adresse_mac' => $address)
-                )[0];
+                );
 
                 if ($tempSysteme != null && ($tempSysteme->getId() != $systemeAcquisition->getId())) {
                     $erreur = ['code' => 3, 'mac' => $_POST['adresseMac'], 'systeme' => $tempSysteme->getId()];
                 } elseif ($_POST['salle'] != '-1') {
-                    $tempSysteme = $systemeAcquisitionRepository->findBy(
+                    $tempSysteme = $systemeAcquisitionRepository->findOneBy(
                         array('salle' => $_POST['salle'])
-                    )[0];
+                    );
 
                     if ($tempSysteme != null && ($tempSysteme->getId() != $systemeAcquisition->getId())) {
                         $batiment = $tempSysteme->getSalle()->getBatiment()->getNom();
