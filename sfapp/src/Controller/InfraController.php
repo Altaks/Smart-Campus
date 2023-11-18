@@ -31,6 +31,8 @@ class InfraController extends AbstractController
     public function modifierSystemesAcquisition(ManagerRegistry $managerRegistry, ?int $id, Request $request) : Response
     {
 
+        $erreur = null;
+
         $entityManager = $managerRegistry->getManager();
 
         $systemeAcquisitionRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
@@ -43,19 +45,45 @@ class InfraController extends AbstractController
 
         if ($request->getMethod() == 'POST') {
 
-            $systemeAcquisition->setAdresseMac($_POST['adresseMac']);
+            // check if the mac address format is correct
 
-            if ($_POST['salle'] == '-1') {
-                $systemeAcquisition->setSalle(null);
-            } else {
-                $systemeAcquisition->setSalle($sallesRepository->findOneBy(
-                    array('id' => $_POST['salle'])
-                ));
+            $address = strtoupper($_POST['adresseMac']);
+
+            if (!preg_match('/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/', $_POST['adresseMac'])) {
+                $erreur = ['code' => 2, 'mac' => $_POST['adresseMac']];
+            }
+            else {
+                $tempSysteme = $systemeAcquisitionRepository->findBy(
+                    array('adresse_mac' => $address)
+                )[0];
+
+                if ($tempSysteme != null && ($tempSysteme->getId() != $systemeAcquisition->getId())) {
+                    $erreur = ['code' => 3, 'mac' => $_POST['adresseMac'], 'systeme' => $tempSysteme->getId()];
+                } elseif ($_POST['salle'] != '-1') {
+                    $tempSysteme = $systemeAcquisitionRepository->findBy(
+                        array('salle' => $_POST['salle'])
+                    )[0];
+
+                    if ($tempSysteme != null && ($tempSysteme->getId() != $systemeAcquisition->getId())) {
+                        $batiment = $tempSysteme->getSalle()->getBatiment()->getNom();
+                        $salle = $tempSysteme->getSalle()->getNumero();
+                        $erreur = ['code' => 1, 'batiment' => $batiment , 'salle' => $salle, 'systeme-lie' => $tempSysteme->getId()];
+                    }
+                }
             }
 
-            $entityManager->flush();
-
-            return $this->redirectToRoute('infra_liste_systemes-acquisition');
+            if ($erreur == null) {
+                $systemeAcquisition->setAdresseMac($address);
+                if ($_POST['salle'] != '-1'){
+                    $systemeAcquisition->setSalle($sallesRepository->findOneBy(
+                        array('id' => $_POST['salle'])
+                    ));
+                } else {
+                    $systemeAcquisition->setSalle(null);
+                }
+                $entityManager->flush();
+                return $this->redirectToRoute('infra_liste_systemes-acquisition');
+            }
         }
 
         $listeBatiments = $batimentRepository->findAll();
@@ -63,6 +91,7 @@ class InfraController extends AbstractController
 
         return $this->render('infra/modifier-sa.html.twig', [
             'id' => $id,
+            'erreur' => $erreur,
             'systemeAcquisition' => $systemeAcquisition,
             'listeBatiments' => $listeBatiments,
             'listeSalles' => $listeSalles
