@@ -91,6 +91,7 @@ class InfraController extends AbstractController
 
         return $this->render('infra/modifier-sa.html.twig', [
             'id' => $id,
+            'systeme' => $systemeAcquisition,
             'erreur' => $erreur,
             'systemeAcquisition' => $systemeAcquisition,
             'listeBatiments' => $listeBatiments,

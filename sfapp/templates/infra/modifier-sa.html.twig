@@ -27,21 +27,43 @@
         <div class="grid gap-6 mb-6 md:grid-cols-2">
             <div>
                 <label for="batiment" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bâtiment</label>
+
                 <select id="batiment" name="batiment" onchange="onBatimentChange()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option value="-1"selected>Choisissez un bâtiment</option>
                     {% for batiment in listeBatiments %}
-                        <option value='{{ batiment.id }}'>{{ batiment.nom }}</option>
+                        {% if systeme.salle is not null and  batiment.id == systeme.salle.batiment.id %}
+                            <option value='{{ batiment.id }}' selected>{{ batiment.nom }}</option>
+                        {% else %}
+                            <option value='{{ batiment.id }}'>{{ batiment.nom }}</option>
+                        {% endif %}
                     {% endfor %}
+                    {% if systeme.salle is null %}
+                        <option value="-1" selected>Ne pas associer de salle</option>
+                    {% else %}
+                        <option value="-1">Ne pas associer de salle</option>
+                    {% endif %}
                 </select>
             </div>
             <div>
                 {% if erreur is not null and erreur['code'] == 1 %}
-                    <label for="salle" class="block mb-2 text-sm font-medium text-red-900 dark:text-red">Salle associée</label>
+                    <label for="salle" class="block mb-2 text-sm font-medium xt-red-900 dark:text-red">Salle associée</label>
                 {% else %}
                     <label for="salle" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Salle associée</label>
                 {% endif %}
                 <select id="salle" onchange="onSalleChange()" name="salle" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option value="-1" selected>Choisissez d'abord un bâtiment</option>
+                    {% if systeme.salle is not null %}
+                        {% for salle in listeSalles %}
+                            {% if salle.batiment.id == systeme.salle.batiment.id %}
+                                {% if salle.id != systeme.salle.id %}
+                                    <option value="{{ salle.id }}">{{ salle.numero }}</option>
+                                {% else %}
+                                    <option value="{{ salle.id }}" selected>{{ salle.numero }}</option>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                    {% else %}
+                        <option value="-1" selected>Choisissez d'abord un bâtiment</option>
+                    {% endif %}
                 </select>
                 {% if erreur is not null and erreur['code'] == 1 %}
                 <p id="outlined_error_help" class="mt-2 text-xs text-red-600 dark:text-red-400"><span class="font-medium"> La salle selectionnée ({{ erreur['batiment'] }}, salle {{ erreur["salle"] }}) est déjà liée au système d'acquisition n°{{ erreur["systeme-lie"]}}, veulliez en selectionner une autre </span></p>
@@ -99,7 +121,12 @@
 
         if (nbSalles == 0) {
             salles.options.length = 0;
-            salles.options.add(new Option("Aucune salle trouvée", -1));
+            if (batimentId != -1){
+                salles.options.add(new Option("Aucune salle trouvée", -1));
+            }
+            else{
+                salles.options.add(new Option("Choisissez d'abord un bâtiment", -1));
+            }
         }
 
     }
