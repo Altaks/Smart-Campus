@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des capteurs{% endblock %}
+
+{% block body %}
+
+    <div class="mx-auto my-2 max-w-6xl">
+
+        <h2 class="my-2">Systèmes d'acquisition connectés</h2>
+
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        Identifiant
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Adresse Mac
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Bâtiment
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Salle
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Modifier
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for dispositif in dispositifs %}
+                    <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ dispositif.id }}
+                        </th>
+                        <td class="px-6 py-4">
+                            {{ dispositif.adressemac }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ dispositif.salle.batiment.nom | default("-") }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ dispositif.salle.numero | default("-") }}
+                        </td>
+                        <td class="px-6 py-4 flex flex-row content-center">
+                            <a href="/infra/systemes-acquisition/modifier/{{ dispositif.id }}"><box-icon name='edit-alt'></box-icon></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+{% endblock %}
