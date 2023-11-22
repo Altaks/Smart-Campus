@@ -13,9 +13,9 @@
     <form id="formulaire" method="post">
         <div class="mb-6">
             {% if erreur is not null and (erreur['code'] == 2 or erreur['code'] == 3) %}
-            <label for="macAddr" class="block mb-2 text-sm font-medium text-red-900 dark:text-red">Adresse MAC du Système d'Acquisition</label>
+            <label for="macAddr" class="block mb-2 text-sm font-medium text-red-900 dark:text-red">Adresse MAC du système d'acquisition :</label>
             {% else %}
-            <label for="macAddr" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Adresse MAC du Système d'Acquisition</label>
+            <label for="macAddr" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Adresse MAC du système d'acquisition :</label>
             {% endif %}
             <input type="text" id="adresseMac" name="adresseMac" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{ systemeAcquisition.adresseMac }}" placeholder="Exemple : 00:00:00:00:00:00" required>
             {% if erreur is not null and erreur['code'] == 2 %}
@@ -45,9 +45,9 @@
             </div>
             <div>
                 {% if erreur is not null and erreur['code'] == 1 %}
-                    <label for="salle" class="block mb-2 text-sm font-medium xt-red-900 dark:text-red">Salle associée</label>
+                    <label for="salle" class="block mb-2 text-sm font-medium xt-red-900 dark:text-red">Salle</label>
                 {% else %}
-                    <label for="salle" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Salle associée</label>
+                    <label for="salle" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Salle</label>
                 {% endif %}
                 <select id="salle" onchange="onSalleChange()" name="salle" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     {% if systeme.salle is not null %}
