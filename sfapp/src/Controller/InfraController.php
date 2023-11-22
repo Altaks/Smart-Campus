@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class InfraController extends AbstractController
 {
     
-    #[Route('/infra/systeme-acquisition', name: 'infra_liste_systeme-acquisition')]
+    #[Route('/infra/systemes-acquisition', name: 'infra_liste_systeme-acquisition')]
     public function systemesAcquisition(ManagerRegistry $managerRegistry): Response
     {
         $entityManager = $managerRegistry->getManager();
