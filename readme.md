@@ -1,100 +1,113 @@
-<h1>Stack de développement Symfony de la SAE3</h1>
+# SAE 3.1 - Développement d'une application Web
 
---- 
-Contenu : 
-- [Prérequis](#prérequis)
-- [Démarrage](#démarrage)
-  - [1. Forker le modèle de stack](#1-forker-le-modèle-de-stack)
-  - [2. Cloner la stack du projet](#2-cloner-la-stack-du-projet)
-  - [3. Démarrer la stack du projet](#3-démarrer-la-stack-du-projet)
-- [Initialiser le service `sfapp`](#initialiser-le-service-sfapp)
-- [Partager le projet](#partager-le-projet)
+### Récupération de la stack
 
---- 
+Pour lancer la stack, vous aurez besoin de :
 
-## Prérequis
+- Git
+- Docker engine
+- Docker compose
+- Avoir les ports 8000, 3306 et 9000 de libres
+- Un compte ayant accès au repository
 
-Sur votre machine Linux ou Mac :
+Une fois que vous vous êtes assurés d'avoir ce qu'il faut, vous pouvez lancer la commande suivante dans un répertoire :
 
-- Docker 24 
-- Docker Engine sous Linux (ne pas installer Docker Desktop sous Linux)
-- Docker Desktop sous Mac
-- PHPStorm  
-  _Votre email étudiant vous permet de bénéficier d'une licence complète de 12 mois pour tous les produits JetBrains_  
-
-De manière optionnelle, mais fortement recommandée :
-
-- Une [clé SSH](https://forge.iut-larochelle.fr/help/ssh/index#generate-an-ssh-key-pair) active sur votre machine
-  (perso) et [ajoutée dans votre compte gitlab](https://forge.iut-larochelle.fr/help/ssh/index#add-an-ssh-key-to-your-gitlab-account) :  
-  elle vous permettra de ne pas taper votre mot de passe en permanence.
-
-## Démarrage
-
-### 1. Forker le modèle de stack
-
-**UN.E SEUL.E** des développeuses/développeurs de votre équipe va **fork** le présent dépôt, pour en créer un nouveau, 
-dans le groupe correspondant à votre équipe :  
-_Par exemple pour l'équipe 1 du groupe de TP K1, le groupe est :_ `2023-2024-BUT-INFO2-A-SAE34/K1/K11`
-
-**Remarque** : 
->Il n'est pas nécessaire de conserver le lien avec le modèle de stack, vous pouvez donc aller dans  
-> Settings > General > Advanced (dans Gitlab) pour supprimer le "Fork relationship" de votre projet
-
-
-### 2. Cloner la stack du projet 
-
-Le membre de l'équipe qui a réalisé le fork, doit cloner ce dépôt sur son poste de travail 
-
-⚠️ **Si vous êtes sous Linux**  
-> Avant de démarrer la stack, il faut renseigner les variables qui se trouvent dans le fichier `.env` à la racine du dépôt     
-> Vous pouvez obtenir l'id de votre user (et de son groupe) en lançant la commande `id -u ${USER}` dans un terminal
-
-### 3. Démarrer la stack du projet 
-
-Dans un terminal positionné dans le dossier de la stack du projet : 
-
-- Créer le dossier `sfapp`
-```
-mkdir sfapp
+```bash
+git clone https://forge.iut-larochelle.fr/2023-2024-but-info2-a-sae34/m2/m23/but-info2-a-sae3-docker-stack.git
 ```
 
-- démarrer la stack    
+Pour pouvoir modifier/ajouter/supprimer des fichiers du dossier sfapp une fois la stack lancée, vous devez configurer la stack : vous pouvez changer de compte en indiquant votre compte utilisateur Linux dans le fichier `.env` :
+
+> Ce changement n'est nécessaire que sur Linux !
+
+```env
+# Uniquement sous linux
+# Décommenter ces valeurs
+
+USER_NAME=<username>
+USER_ID=<userid>
+GROUP_NAME=<groupname>
+GROUP_ID=<groupid>
 ```
+
+Exemple avec un compte `altaks` et le groupe par défaut : 
+
+```env
+# Uniquement sous linux
+# Décommenter ces valeurs
+
+USER_NAME=altaks
+USER_ID=1000
+GROUP_NAME=altaks
+GROUP_ID=1000
+```
+
+### Lancement de la stack
+
+Une fois le repository cloné et configuré, vous pouvez lancer la stack en utilisant la commande suivante :
+
+```bash
 docker compose up --build
 ```
 
-- inspecter l'état des services 
-```
-docker compose ps
+> Si vous souhaitez lancer la stack sans vous bloquer votre terminal, vous pouvez lancer la commande suivante :
+> ```bash
+> docker compose up --build -d
+> ```
+> Vous aurez alors la stack lancée en arrière plan (le terminal est détaché)
+
+### Lancer un bash interactif avec un container
+
+Afin de vous rendre dans un container et effectuer des changements, vous pouvez utiliser la commande suivante dans le même dossier que la stack :
+
+```bash
+docker compose exec <sfapp/database/nginx> bash
 ```
 
-## Initialiser le service `sfapp`
+Exemple, pour accéder au container où se situe Symfony, on utilise : 
 
-Dans un terminal positionné dans le dossier de la stack du projet : 
- 
- - on se connecte au conteneur associé su service `sfapp` 
 ```bash
 docker compose exec sfapp bash
 ```
-- après connexion, on doit être dans `/app`, vérifier 
-```
-pwd 
-```
-- créer le projet `sfapp`
-```
-composer create-project symfony/skeleton:"6.3.*" sfapp
+
+### Réinstallation des packages (dans le container `sfapp`)
+
+Lorsque vous utilisez la stack pour la première fois dans un répertoire, si vous ne disposez pas des dossiers `sfapp/vendor` et `sfapp/node_modules`, vous pouvez faire télécharger leur contenu à la stack avec la commande suivante :
+
+```shell
+cd /app/sfapp && composer install && npm i
 ```
 
-- vérifier l'exécution du service `sfapp`
-```
-localhost:8000
+### Mise à jour automatique des fichiers de Tailwind CSS (dans le container `sfapp`)
+
+Afin de mettre a jour le CSS qui sera utilisé pour les fichiers twig, vous pouvez utiliser la commande suivante : 
+
+```shell
+cd /app/sfapp && npm run build
 ```
 
-## Partager le projet
+Cependant, si vous souhaitez que les mises à jour s'effectuent d'elles même, vous pouvez lancer cette commande dans un terminal secondaire : 
 
-À ce stade, les services `sfapp`, `database` et `nginx` sont créés et démarrés, autrement dit fonctionnels, alors : 
-- on fait `commit` et `push` pour partager avec les autres membres de l'équipe
-- on déclare tout les membres de l'équipe dans le dépôt du projet avec le rôle `Developer` (si ce n'est pas déjà fait :-))
-- chaque membre de l'équipe peut alors 
-  - cloner ce nouveau dépôt sur son poste de travail 
-  - démarrer toute la stack docker du projet 
+```shell
+cd /app/sfapp && npm run watch
+```
+
+### Règles de collaboration
+
+Pour collaborer sur le projet, vous devez développer en répondant à une user story.
+
+Vous devrez créer une branche en suivant la syntaxe suivante : 
+
+```
+develop-US<release>.<numero-US>-<DescriptionUS>
+```
+
+Exemple pour l'US 1.4
+
+```
+develop-US1.4-Modifier-SA
+```
+
+### Une fois vos changements prêts
+
+Vous pouvez émettre une merge request avec un reviewer parmis Adrien, Arnaud, Luc ou Kevin et vos changements seront revus
