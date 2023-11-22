@@ -1,0 +1,146 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello InfraController!{% endblock %}
+
+{% block body %}
+
+<div class="mx-auto my-2 max-w-6xl">
+
+    <h1 class="my-12">Modifier le Système d'Acquisition n°{{ id }}</h1>
+
+
+
+    <form id="formulaire" method="post">
+        <div class="mb-6">
+            {% if erreur is not null and (erreur['code'] == 2 or erreur['code'] == 3) %}
+            <label for="macAddr" class="block mb-2 text-sm font-medium text-red-900 dark:text-red">Adresse MAC du système d'acquisition :</label>
+            {% else %}
+            <label for="macAddr" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Adresse MAC du système d'acquisition :</label>
+            {% endif %}
+            <input type="text" id="adresseMac" name="adresseMac" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{ systemeAcquisition.adresseMac }}" placeholder="Exemple : 00:00:00:00:00:00" required>
+            {% if erreur is not null and erreur['code'] == 2 %}
+            <p id="outlined_error_help" class="mt-2 text-xs text-red-600 dark:text-red-400"><span class="font-medium"> L'adresse MAC saisie ( {{ erreur['mac']}} ) est invalide, il faut respecter le format XX:XX:XX:XX:XX:XX </span></p>
+            {% elseif erreur is not null and erreur['code'] == 3 %}
+            <p id="outlined_error_help" class="mt-2 text-xs text-red-600 dark:text-red-400"><span class="font-medium"> L'adresse MAC saisie ( {{ erreur['mac']}} ) est déjà utilisée par le système d'acquisition n° {{ erreur['systeme']}} </span></p>
+            {% endif %}
+        </div>
+        <div class="grid gap-6 mb-6 md:grid-cols-2">
+            <div>
+                <label for="batiment" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bâtiment</label>
+
+                <select id="batiment" name="batiment" onchange="onBatimentChange()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    {% for batiment in listeBatiments %}
+                        {% if systeme.salle is not null and  batiment.id == systeme.salle.batiment.id %}
+                            <option value='{{ batiment.id }}' selected>{{ batiment.nom }}</option>
+                        {% else %}
+                            <option value='{{ batiment.id }}'>{{ batiment.nom }}</option>
+                        {% endif %}
+                    {% endfor %}
+                    {% if systeme.salle is null %}
+                        <option value="-1" selected>Ne pas associer de salle</option>
+                    {% else %}
+                        <option value="-1">Ne pas associer de salle</option>
+                    {% endif %}
+                </select>
+            </div>
+            <div>
+                {% if erreur is not null and erreur['code'] == 1 %}
+                    <label for="salle" class="block mb-2 text-sm font-medium xt-red-900 dark:text-red">Salle</label>
+                {% else %}
+                    <label for="salle" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Salle</label>
+                {% endif %}
+                <select id="salle" onchange="onSalleChange()" name="salle" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    {% if systeme.salle is not null %}
+                        {% for salle in listeSalles %}
+                            {% if salle.batiment.id == systeme.salle.batiment.id %}
+                                {% if salle.id != systeme.salle.id %}
+                                    <option value="{{ salle.id }}">{{ salle.numero }}</option>
+                                {% else %}
+                                    <option value="{{ salle.id }}" selected>{{ salle.numero }}</option>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                    {% else %}
+                        <option value="-1" selected>Choisissez d'abord un bâtiment</option>
+                    {% endif %}
+                </select>
+                {% if erreur is not null and erreur['code'] == 1 %}
+                <p id="outlined_error_help" class="mt-2 text-xs text-red-600 dark:text-red-400"><span class="font-medium"> La salle selectionnée ({{ erreur['batiment'] }}, salle {{ erreur["salle"] }}) est déjà liée au système d'acquisition n°{{ erreur["systeme-lie"]}}, veulliez en selectionner une autre </span></p>
+                {% endif %}
+
+            </div>
+        </div>
+        <button type="submit" id="submitButton" class="float-right focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Valider</button>
+    </form>
+
+</div>
+
+<script>
+    function enableSubmitButton(){
+
+        let button = document.getElementById("submitButton");
+
+        if (button.disabled){
+            button.disabled = false;
+            button.classList.remove("cursor-not-allowed");
+        }
+    }
+
+    function disableSubmitButton(){
+        // text-white bg-blue-400 dark:bg-blue-500 cursor-not-allowed font-medium rounded-lg text-sm px-5 py-2.5 text-center
+        let button = document.getElementById("submitButton");
+        if (!button.disabled){
+            button.disabled = true;
+            button.classList.add("cursor-not-allowed");
+        }
+    }
+
+    function onBatimentChange() {
+        let batiment = document.getElementById('batiment');
+        let salles = document.getElementById('salle');
+        let batimentId = batiment.value;
+
+        salles.options.length = 0;
+
+
+
+        let nbSalles = 0;
+
+        {% for salle in listeSalles %}
+        if ({{ salle.batiment.id }} == batimentId)
+        {
+            if (nbSalles == 0){
+                salles.options.add(new Option("Choisissez une salle", -1));
+                disableSubmitButton();
+            }
+            salles.options.add(new Option('{{ salle.numero }}', {{ salle.id }}));
+            nbSalles++;
+        }
+        {% endfor %}
+
+        if (nbSalles == 0) {
+            salles.options.length = 0;
+            if (batimentId != -1){
+                salles.options.add(new Option("Aucune salle trouvée", -1));
+            }
+            else{
+                salles.options.add(new Option("Choisissez d'abord un bâtiment", -1));
+            }
+        }
+
+    }
+
+    function onSalleChange(){
+        let salles = document.getElementById('salle');
+
+        if (salles.value == -1){
+            disableSubmitButton();
+        }
+        else{
+            enableSubmitButton();
+        }
+    }
+</script>
+
+{% endblock %}
