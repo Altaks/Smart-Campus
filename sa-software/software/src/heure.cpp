@@ -8,7 +8,7 @@ RtcDS1307<TwoWire> Rtc(Wire);
 void initHeure()
 {
     Rtc.Begin(8,9);
-    Rtc.SetDateTime(RtcDateTime(2024,1,1,0,0,0));
+    Rtc.SetDateTime(RtcDateTime(__DATE__,__TIME__));
     Rtc.SetIsRunning(true);
 }
 
