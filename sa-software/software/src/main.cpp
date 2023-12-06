@@ -68,6 +68,5 @@ void setup() {
 }
 
 void loop() {
-  Serial.println(getDate());
-  delay(5000);
+  
 }
