@@ -13,9 +13,8 @@
 void taskTempEtHum(void *pvParameters);
 
 /**
- * @return bool
  * initialise le capteur et la tâche, et teste si l'initialisation s'est bien déroulée
 */
-bool initTempEtHum();
+void  initTempEtHum();
 
 #endif

@@ -8,8 +8,9 @@
 void setup() {
   Serial.begin(9600);
   while(!Serial);
+  delay(100);
 
-  // Température et humidité 
+  //Initialise la tâche température et humidité 
   initTempEtHum();
 }
 
