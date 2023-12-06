@@ -32,8 +32,8 @@ void u32_to_array(u32 value, u8* array)
     array[3]=value;
 }
 
-/*
- * Reset baseline per hour, store it in EEPROM;
+/**
+ * Fonction permettant de stocker la valeur de la baseline dans l'EEPROM
  */
 void  store_baseline(void)
 {
@@ -66,9 +66,8 @@ void  store_baseline(void)
     delay(LOOP_TIME_INTERVAL_MS);
 }
 
-/* Read baseline from EEPROM and set it.
- * If there is no value in EEPROM, return.
- * Another situation: When the baseline record in EEPROM is older than seven days, Discard it and return !!
+/**
+ * Fonction permettant d'écrire la baseline dans l'EEPROM
  */
 void set_baseline(void)
 {
@@ -87,28 +86,22 @@ void set_baseline(void)
         Serial.println("There is no baseline value in EEPROM");
         return;
     }
-    /*
-    if(baseline record in EEPROM is older than seven days)
-    {
-     return;
-     }
-     */
+
     array_to_u32(&baseline_value,baseline);
     sgp_set_iaq_baseline(baseline_value);
-    Serial.println(baseline_value,HEX);
+    Serial.println(baseline_value, HEX);
 }
 
 void initQualAir()
 {
-    //Qualité de l'air
+    // Initialisation du capteur de qualité de l'air
     s16 err;
     u16 scaled_ethanol_signal, scaled_h2_signal;
     Serial.begin(9600);
     Serial.println("serial start!!");
 
     /*
-     *  Init module,Reset all baseline,The initialization takes up to around 15 seconds, during which
-     *  all APIs measuring IAQ (Indoor air quality ) output will not change. Default value is 400(ppm) for co2, 0(ppb) for tvoc
+     * Vérification du statut du capteur
      */
     while (sgp_probe() != STATUS_OK) {
         Serial.println("SGP failed");
@@ -116,16 +109,21 @@ void initQualAir()
     }
 
     /*
-     * Read H2 and Ethanol signal in the way of blocking
+     * Lecture des signaux avec des appels bloquants
      */
     err = sgp_measure_signals_blocking_read(&scaled_ethanol_signal,
                                             &scaled_h2_signal);
+
+    /*
+     * Indication de la réussite de la lecture des signaux
+     */
     if (err == STATUS_OK) {
         Serial.println("get ram signal!");
     } else {
         Serial.println("error reading signals");
     }
-    // err = sgp_iaq_init();
+
+    // Ecrire la baseline dans l'EEPROM
     set_baseline();
 }
 
@@ -133,14 +131,17 @@ void loopQualAir()
 {
     s16 err=0;
     u16 tvoc_ppb, co2_eq_ppm;
-    err = sgp_measure_iaq_blocking_read(&tvoc_ppb, &co2_eq_ppm);
+    err = sgp_measure_iaq_blocking_read(&tvoc_ppb, &co2_eq_ppm); // Appel de la fonction de lecture des valeurs de qualité de l'air
     store_baseline();
+
+    // S'il n'y a pas d'erreur, changer la variable globale et afficher les valeurs de qualité de l'air dans la console
     if (err == STATUS_OK) {
         co2 = int(co2_eq_ppm);
         Serial.printf("----- Qualité de l'air ------\n"
                       "CO2eq Concentration : %03d ppm\n"
                       "-----------------------------\n", co2);
     } else {
+        // Si erreur, afficher un message d'erreur et mettre la variable globale à -1 (valeur d'erreur)
         Serial.println("error reading IAQ values\n");
         co2 = -1;
     }
