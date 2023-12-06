@@ -12,21 +12,12 @@ void taskTempEtHum(void *pvParameters) {
   }
 }
 
-void taskHeure(void *pvParameters) {
-  while(true){
-    loopHeure();
-    delay(300000);
-  }
-}
-
-
 void taskQualAir(void *pvParameters) {
-  while(true){
-    loopQualAir();
-    delay(300000);
-  }
+    while(true){
+        loopQualAir();
+        delay(1000);
+    }
 }
-
 
 void setup() {
 
@@ -37,7 +28,6 @@ void setup() {
 
   Serial.begin(9600);
   while(!Serial);
-
 
   // Température et humidité 
   /*initTempEtHum();
@@ -63,31 +53,20 @@ void setup() {
     );
   }
 
+  initHeure();
 
-  // Heure
-  /*initHeure();
+  initQualAir();
   xTaskCreate(
-    taskHeure,
-    "taskHeure",
-    1000,
+    taskQualAir,
+    "taskQualAir",
+    10000,
     NULL,
     1,
     NULL
   );
 
-  //Qualité de l'air
-  initQualAir();
-  xTaskCreate(
-    taskQualAir,
-    "taskQualAir",
-    1000,
-    NULL,
-    1,
-    NULL
-  );*/
-
 }
 
 void loop() {
-
+  
 }
