@@ -10,7 +10,5 @@
 
 bool initAffichage();
 void taskAffichage(void *pvParameters);
-void changerPageDroite();
-void changerPageGauche();
 
 #endif

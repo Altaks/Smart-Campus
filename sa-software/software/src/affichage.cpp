@@ -31,73 +31,44 @@ bool initAffichage()
 
 void taskAffichage(void *pvParameters) {
     while(true){
+        display->clear();
+        //display->drawString(0, 0, getDate());
         switch (page) {
             case TEMPERATURE :
                 if (!isnan(temperature)) {
                     char temp[20];
                     sprintf(temp, "Temp : %.2f°C", temperature);
-                    //display->drawString(0, 0, getDate());
                     display->drawString(0, 20, temp);
                 }
                 else {
-                    //display->drawString(0, 0, getDate());
                     display->drawString(0, 20, "Erreur lors de la récupération de la température");
                 }
+                page = HUMIDITE;
                 break;
             case HUMIDITE :
                 if (!isnan(humidite)) {
                     char temp[17];
-                    sprintf(temp, "Humidite : %.2f%s", humidite, "\"%\"");
-                    //display->drawString(0, 0, getDate());
+                    sprintf(temp, "Humidite : %.2f%s", humidite, "%");
                     display->drawString(0, 20, temp);
                 }
                 else {
-                    //display->drawString(0, 0, getDate());
                     display->drawString(0, 20, "Hum : Erreur");
                 }
+                page = CO2;
                 break;
             case CO2 :
                 if (co2 != -1) {
                     char temp[17];
                     sprintf(temp, "CO2 : %d ppm", co2);
-                    //display->drawString(0, 0, getDate());
                     display->drawString(0, 20, temp);
                 }
                 else {
-                    //display->drawString(0, 0, getDate());
                     display->drawString(0, 20, "CO2 : Erreur");
                 }
+                page = TEMPERATURE;
             break;
         }
         display->display();
-        delay(300000);
-    }
-}
-
-void IRAM_ATTR changerPageDroite() {
-    switch (page) {
-        case TEMPERATURE :
-            page = HUMIDITE;
-            break;
-        case HUMIDITE :
-            page = CO2;
-            break;
-        case CO2 :
-            page = TEMPERATURE;
-            break;
-    }
-}
-
-void IRAM_ATTR changerPageGauche() {
-    switch (page) {
-        case TEMPERATURE :
-            page = CO2;
-        break;
-        case HUMIDITE :
-            page = TEMPERATURE;
-        break;
-        case CO2 :
-            page = HUMIDITE;
-        break;
+        delay(3000);
     }
 }

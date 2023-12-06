@@ -35,10 +35,6 @@ void setup() {
   co2 = -1;
   page = TEMPERATURE;
 
-  attachInterrupt(digitalPinToInterrupt(PIN_DROITE), changerPageDroite, RISING);
-  attachInterrupt(digitalPinToInterrupt(PIN_GAUCHE), changerPageGauche, RISING);
-
-
   Serial.begin(9600);
   while(!Serial);
 

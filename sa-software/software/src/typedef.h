@@ -1,9 +1,6 @@
 #ifndef TYPEDEF_H
 #define TYPEDEF_H
 
-#define PIN_DROITE 1
-#define PIN_GAUCHE 2
-
 // temperature est humidité :
 static float temperature;
 static float humidite;
