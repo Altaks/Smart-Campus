@@ -1,9 +1,0 @@
-void initQualAir()
-{
-
-}
-
-void loopQualAir()
-{
-    
-}

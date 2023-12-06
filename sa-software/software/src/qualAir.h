@@ -1,2 +1,0 @@
-void initQualAir();
-void loopQualAir();
