@@ -3,18 +3,11 @@
 #include "heure.h"
 #include "qualAir.h"
 #include "affichage.h"
+#include "typedef.h"
 
 void taskTempEtHum(void *pvParameters) {
   while(true){
     loopTempEtHum();
-    delay(300000);
-  }
-}
-
-
-void taskAffichage(void *pvParameters) {
-  while(true){
-    loopAffichage();
     delay(300000);
   }
 }
@@ -27,11 +20,17 @@ void taskQualAir(void *pvParameters) {
 }
 
 void setup() {
+
+  temperature = NAN;
+  humidite = NAN;
+  co2 = -1;
+  page = TEMPERATURE;
+
   Serial.begin(9600);
   while(!Serial);
 
   // Température et humidité 
-  initTempEtHum();
+  /*initTempEtHum();
   xTaskCreate(
     taskTempEtHum,
     "taskTempEtHum",
@@ -39,20 +38,21 @@ void setup() {
     NULL,
     1,
     NULL
-  );
+  );*/
 
   // Affichage
-  initAffichage();
-  xTaskCreate(
-    taskAffichage,
-    "taskAffichage",
-    1000,
-    NULL,
-    1,
-    NULL
-  );
+  bool isDisplayInit = initAffichage();
+  if (isDisplayInit) {
+    xTaskCreate(
+      taskAffichage,
+      "taskAffichage",
+      1000,
+      NULL,
+      1,
+      NULL
+    );
+  }
 
-  // Heure
   initHeure();
 
   initQualAir();
