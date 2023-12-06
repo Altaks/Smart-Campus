@@ -19,15 +19,6 @@ void taskAffichage(void *pvParameters) {
   }
 }
 
-
-void taskHeure(void *pvParameters) {
-  while(true){
-    loopHeure();
-    delay(300000);
-  }
-}
-
-
 void taskQualAir(void *pvParameters) {
     while(true){
         loopQualAir();
@@ -63,14 +54,6 @@ void setup() {
 
   // Heure
   initHeure();
-  xTaskCreate(
-    taskHeure,
-    "taskHeure",
-    1000,
-    NULL,
-    1,
-    NULL
-  );
 
   initQualAir();
   xTaskCreate(
@@ -85,5 +68,5 @@ void setup() {
 }
 
 void loop() {
-
+  
 }
