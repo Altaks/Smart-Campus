@@ -1,0 +1,2 @@
+void initTempEtHum();
+void loopTempEtHum();

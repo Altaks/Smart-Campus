@@ -1,0 +1,2 @@
+void initHeure();
+void loopHeure();
