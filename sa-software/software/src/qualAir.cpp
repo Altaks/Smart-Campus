@@ -92,11 +92,8 @@ void set_baseline(void)
     //Serial.println(baseline_value, HEX);
 }
 
-void initQualAir()
+void initQualAir(unsigned short * co2)
 {
-
-    Serial.begin(9600);
-    while(!Serial);
     // Initialisation du capteur de qualité de l'air
     s16 err;
     u16 scaled_ethanol_signal, scaled_h2_signal;
@@ -129,8 +126,8 @@ void initQualAir()
         taskQualAir,
         "taskQualAir",
         10000,
-        NULL,
-        2 | portPRIVILEGE_BIT,
+        (void*)co2,
+        9,
         NULL
     );
 
@@ -140,9 +137,11 @@ void initQualAir()
 
 void taskQualAir(void *pvParameters)
 {
+    unsigned int* co2 = (unsigned int*) pvParameters; 
 
-    int co2;
-    while (true) {
+    for (;;) {
+        
+        delay(2000);
         s16 err=0;
         u16 tvoc_ppb, co2_eq_ppm;
         err = sgp_measure_iaq_blocking_read(&tvoc_ppb, &co2_eq_ppm); // Appel de la fonction de lecture des valeurs de qualité de l'air
@@ -150,16 +149,15 @@ void taskQualAir(void *pvParameters)
 
         // S'il n'y a pas d'erreur, changer la variable globale et afficher les valeurs de qualité de l'air dans la console
         if (err == STATUS_OK) {
-            co2 = int(co2_eq_ppm);
+            *co2 = (unsigned short)(co2_eq_ppm);
             /*Serial.printf("----- Qualité de l'air ------\n"
                         "CO2eq Concentration : %03d ppm\n"
-                        "-----------------------------\n", co2);*/
+                        "-----------------------------\n", co2_eq_ppm);*/
         } else {
             // Si erreur, afficher un message d'erreur et mettre la variable globale à -1 (valeur d'erreur)
             //Serial.println("error reading IAQ values\n");
-            co2 = -1;
+            *co2 = -1;
         }
-        delay(2000);
     }
 
 }

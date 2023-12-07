@@ -6,34 +6,35 @@
 #include "typedef.h"
 
 
+  TempEtHum* tempEtHum;
+  unsigned short* co2;
+
 void setup() {
 
-
-  TempEtHum tempEtHum;
-  int co2;
-  page = TEMPERATURE;
+  tempEtHum = new TempEtHum();
+  co2 = new (unsigned short);
 
   Serial.begin(9600);
   while(!Serial);
-  delay(1000);
   
-  //Initialise la tâche de CO2
-  initQualAir();
+  //Initialise la tâche température et humidité 
+  initTempEtHum(tempEtHum);
   
-  delay(300);
   
   //Initialise la tâche l'horodatage
   initHeure();
 
-  //wdelay(100);
+  delay(1000);
+  
+  //Initialise la tâche de CO2
+  initQualAir(co2);
 
-  //Initialise la tâche température et humidité 
-  initTempEtHum(&tempEtHum);
-
-  delay(300);
+  
+    
   
 }
 
 void loop() {
-  
+  delay(2000);
+  Serial.printf("temp: %.1f; hum: %.1f; co2: %d\n",tempEtHum->temperature,tempEtHum->humidite,*co2);
 }
