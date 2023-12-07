@@ -2,7 +2,8 @@
 #define TEMPETHUM_H
 
 #include "DHTesp.h"
-
+#include "typedef.h"
+#include <cmath>
 
 
 /**
@@ -15,6 +16,6 @@ void taskTempEtHum(void *pvParameters);
 /**
  * initialise le capteur et la tâche, et teste si l'initialisation s'est bien déroulée
 */
-void  initTempEtHum();
+void  initTempEtHum(struct TempEtHum*);
 
 #endif

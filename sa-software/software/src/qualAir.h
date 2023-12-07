@@ -23,7 +23,7 @@
 /**
  * Fonction permettant d'initialiser le capteur de qualité de l'air
  */
-void initQualAir();
+void initQualAir(unsigned short * co2);
 
 /**
  * Fonction permettant de récupérer la qualité de l'air et l'injecter dans la variable globale co2
