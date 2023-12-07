@@ -3,9 +3,16 @@
 #include "heure.h"
 #include "qualAir.h"
 #include "affichage.h"
+#include "typedef.h"
 
 
 void setup() {
+
+  temperature = NAN;
+  humidite = NAN;
+  co2 = -1;
+  page = TEMPERATURE;
+
   Serial.begin(9600);
   while(!Serial);
   delay(100);
@@ -30,5 +37,5 @@ void setup() {
 }
 
 void loop() {
-
+  
 }
