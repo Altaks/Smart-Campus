@@ -12,6 +12,21 @@ void setup() {
 
   //Initialise la tâche température et humidité 
   initTempEtHum();
+
+  delay(100);
+
+  //Initialise la ttaĉhe d'affichage sur l'écran
+  initAffichage();
+
+  delay(100);
+  
+  //Initialise la tâche l'horodatage
+  initHeure();
+
+  delay(100);
+  
+  //Initialise la tâche de CO2
+  initQualAir();
 }
 
 void loop() {
