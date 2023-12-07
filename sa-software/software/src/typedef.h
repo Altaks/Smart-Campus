@@ -5,7 +5,7 @@
 // valeurs des pins
 const int pinTempEtHum = 17;
 
-// temperature est humidité :
+// temperature et humidité :
 static float temperature;
 static float humidite;
 

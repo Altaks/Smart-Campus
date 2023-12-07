@@ -12,7 +12,7 @@ void taskTempEtHum(void *pvParameters) {
     temperature = (isnan(TempEtHum.temperature) ?  -1 : round(TempEtHum.temperature * 10.0)/10.0); //arrondi la valeur et reste a NaN si NaN pour ne pas "arrondir" NaN
     humidite = (isnan(TempEtHum.humidity) ?  -1 : round(TempEtHum.humidity * 10.0)/10.0);
     
-    Serial.printf("temp: %.1f; hum: %.1f;\n", temperature, humidite); //affiche dans le moniteur série les valeurs
+    //Serial.printf("temp: %.1f; hum: %.1f;\n", temperature, humidite); //affiche dans le moniteur série les valeurs
     vTaskDelay(pdMS_TO_TICKS(2000)); //délai avant nouvelle mesure
   }
 }
@@ -24,14 +24,14 @@ void initTempEtHum()
       taskTempEtHum,
       "taskTempEtHum",
       1000,
-      nullptr,
-      1,
-      &tempEtHumTaskHandle
+      NULL,
+      3 | portPRIVILEGE_BIT,
+      NULL
     );
-    if (tempEtHumTaskHandle == NULL) { //test si la tâche a été créée
-      Serial.println("Failed to start task for temperature update");
+    /*if (tempEtHumTaskHandle == NULL) { //test si la tâche a été créée
+      //Serial.println("Failed to start task for temperature update");
       return;
-    }
+    }*/
 }
 
 
