@@ -155,8 +155,8 @@ void taskQualAir(void *pvParameters)
                         "-----------------------------\n", co2_eq_ppm);*/
         } else {
             // Si erreur, afficher un message d'erreur et mettre la variable globale à -1 (valeur d'erreur)
-            //Serial.println("error reading IAQ values\n");
-            *co2 = -1;
+            Serial.println("error reading IAQ values\n");
+            *co2 = 0;
         }
     }
 

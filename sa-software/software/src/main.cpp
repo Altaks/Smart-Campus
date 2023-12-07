@@ -28,10 +28,6 @@ void setup() {
   
   //Initialise la tâche de CO2
   initQualAir(co2);
-
-  
-    
-  
 }
 
 void loop() {

@@ -29,10 +29,6 @@ void initTempEtHum(struct TempEtHum* tempEtHum)
       10,
       NULL
     );
-    /*if (tempEtHumTaskHandle == NULL) { //test si la tâche a été créée
-      //Serial.println("Failed to start task for temperature update");
-      return;
-    }*/
 }
 
 
