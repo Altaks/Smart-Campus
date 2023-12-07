@@ -94,6 +94,9 @@ void set_baseline(void)
 
 void initQualAir()
 {
+
+    Serial.begin(9600);
+    while(!Serial);
     // Initialisation du capteur de qualité de l'air
     s16 err;
     u16 scaled_ethanol_signal, scaled_h2_signal;
@@ -137,6 +140,8 @@ void initQualAir()
 
 void taskQualAir(void *pvParameters)
 {
+
+    int co2;
     while (true) {
         s16 err=0;
         u16 tvoc_ppb, co2_eq_ppm;

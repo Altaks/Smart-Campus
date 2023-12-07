@@ -8,9 +8,9 @@
 
 void setup() {
 
-  temperature = -1;
-  humidite = -1;
-  co2 = -1;
+
+  TempEtHum tempEtHum;
+  int co2;
   page = TEMPERATURE;
 
   Serial.begin(9600);
@@ -21,14 +21,14 @@ void setup() {
   initQualAir();
   
   delay(300);
-  /*
+  
   //Initialise la tâche l'horodatage
   initHeure();
 
-  delay(100);
-*/
+  //wdelay(100);
+
   //Initialise la tâche température et humidité 
-  initTempEtHum();
+  initTempEtHum(&tempEtHum);
 
   delay(300);
   
