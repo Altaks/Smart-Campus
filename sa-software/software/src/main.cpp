@@ -3,7 +3,7 @@
 #include "heure.h"
 #include "qualAir.h"
 #include "affichage.h"
-#include "typedef.h"
+#include "typeDef.h"
 
 void taskTempEtHum(void *pvParameters) {
   while(true){
@@ -40,6 +40,19 @@ void setup() {
     NULL
   );*/
 
+  initHeure();
+
+  initQualAir();
+  xTaskCreate(
+    taskQualAir,
+    "taskQualAir",
+    10000,
+    NULL,
+    1,
+    NULL
+  );
+
+  delay(100);
   // Affichage
   bool isDisplayInit = initAffichage();
   if (isDisplayInit) {
@@ -52,18 +65,6 @@ void setup() {
       NULL
     );
   }
-
-  initHeure();
-
-  initQualAir();
-  xTaskCreate(
-    taskQualAir,
-    "taskQualAir",
-    10000,
-    NULL,
-    1,
-    NULL
-  );
 
 }
 

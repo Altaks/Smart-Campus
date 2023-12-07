@@ -1,5 +1,6 @@
 #include "affichage.h"
-#include "typedef.h"
+#include "typeDef.h"
+#include "heure.h"
 
 SSD1306Wire * display;
 
@@ -31,8 +32,9 @@ bool initAffichage()
 
 void taskAffichage(void *pvParameters) {
     while(true){
+        delay(3000);
         display->clear();
-        //display->drawString(0, 0, getDate());
+        display->drawString(0, 0, getDate());
         switch (page) {
             case TEMPERATURE :
                 if (!isnan(temperature)) {
@@ -69,6 +71,5 @@ void taskAffichage(void *pvParameters) {
             break;
         }
         display->display();
-        delay(3000);
     }
 }
