@@ -1,17 +1,19 @@
 #ifndef TYPEDEF_H
 #define TYPEDEF_H
+#include <WString.h>
 
-// temperature est humidité :
+// valeurs des pins
+const int pinTempEtHum = 17;
+
+// temperature et humidité :
 static float temperature;
 static float humidite;
 
 // qualite de l'air :
 static int co2;
 
-// placer les variables globales ici :
 
 // page courante dans les valeurs (1 -> Température, 2 -> Humidité, 3 -> CO2);
-
 enum PAGE {
     TEMPERATURE,
     HUMIDITE,
