@@ -14,7 +14,7 @@
 #include "sgp30.h"
 
 // Inclusion des librairies du projet
-#include "typedef.h"
+#include "typeDef.h"
 
 // Définition des constantes
 #define LOOP_TIME_INTERVAL_MS  1000     // Temps d'attente entre chaque mesure de la qualité de l'air

@@ -3,8 +3,9 @@
 #include "heure.h"
 
 SSD1306Wire * display;
+PAGE page = TEMPERATURE;
 
-bool initAffichage()
+bool initAffichage(struct Donnees* donnees)
 {
     Serial.println("______________________________________");
     Serial.println("Début de l'initialisation de l'écran :");
@@ -27,45 +28,57 @@ bool initAffichage()
     Serial.println("Variable initialisee.");
     Serial.println("Ecran Initialise.");
     Serial.println("______________________________________");
+    xTaskCreate( //création de la tâche
+      taskAffichage,
+      "taskTempEtHum",
+      10000,
+      (void*)donnees,
+      1,
+      NULL
+    );
     return true;
 }
 
 void taskAffichage(void *pvParameters) {
+    struct Donnees * donnees = (struct Donnees *) pvParameters;
     while(true){
-        delay(3000);
+        delay(10 * 1000);
         display->clear();
-        display->drawString(0, 0, getDate());
+
+        String dateTime = String(getJour()) + "/" + String(getMois()) + "/" + String(getAnnee()) + " " + String(getHeure()) + ":" + String(getMinute());
+
+        display->drawString(0, 0, dateTime);
         switch (page) {
             case TEMPERATURE :
-                if (!isnan(temperature)) {
+                if (donnees->tempEtHum->temperature != -1) {
                     char temp[20];
-                    sprintf(temp, "Temp : %.2f°C", temperature);
-                    display->drawString(0, 20, temp);
+                    sprintf(temp, "Temp : %.2f°C", donnees->tempEtHum->temperature);
+                    display->drawString(0, 25, temp);
                 }
                 else {
-                    display->drawString(0, 20, "Erreur lors de la récupération de la température");
+                    display->drawString(0, 25, "Temp : N/A");
                 }
                 page = HUMIDITE;
                 break;
             case HUMIDITE :
-                if (!isnan(humidite)) {
+                if (donnees->tempEtHum->humidite != -1) {
                     char temp[17];
-                    sprintf(temp, "Humidite : %.2f%s", humidite, "%");
-                    display->drawString(0, 20, temp);
+                    sprintf(temp, "Hum : %.2f%s", donnees->tempEtHum->humidite, "%");
+                    display->drawString(0, 25, temp);
                 }
                 else {
-                    display->drawString(0, 20, "Hum : Erreur");
+                    display->drawString(0, 25, "Hum : N/A");
                 }
                 page = CO2;
                 break;
             case CO2 :
-                if (co2 != -1) {
+                if (*donnees->co2 != -1) {
                     char temp[17];
-                    sprintf(temp, "CO2 : %d ppm", co2);
-                    display->drawString(0, 20, temp);
+                    sprintf(temp, "CO2 : %d ppm", *donnees->co2);
+                    display->drawString(0, 25, temp);
                 }
                 else {
-                    display->drawString(0, 20, "CO2 : Erreur");
+                    display->drawString(0, 25, "CO2 : N/A");
                 }
                 page = TEMPERATURE;
             break;

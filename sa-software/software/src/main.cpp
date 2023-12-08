@@ -8,11 +8,16 @@
 
   TempEtHum* tempEtHum;
   unsigned short* co2;
+  Donnees* donnees;
 
 void setup() {
 
   tempEtHum = new TempEtHum();
   co2 = new (unsigned short);
+  donnees = new Donnees();
+  donnees->tempEtHum = tempEtHum;
+  donnees->co2 = co2;
+
 
   Serial.begin(9600);
   while(!Serial);
@@ -30,6 +35,9 @@ void setup() {
   
   //Initialise la tâche de CO2
   initQualAir(co2);
+
+  delay(1000);
+  initAffichage(donnees);
 }
 
 void loop() {
