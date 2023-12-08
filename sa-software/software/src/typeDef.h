@@ -6,13 +6,10 @@
 const int pinTempEtHum = 17;
 
 // temperature et humidité :
-static float temperature;
-static float humidite;
-
-// qualite de l'air :
-static int co2;
-static String curDate;
-
+struct TempEtHum{
+    float temperature;
+    float humidite;
+};
 
 // page courante dans les valeurs (1 -> Température, 2 -> Humidité, 3 -> CO2);
 enum PAGE {
