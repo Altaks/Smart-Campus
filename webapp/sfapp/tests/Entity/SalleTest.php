@@ -4,6 +4,7 @@ namespace App\Tests\Entity;
 
 use App\Entity\Batiment;
 use App\Entity\Salle;
+use App\Entity\SystemeAcquisition;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 

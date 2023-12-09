@@ -15,8 +15,11 @@ class Batiment
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 255)]
     private ?string $nom = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $departement = null;
 
     #[ORM\OneToMany(mappedBy: 'batiment', targetEntity: Salle::class, orphanRemoval: true)]
     private Collection $salles;
@@ -39,6 +42,18 @@ class Batiment
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
+
+        return $this;
+    }
+
+    public function getDepartement(): ?string
+    {
+        return $this->departement;
+    }
+
+    public function setDepartement(string $departement): static
+    {
+        $this->departement = $departement;
 
         return $this;
     }
