@@ -2,24 +2,46 @@
 
 namespace App\Tests\Entity;
 
+use App\Entity\Batiment;
 use App\Entity\Salle;
 use App\Entity\SystemeAcquisition;
+use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 
 class SystemeAcquisitionTest extends TestCase
 {
-    public function test_un_systeme_d_acquisition_a_une_adresse_mac(): void
+    public function test_classe_systeme_acquisition_existe(): void
     {
-        $systeme = new SystemeAcquisition();
-        $systeme->setAdresseMac("44:55:66:77:88:99");
-        $this->assertEquals("44:55:66:77:88:99",$systeme->getAdresseMac());
+        $this->assertTrue(class_exists(SystemeAcquisition::class));
     }
 
-    public function test_un_systeme_d_acquisition_est_dans_une_salle(): void
+    public function test_id_systeme_acquisition(): void
     {
-        $systeme = new SystemeAcquisition();
-        $salle = $this->createMock(Salle::class);
-        $systeme->setSalle($salle);
-        $this->assertEquals($salle,$systeme->getSalle());
+        $sa = new SystemeAcquisition();
+        $this->assertNull($sa->getId());
     }
+
+    public function test_adresse_mac_systeme_acquisition(): void
+    {
+        $sa = new SystemeAcquisition();
+        $sa->setAdresseMac('00:00:00:00:00:01');
+        $this->assertEquals('00:00:00:00:00:01', $sa->getAdresseMac());
+    }
+
+    public function test_adresse_mac_systeme_acquisition_taille(): void
+    {
+        $sa = new SystemeAcquisition();
+        $this->expectException(\InvalidArgumentException::class);
+        $sa->setAdresseMac('00:00:00:00:00:0');
+        $this->assertEquals(null, $sa->getAdresseMac());
+    }
+
+    public function test_adresse_mac_systeme_acquisition_format(): void
+    {
+        $sa = new SystemeAcquisition();
+        $this->expectException(\InvalidArgumentException::class);
+        $sa->setAdresseMac('00:00:00:00:00:0G');
+        $this->assertEquals(null, $sa->getAdresseMac());
+    }
+
 }

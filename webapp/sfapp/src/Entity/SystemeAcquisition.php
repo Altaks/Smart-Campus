@@ -13,27 +13,15 @@ class SystemeAcquisition
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 17)]
-    private ?string $adresse_mac = null;
-
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'systemeAcquisition', cascade: ['persist', 'remove'])]
     private ?Salle $salle = null;
+
+    #[ORM\Column(length: 11)]
+    private ?string $adresseMac = null;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getAdresseMac(): ?string
-    {
-        return $this->adresse_mac;
-    }
-
-    public function setAdresseMac(string $adresse_mac): static
-    {
-        $this->adresse_mac = $adresse_mac;
-
-        return $this;
     }
 
     public function getSalle(): ?Salle
@@ -43,7 +31,29 @@ class SystemeAcquisition
 
     public function setSalle(?Salle $salle): static
     {
+        // unset the owning side of the relation if necessary
+        if ($salle === null && $this->salle !== null) {
+            $this->salle->setSystemeAcquisition(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($salle !== null && $salle->getSystemeAcquisition() !== $this) {
+            $salle->setSystemeAcquisition($this);
+        }
+
         $this->salle = $salle;
+
+        return $this;
+    }
+
+    public function getAdresseMac(): ?string
+    {
+        return $this->adresseMac;
+    }
+
+    public function setAdresseMac(string $adresseMac): static
+    {
+        $this->adresseMac = $adresseMac;
 
         return $this;
     }

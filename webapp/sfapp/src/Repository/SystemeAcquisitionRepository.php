@@ -21,24 +21,6 @@ class SystemeAcquisitionRepository extends ServiceEntityRepository
         parent::__construct($registry, SystemeAcquisition::class);
     }
 
-    public function add(SystemeAcquisition $systemeAcquisition, bool $flush = false)
-    {
-        $this->getEntityManager()->persist($systemeAcquisition);
-
-        if($flush){
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(SystemeAcquisition $systemeAcquisition, bool $flush = false)
-    {
-        $this->getEntityManager()->remove($systemeAcquisition);
-
-        if($flush){
-            $this->getEntityManager()->flush();
-        }
-    }
-
 //    /**
 //     * @return SystemeAcquisition[] Returns an array of SystemeAcquisition objects
 //     */
