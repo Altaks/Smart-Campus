@@ -17,15 +17,17 @@ class AppFixtures extends Fixture
 
         $batiment = new Batiment();
         $batiment->setNom("Batiment D");
+        $batiment->setDepartement("Info");
         $manager->persist($batiment);
 
         $batiment2 = new Batiment();
         $batiment2->setNom("Batiment C");
+        $batiment2->setDepartement("R & T");
         $manager->persist($batiment2);
 
         $salle1 = new Salle();
-        $salle1->setNumero("302")
-            ->setOrientation("Nord")
+        $salle1->setNom("302")
+            ->setOrientation("No")
             ->setNbfenetres(6)
             ->setNbportes(2)
             ->setContientpc(true)
@@ -34,8 +36,8 @@ class AppFixtures extends Fixture
         $manager->persist($salle1);
 
         $salle2 = new Salle();
-        $salle2->setNumero("303")
-            ->setOrientation("Sud")
+        $salle2->setNom("303")
+            ->setOrientation("Su")
             ->setNbfenetres(2)
             ->setNbportes(1)
             ->setContientpc(false)
@@ -45,8 +47,8 @@ class AppFixtures extends Fixture
 
         $salle3 = new Salle();
 
-        $salle3->setNumero("004")
-            ->setOrientation("Est")
+        $salle3->setNom("004")
+            ->setOrientation("Es")
             ->setNbfenetres(6)
             ->setNbportes(1)
             ->setContientpc(true)

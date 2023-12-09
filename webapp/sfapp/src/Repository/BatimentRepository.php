@@ -21,24 +21,6 @@ class BatimentRepository extends ServiceEntityRepository
         parent::__construct($registry, Batiment::class);
     }
 
-    public function add(Batiment $batiment, bool $flush = false)
-    {
-        $this->getEntityManager()->persist($batiment);
-
-        if($flush){
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(Batiment $batiment, bool $flush = false)
-    {
-        $this->getEntityManager()->remove($batiment);
-
-        if($flush){
-            $this->getEntityManager()->flush();
-        }
-    }
-
 //    /**
 //     * @return Batiment[] Returns an array of Batiment objects
 //     */
