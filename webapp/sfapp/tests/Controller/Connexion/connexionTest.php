@@ -17,8 +17,64 @@ class connexionTest extends WebTestCase
         $label = $crawler->filter("label");
         $this->assertEquals($label->eq(0)->text(), 'Identifiant');
         $this->assertEquals($label->eq(1)->text(), 'Mot de passe');
-        $this->assertSelectorCount(2, 'input');
+        $this->assertSelectorCount(3, 'input');
         $this->assertSelectorTextContains('button', 'Se connecter');
 
     }
+
+    public function test_envoi_formulaire_de_connexion_cas_valide_charge_de_mission(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/connexion');
+        $crawler = $client->submitForm('submit', [
+            '_username' => 'testChargeDeMission',
+            '_password' => '\$2y$13\$iCQoObBJ8ytBcypkX1RKTes7upAIBT5ktnPaHai3pI13YUNGE1y2a'
+        ]);
+
+        $this->assertResponseStatusCodeSame(302);
+        $this->assertResponseHasHeader('content-type');
+        $client->followRedirects();
+    }
+
+    public function test_envoi_formulaire_de_connexion_cas_identifiant_invalide(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/connexion');
+        $crawler = $client->submitForm('submit', [
+            '_username' => 'testAdministrateur',
+            '_password' => '\$2y$13\$iCQoObBJ8ytBcypkX1RKTes7upAIBT5ktnPaHai3pI13YUNGE1y2a'
+        ]);
+
+        $this->assertResponseStatusCodeSame(302);
+        $this->assertResponseHasHeader('content-type');
+    }
+
+    public function test_envoi_formulaire_de_connexion_cas_mot_de_passe_invalide(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/connexion');
+        $crawler = $client->submitForm('submit', [
+            '_username' => 'testChargeDeMission',
+            '_password' => 'motDePasseInvalide'
+        ]);
+
+        $this->assertResponseStatusCodeSame(302);
+        $this->assertResponseHasHeader('content-type');
+    }
+
+    public function test_envoi_formulaire_de_connexion_cas_identifiant_et_mot_de_passe_invalide(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/connexion');
+        $crawler = $client->submitForm('submit', [
+            '_username' => 'testAdministrateur',
+            '_password' => 'motDePasseInvalide'
+        ]);
+
+        $this->assertResponseStatusCodeSame(302);
+        $this->assertResponseHasHeader('content-type');
+    }
+
+
+
 }

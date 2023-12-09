@@ -5,9 +5,10 @@ namespace App\DataFixtures;
 use App\Entity\Batiment;
 use App\Entity\Salle;
 use App\Entity\SystemeAcquisition;
+use App\Entity\Utilisateur;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
@@ -76,6 +77,13 @@ class AppFixtures extends Fixture
         $sa4->setAdresseMac("00:00:00:00:00:04");
 
         $manager->persist($sa4);
+
+        $utilisateur = new Utilisateur();
+        $utilisateur->setIdentifiant("testChargeDeMission");
+        $utilisateur->setMotDePasse("\$2y$13\$iCQoObBJ8ytBcypkX1RKTes7upAIBT5ktnPaHai3pI13YUNGE1y2a")
+                    ->addRole("ROLE_CHARGE_DE_MISSION");
+
+        $manager->persist($utilisateur);
 
         $manager->flush();
     }

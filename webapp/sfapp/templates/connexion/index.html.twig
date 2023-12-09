@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block body %}
+<main class="w-full flex flex-col items-center text-center">
+    <h1 class="text-center text-3xl mt-8">Connexion</h1>
+
+    <form action="{{ path('app_connexion') }}" method="post" class=" flex flex-col mt-14">
+        <label for="identifiant" class="text-2xl mb-2">Identifiant</label>
+        <input type="text" id="identifiant" name="_username" value="{{ dernier_identifiant }}"  placeholder="Identifiant" class="border-none bg-gray-100 rounded py-0">
+
+        <label for="mot_de_passe" class="text-2xl mt-6 mb-2">Mot de passe</label>
+        <input type="password" id="mot_de_passe" name="_password" placeholder="Mot de passe" class="border-none bg-gray-100 rounded py-0">
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authentificate') }}">
+
+        <button disabled type="submit" id="submit" class="cursor-not-allowed w-2/3 rounded-lg bg-[#0f6eb1] text-white p-1 self-center mt-6">Se connecter</button>
+    </form>
+        {% if erreur %}
+            <p class="text-red-500 m-auto mt-16">Identifiant ou mot de passe invalides.</p>
+        {% endif %}
+</main>
+<script>
+    let identifiant = document.getElementById('identifiant');
+    let motDePasse = document.getElementById('mot_de_passe');
+
+    identifiant.addEventListener('input', function() {
+        let identifiant = document.getElementById('identifiant');
+        if (identifiant.value.length === 0) {
+            disableSubmitButton()
+        } else {
+            let motDePasse = document.getElementById('mot_de_passe');
+            disableSubmitButton()
+            if( motDePasse.value.length === 0) {
+            }
+            else {
+                enableSubmitButton();
+            }
+        }
+    })
+
+    motDePasse.addEventListener('input', function(e) {
+        let motDePasse = document.getElementById('mot_de_passe');
+        if (motDePasse.value.length === 0) {
+            disableSubmitButton()
+        } else {
+            let identifiant = document.getElementById('identifiant');
+            let submit = document.getElementById('submit');
+            if( identifiant.value.length === 0) {
+                disableSubmitButton();
+            }
+            else {
+                enableSubmitButton();
+            }
+        }
+    });
+
+    function enableSubmitButton(){
+        let button = document.getElementById("submit");
+        if (button.disabled){
+            button.disabled = false;
+            button.classList.remove("cursor-not-allowed");
+            button.classList.add("hover:bg-sky-600");
+        }
+    }
+    function disableSubmitButton(){
+        let button = document.getElementById("submit");
+        if (!button.disabled){
+            button.disabled = true;
+            button.classList.add("cursor-not-allowed");
+            button.classList.remove("hover:bg-sky-600");
+        }
+    }
+</script>
+{% endblock %}
+
+

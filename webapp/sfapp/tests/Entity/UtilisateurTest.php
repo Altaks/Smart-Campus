@@ -3,8 +3,8 @@
 namespace App\Tests\Entity;
 
 use PHPUnit\Framework\TestCase;
-
 use App\Entity\Utilisateur;
+use App\Tests\Entity\ArrayCollection;
 
 class UtilisateurTest extends TestCase
 {
@@ -27,9 +27,9 @@ class UtilisateurTest extends TestCase
         $utilisateur = new Utilisateur();
         $utilisateur->addRole("ROLE_ADMIN");
         $utilisateur->addRole("ROLE_USER");
-        $roles = new ArrayCollection();
-        $roles->add("ROLE_ADMIN");
-        $roles->add("ROLE_USER");
+        $roles = array();
+        $roles[] = "ROLE_ADMIN";
+        $roles[] = "ROLE_USER";
         $this->assertEquals($utilisateur->getRoles(), $roles);
     }
 }
