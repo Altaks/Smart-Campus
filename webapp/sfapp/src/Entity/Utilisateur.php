@@ -8,10 +8,12 @@ use Doctrine\DBAL\Types\Types;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherAwareInterface;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
-class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
+class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, PasswordHasherAwareInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -66,7 +68,13 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setMotDePasse(string $motDePasse): static
     {
-        $this->motDePasse = $motDePasse;
+        $passwordHasherFactory = new PasswordHasherFactory(
+            ['harsh' => [
+                'algorithm' => 'auto',
+                'cost' => 15
+        ]]);
+        $passwordHasher = new UserPasswordHasher($passwordHasherFactory);
+        $this->motDePasse = $passwordHasher->hashPassword($this, $motDePasse);
 
         return $this;
     }
@@ -90,5 +98,10 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getPasswordHasherName() :?string
+    {
+        return 'harsh';
     }
 }

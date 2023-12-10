@@ -24,6 +24,7 @@ class ConnexionController extends AbstractController
         $erreur = $authenticationUtils->getLastAuthenticationError();
 
         $dernierIdentifiant = $authenticationUtils->getLastUsername();
+
         return $this->render('connexion/index.html.twig', [
             'dernier_identifiant' => $dernierIdentifiant,
             'erreur' => $erreur,
@@ -33,26 +34,10 @@ class ConnexionController extends AbstractController
     #[Route('/auth-Success', name: 'auth-success')]
     public function onAuthenticationSuccess(Security $security, Request $request)
     {
-        $formData = [
-            'test' => 'test',
-            'test2' => 'test2',
-        ];
-
-        $model = new TestObject();
-        // $model will retrieve data from the form submission; pass it as the second argument
-        $form = $this->factory->create(TestedType::class, $model);
-
-        $expected = new TestObject();
-        // ...populate $expected properties with the data stored in $formData
-
-        // submit the data to the form directly
-        $form->submit($formData);
-
-        // This check ensures there are no transformation failures
-        $this->assertTrue($form->isSynchronized());
-
-        // check that $model was modified as expected when the form was submitted
-        $this->assertEquals($expected, $model);
+        $utilisateur = $security->getUser();
+        $security->login($utilisateur);
+        if (array_search("ROLE_CHARGE_DE_MISSION", $utilisateur->getRoles()) !== false) {
+            return $this->redirect('/accueil/ChargeMission');
+        }
     }
-
 }

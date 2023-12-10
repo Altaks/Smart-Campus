@@ -5,6 +5,8 @@ namespace App\Tests\Entity;
 use PHPUnit\Framework\TestCase;
 use App\Entity\Utilisateur;
 use App\Tests\Entity\ArrayCollection;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
 
 class UtilisateurTest extends TestCase
 {
@@ -19,7 +21,7 @@ class UtilisateurTest extends TestCase
     {
         $utilisateur = new Utilisateur();
         $utilisateur->setMotDePasse("password");
-        $this->assertEquals($utilisateur->getMotDePasse(), "password");
+        $this->assertNotEquals($utilisateur->getMotDePasse(), "password");
     }
 
     public function test_un_utilisateur_a_une_liste_de_role(): void

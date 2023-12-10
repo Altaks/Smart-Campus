@@ -79,8 +79,8 @@ class AppFixtures extends Fixture
         $manager->persist($sa4);
 
         $utilisateur = new Utilisateur();
-        $utilisateur->setIdentifiant("testChargeDeMission");
-        $utilisateur->setMotDePasse("\$2y$13\$iCQoObBJ8ytBcypkX1RKTes7upAIBT5ktnPaHai3pI13YUNGE1y2a")
+        $utilisateur->setIdentifiant("testChargeDeMission")
+                    ->setMotDePasse("testChargeDeMission")
                     ->addRole("ROLE_CHARGE_DE_MISSION");
 
         $manager->persist($utilisateur);

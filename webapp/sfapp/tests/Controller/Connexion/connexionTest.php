@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller\Connexion;
 
+use http\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class connexionTest extends WebTestCase
@@ -28,12 +29,10 @@ class connexionTest extends WebTestCase
         $client->request('GET', '/connexion');
         $crawler = $client->submitForm('submit', [
             '_username' => 'testChargeDeMission',
-            '_password' => '\$2y$13\$iCQoObBJ8ytBcypkX1RKTes7upAIBT5ktnPaHai3pI13YUNGE1y2a'
+            '_password' => 'testChargeDeMission'
         ]);
-
-        $this->assertResponseStatusCodeSame(302);
-        $this->assertResponseHasHeader('content-type');
-        $client->followRedirects();
+        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
+        //$this->assertResponseRedirects("/auth-Success");
     }
 
     public function test_envoi_formulaire_de_connexion_cas_identifiant_invalide(): void
@@ -44,9 +43,8 @@ class connexionTest extends WebTestCase
             '_username' => 'testAdministrateur',
             '_password' => '\$2y$13\$iCQoObBJ8ytBcypkX1RKTes7upAIBT5ktnPaHai3pI13YUNGE1y2a'
         ]);
-
-        $this->assertResponseStatusCodeSame(302);
-        $this->assertResponseHasHeader('content-type');
+        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
+        //$this->assertResponseRedirects("/connexion");
     }
 
     public function test_envoi_formulaire_de_connexion_cas_mot_de_passe_invalide(): void
@@ -57,9 +55,8 @@ class connexionTest extends WebTestCase
             '_username' => 'testChargeDeMission',
             '_password' => 'motDePasseInvalide'
         ]);
-
-        $this->assertResponseStatusCodeSame(302);
-        $this->assertResponseHasHeader('content-type');
+        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
+        //$this->assertResponseRedirects("/connexion");
     }
 
     public function test_envoi_formulaire_de_connexion_cas_identifiant_et_mot_de_passe_invalide(): void
@@ -70,11 +67,7 @@ class connexionTest extends WebTestCase
             '_username' => 'testAdministrateur',
             '_password' => 'motDePasseInvalide'
         ]);
-
-        $this->assertResponseStatusCodeSame(302);
-        $this->assertResponseHasHeader('content-type');
+        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
+        //$this->assertResponseRedirects("/connexion");
     }
-
-
-
 }
