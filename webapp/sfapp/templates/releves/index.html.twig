@@ -7,7 +7,7 @@
     <div class="max-w-6xl mx-auto my-12">
         <h1 class="my-12 text-2xl w-full text-center">Liste des relevés</h1>
 
-        <div class="bg-gray-50 dark:bg-gray-800 rounded-t-lg min-h-2 p-4 flex flex-row justify-between items-center">
+        <div class="bg-gray-50 dark:bg-gray-800 rounded-t-lg min-h-2 p-4 flex flex-row justify-between items-center shadow-md">
             {% if salle_actuelle is not defined %}
                 <div class="flex flex-row ml-4">
                     <span>Veuillez choisir une salle</span>
@@ -73,7 +73,9 @@
                     </tbody>
                 </table>
             {% else %}
-                <p>Système d'acquisition absent - Veuillez en faire part au chargé de mission</p>
+                <div class="bg-red-50 dark:bg-red-800 rounded-b-lg min-h-2 p-4 flex flex-row justify-between items-center mt-5 shadow-md">
+                    <p class="w-full text-center">Système d'acquisition absent - Veuillez en faire part au chargé de mission</p>
+                </div>
             {% endif %}
         {% endif %}
     </div>
