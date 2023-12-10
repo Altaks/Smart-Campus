@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des relevés{% endblock %}
+
+{% block body %}
+
+    <div class="max-w-6xl mx-auto my-12">
+        <h1 class="my-12 text-2xl w-full text-center">Liste des relevés</h1>
+
+        <div class="bg-gray-300 rounded-t-lg min-h-2 p-4 flex flex-row justify-between items-center">
+            {% if salle_actuelle is not defined %}
+                <div class="flex flex-row ml-4">
+                    <span>Veuillez choisir une salle</span>
+                </div>
+            {% else %}
+                <div class="flex flex-row ml-4">
+                    <span>{{ salle_actuelle.batiment.nom }}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(0, 0, 0, 1);transform: ;msFilter:;"><path d="M10.707 17.707 16.414 12l-5.707-5.707-1.414 1.414L13.586 12l-4.293 4.293z"></path></svg>
+                    <span>{{ salle_actuelle.nom }}</span>
+                </div>
+            {% endif %}
+            <div>
+                {{ form_start(form) }}
+                <div class="flex flex-row justify-center items-center">
+                    <select class="rounded-lg border-2 border-gray-300 bg-white h-10 px-5 pr-16 text-sm focus:outline-none" name="{{ field_name(form.salle) }}">
+                        {% for label, value in field_choices(form.salle) %}
+                            <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="rounded-lg border-2 border-gray-300 bg-white h-10 w-10 text-sm focus:outline-none"><box-icon name='search'></box-icon></button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
