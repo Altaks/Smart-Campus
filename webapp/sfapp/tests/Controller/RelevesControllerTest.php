@@ -34,6 +34,18 @@ class RelevesControllerTest extends WebTestCase
         $client = static::createClient();
         $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
 
+        // Réinitialiser les releves
+        $relevesRepository = $entityManager->getRepository('App\Entity\Releve');
+        foreach ($relevesRepository->findAll() as $releve) {
+            $entityManager->remove($releve);
+        }
+
+        // Réinitialiser les sa
+        $systemeAcquisitionRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
+        foreach ($systemeAcquisitionRepository->findAll() as $sa) {
+            $entityManager->remove($sa);
+        }
+
         // Réinitialiser les salles
         $salleRepository = $entityManager->getRepository('App\Entity\Salle');
         foreach ($salleRepository->findAll() as $salle) {
@@ -42,6 +54,7 @@ class RelevesControllerTest extends WebTestCase
 
         $batiment = new Batiment();
         $batiment->setNom('Batiment Z');
+        $batiment->setDepartement('Info');
 
         $salle = new Salle();
         $salle->setNom('302');
@@ -70,6 +83,18 @@ class RelevesControllerTest extends WebTestCase
         $client = static::createClient();
         $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
 
+        // Réinitialiser les releves
+        $relevesRepository = $entityManager->getRepository('App\Entity\Releve');
+        foreach ($relevesRepository->findAll() as $releve) {
+            $entityManager->remove($releve);
+        }
+
+        // Réinitialiser les sa
+        $systemeAcquisitionRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
+        foreach ($systemeAcquisitionRepository->findAll() as $sa) {
+            $entityManager->remove($sa);
+        }
+
         // Réinitialiser les salles
         $salleRepository = $entityManager->getRepository('App\Entity\Salle');
         foreach ($salleRepository->findAll() as $salle) {
@@ -78,6 +103,7 @@ class RelevesControllerTest extends WebTestCase
 
         $batiment = new Batiment();
         $batiment->setNom('Batiment Z');
+        $batiment->setDepartement('Info');
 
         $salle = new Salle();
         $salle->setNom('302');

@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Batiment;
+use App\Entity\Releve;
 use App\Entity\Salle;
 use App\Entity\SystemeAcquisition;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -60,6 +61,8 @@ class AppFixtures extends Fixture
         $sa1->setAdresseMac("00:00:00:00:00:01")
             ->setSalle($salle1);
 
+        $salle1->setSystemeAcquisition($sa1);
+
         $manager->persist($sa1);
 
         $sa2 = new SystemeAcquisition();
@@ -78,7 +81,27 @@ class AppFixtures extends Fixture
         $sa4->setAdresseMac("00:00:00:00:00:04");
 
         $manager->persist($sa4);
+        $releve1 = new Releve();
+        $releve1->setHorodatage(new \DateTime());
+        $releve1->setTemperature(20.0);
+        $releve1->setHumidite(50.0);
+        $releve1->setQualiteAir(400);
+        $releve1->setSystemeAcquisition($sa1);
+        $releve1->setSalle($sa1->getSalle());
+
+        $manager->persist($releve1);
+
+        $releve2 = new Releve();
+        $releve2->setHorodatage(new \DateTime());
+        $releve2->setTemperature(21.0);
+        $releve2->setHumidite(51.0);
+        $releve2->setQualiteAir(444);
+        $releve2->setSystemeAcquisition($sa1);
+        $releve2->setSalle($sa1->getSalle());
+
+        $manager->persist($releve2);
 
         $manager->flush();
+
     }
 }
