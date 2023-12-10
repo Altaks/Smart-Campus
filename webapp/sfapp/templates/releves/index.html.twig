@@ -7,7 +7,7 @@
     <div class="max-w-6xl mx-auto my-12">
         <h1 class="my-12 text-2xl w-full text-center">Liste des relevés</h1>
 
-        <div class="bg-gray-300 rounded-t-lg min-h-2 p-4 flex flex-row justify-between items-center">
+        <div class="bg-gray-50 dark:bg-gray-800 rounded-t-lg min-h-2 p-4 flex flex-row justify-between items-center">
             {% if salle_actuelle is not defined %}
                 <div class="flex flex-row ml-4">
                     <span>Veuillez choisir une salle</span>
@@ -22,16 +22,60 @@
             <div>
                 {{ form_start(form) }}
                 <div class="flex flex-row justify-center items-center">
-                    <select class="rounded-lg border-2 border-gray-300 bg-white h-10 px-5 pr-16 text-sm focus:outline-none" name="{{ field_name(form.salle) }}">
+                    <select class="shadow-md rounded-lg border-0 bg-white h-10 px-5 pr-16 text-sm focus:outline-none mr-5" name="{{ field_name(form.salle) }}">
                         {% for label, value in field_choices(form.salle) %}
                             <option value="{{ value }}">{{ label }}</option>
                         {% endfor %}
                     </select>
-                    <button type="submit" class="rounded-lg border-2 border-gray-300 bg-white h-10 w-10 text-sm focus:outline-none"><box-icon name='search'></box-icon></button>
+                    <button type="submit" class="shadow-md rounded-lg border-0 bg-white h-10 w-10 text-sm focus:outline-none"><box-icon name='search'></box-icon></button>
                 </div>
                 {{ form_end(form) }}
             </div>
         </div>
+
+        {% if salle_actuelle is defined %}
+            {% if salle_actuelle.systemeacquisition is not null %}
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg my-12">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">
+                            Horodatage
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Température (°C)
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Qualité de l'air (ppm)
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Humidité (%)
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for releve in salle_actuelle.releves %}
+                        <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {{ releve.horodatage | date("d/m/Y H:i:s") }}
+                            </th>
+                            <td class="px-6 py-4">
+                                {{ releve.temperature | default("-") }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ releve.qualiteAir | default("-") }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ releve.humidite | default("-") }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Système d'acquisition absent - Veuillez en faire part au chargé de mission</p>
+            {% endif %}
+        {% endif %}
     </div>
 
 {% endblock %}

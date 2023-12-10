@@ -72,8 +72,7 @@ class AppFixtures extends Fixture
         $manager->persist($sa2);
 
         $sa3 = new SystemeAcquisition();
-        $sa3->setAdresseMac("00:00:00:00:00:03")
-            ->setSalle($salle3);
+        $sa3->setAdresseMac("00:00:00:00:00:03");
 
         $manager->persist($sa3);
 
@@ -93,7 +92,7 @@ class AppFixtures extends Fixture
 
         $releve2 = new Releve();
         $releve2->setHorodatage(new \DateTime());
-        $releve2->setTemperature(21.0);
+        $releve2->setTemperature(21.8);
         $releve2->setHumidite(51.0);
         $releve2->setQualiteAir(444);
         $releve2->setSystemeAcquisition($sa1);

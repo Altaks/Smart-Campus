@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SystemeAcquisitionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
 
@@ -31,6 +33,14 @@ class SystemeAcquisition
      */
     #[ORM\Column(length: 17)]
     private ?string $adresseMac = null;
+
+    #[ORM\OneToMany(mappedBy: 'systemeAcquisition', targetEntity: Releve::class)]
+    private Collection $releves;
+
+    public function __construct()
+    {
+        $this->releves = new ArrayCollection();
+    }
 
     /**
      * @return int|null ID du système d'acquisition
@@ -92,6 +102,36 @@ class SystemeAcquisition
             throw new InvalidArgumentException("L'adresse mac n'est pas valide");
         }
         $this->adresseMac = $adresseMac;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Releve>
+     */
+    public function getReleves(): Collection
+    {
+        return $this->releves;
+    }
+
+    public function addRelefe(Releve $relefe): static
+    {
+        if (!$this->releves->contains($relefe)) {
+            $this->releves->add($relefe);
+            $relefe->setSystemeAcquisition($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelefe(Releve $relefe): static
+    {
+        if ($this->releves->removeElement($relefe)) {
+            // set the owning side to null (unless already changed)
+            if ($relefe->getSystemeAcquisition() === $this) {
+                $relefe->setSystemeAcquisition(null);
+            }
+        }
 
         return $this;
     }

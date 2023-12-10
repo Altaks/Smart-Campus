@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SalleRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
 
@@ -68,6 +70,14 @@ class Salle
      */
     #[ORM\OneToOne(inversedBy: 'salle', cascade: ['persist', 'remove'])]
     private ?SystemeAcquisition $systemeAcquisition = null;
+
+    #[ORM\OneToMany(mappedBy: 'salle', targetEntity: Releve::class, orphanRemoval: true)]
+    private Collection $releves;
+
+    public function __construct()
+    {
+        $this->releves = new ArrayCollection();
+    }
 
     /**
      * @return int|null ID de la salle
@@ -239,6 +249,36 @@ class Salle
     public function setSystemeAcquisition(?SystemeAcquisition $systemeAcquisition): static
     {
         $this->systemeAcquisition = $systemeAcquisition;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Releve>
+     */
+    public function getReleves(): Collection
+    {
+        return $this->releves;
+    }
+
+    public function addRelefe(Releve $relefe): static
+    {
+        if (!$this->releves->contains($relefe)) {
+            $this->releves->add($relefe);
+            $relefe->setSalle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelefe(Releve $relefe): static
+    {
+        if ($this->releves->removeElement($relefe)) {
+            // set the owning side to null (unless already changed)
+            if ($relefe->getSalle() === $this) {
+                $relefe->setSalle(null);
+            }
+        }
 
         return $this;
     }

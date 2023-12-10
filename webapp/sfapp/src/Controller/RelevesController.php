@@ -17,6 +17,8 @@ class RelevesController extends AbstractController
     public function index(ManagerRegistry $managerRegistry, Request $request): Response
     {
         $sallesRepository = $managerRegistry->getRepository('App\Entity\Salle');
+
+        // Récupération de toutes les salles ayant des relevés avec du DQL
         $salles = $sallesRepository->findAll();
 
         $builder = $this->createFormBuilder()
