@@ -17,7 +17,7 @@ class chargeDeMissionTest extends WebTestCase
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
         $this->assertMatchesRegularExpression('/\/auth-Success$/', $client->getResponse()->headers->get('location'));
         $client->followRedirect();
-        $this->assertMatchesRegularExpression('/\/accueil/charge-de-mission$/', $client->getResponse()->headers->get('location'));
+        $this->assertMatchesRegularExpression('/\/accueil\/charge\-de\-mission$/', $client->getResponse()->headers->get('location'));
     }
 
     public function test_envoi_formulaire_de_connexion_cas_invalide_charge_de_mission(): void

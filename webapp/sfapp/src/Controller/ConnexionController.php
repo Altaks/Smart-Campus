@@ -37,7 +37,7 @@ class ConnexionController extends AbstractController
         $utilisateur = $security->getUser();
         $security->login($utilisateur);
         if (array_search("ROLE_CHARGE_DE_MISSION", $utilisateur->getRoles()) !== false) {
-            return $this->redirect('/accueil/ChargeMission');
+            return $this->redirect('/accueil/charge-de-mission');
         }
     }
 }

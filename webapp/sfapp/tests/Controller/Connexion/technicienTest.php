@@ -4,7 +4,7 @@ namespace App\tests\Controller\Connexion;
 
 use PHPUnit\Framework\TestCase;
 
-class TechnicienTest extends TestCase
+class technicienTest extends TestCase
 {
 
     public function test_envoi_formulaire_de_connexion_cas_valide_technicien(): void
