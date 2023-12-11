@@ -32,6 +32,7 @@ class connexionTest extends WebTestCase
             '_password' => 'MotDePasseLambda'
         ]);
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
+        $this->assertMatchesRegularExpression('/\/connexion$/', $client->getResponse()->headers->get('location'));
         $client->followRedirect();
         $this->assertEquals( $crawler->text(), "Redirecting to http://localhost/connexion Redirecting to http://localhost/connexion.");
     }
