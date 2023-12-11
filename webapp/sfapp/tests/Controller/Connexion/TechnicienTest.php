@@ -16,8 +16,8 @@ class TechnicienTest extends TestCase
             '_password' => 'testTechnicien'
         ]);
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
+        $this->assertMatchesRegularExpression('/\/accueil/tech$/', $client->getResponse()->headers->get('location'));
         $client->followRedirect();
-        $this->assertEquals( $crawler->text(), "Redirecting to http://localhost/auth-Success Redirecting to http://localhost/auth-Success.");
     }
 
     public function test_envoi_formulaire_de_connexion_cas_invalide_technicien(): void
@@ -29,7 +29,7 @@ class TechnicienTest extends TestCase
             '_password' => 'motDePasseInvalide'
         ]);
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
+        $this->assertMatchesRegularExpression('/\/connexion$/', $client->getResponse()->headers->get('location'));
         $client->followRedirect();
-        $this->assertEquals( $crawler->text(), "Redirecting to http://localhost/connexion Redirecting to http://localhost/connexion.");
     }
 }
