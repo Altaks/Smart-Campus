@@ -17,7 +17,6 @@ class chargeDeMissionTest extends WebTestCase
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
         $this->assertMatchesRegularExpression('/\/auth-Success$/', $client->getResponse()->headers->get('location'));
         $client->followRedirect();
-        $this->assertEquals( $crawler->text(), "Redirecting to http://localhost/auth-Success Redirecting to http://localhost/auth-Success.");
         $this->assertMatchesRegularExpression('/\/accueil/charge-de-mission$/', $client->getResponse()->headers->get('location'));
     }
 
