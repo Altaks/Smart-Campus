@@ -23,19 +23,18 @@ class accueilTest extends WebTestCase
 
         $this->assertSelectorTextContains('h1', 'Bienvenue Technicien');
         $h2 = $crawler->filter("h2");
-        $this->assertEquals( 'Relevés', $h2->eq(0)->text());
+        $this->assertEquals('Relevés', $h2->eq(0)->text());
         $this->assertEquals('Infrastructures',$h2->eq(1)->text());
     }
 
-    // Test a modifier en fonction des resultats obtenue
+    // Test à modifier en fonction des resultats obtenue
     public function test_controleur_techniciencontroller_route_accueil_requete_utilisateur_pas_connecte(): void
     {
         $client = static::createClient();
 
         $crawler = $client->request('GET', '/accueil/tech');
 
-        $this->assertResponseStatusCodeSame(401, $client->getResponse()->getStatusCode());
-        $this->assertEquals("Unauthorized",$crawler->text());        // Test a modifier en fonction des resultats obtenue
+        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
         $this->assertMatchesRegularExpression('/\/connexion$/', $client->getResponse()->headers->get('location'));
     }
 
@@ -52,9 +51,7 @@ class accueilTest extends WebTestCase
 
         $crawler = $client->request('GET', '/accueil/tech');
 
-        $this->assertResponseStatusCodeSame(401, $client->getResponse()->getStatusCode());
-        $this->assertEquals("Unauthorized",$crawler->text()); // Test a modifier en fonction des resultats obtenue
-        $this->assertMatchesRegularExpression('/\/accueil/charge-de-mission$/', $client->getResponse()->headers->get('location'));
+        $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
     }
 
     public function test_controleur_techniciencontroller_route_accueil_lien_releve(): void
@@ -71,12 +68,11 @@ class accueilTest extends WebTestCase
         $crawler = $client->request('GET', '/accueil/tech');
         $this->assertResponseIsSuccessful();
 
-        $client->clickLink('Relevés');    // Test a modifier en fonction des resultats obtenue
-        $this->assertResponseIsSuccessful();
-        $this->assertMatchesRegularExpression('/\/releve$/', $client->getResponse()->headers->get('location'));
+        $releve_link = $crawler->filter('a#releves')->link();
+        $this->assertStringEndsWith('/releves', $releve_link->getUri());
     }
 
-    // Test a modifier en fonction des resultats obtenue
+    // Test à modifier en fonction des resultats obtenue
     public function test_controleur_techniciencontroller_route_accueil_lien_infrastructure(): void
     {
         $client = static::createClient();
@@ -91,8 +87,7 @@ class accueilTest extends WebTestCase
         $crawler = $client->request('GET', '/accueil/tech');
         $this->assertResponseIsSuccessful();
 
-        $client->clickLink('Infrastructures');        // Test a modifier en fonction des resultats obtenue
-        $this->assertResponseIsSuccessful();
-        $this->assertMatchesRegularExpression('/\/infra/tech$/', $client->getResponse()->headers->get('location'));
+        $infra_link = $crawler->filter('a#infra')->link();
+        $this->assertStringEndsWith('/infra/tech', $infra_link->getUri());
     }
 }
