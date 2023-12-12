@@ -2,9 +2,9 @@
 
 namespace App\tests\Controller\Connexion;
 
-use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class technicienTest extends TestCase
+class technicienTest extends WebTestCase
 {
 
     public function test_envoi_formulaire_de_connexion_cas_valide_technicien(): void
@@ -16,7 +16,7 @@ class technicienTest extends TestCase
             '_password' => 'testTechnicien'
         ]);
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
-        $this->assertMatchesRegularExpression('/\/accueil/tech$/', $client->getResponse()->headers->get('location'));
+        $this->assertMatchesRegularExpression('/\/accueil\/tech$/', $client->getResponse()->headers->get('location'));
         $client->followRedirect();
     }
 
