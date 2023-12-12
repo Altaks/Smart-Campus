@@ -45,8 +45,8 @@ class sallesTest extends WebTestCase
 
         $crawler = $client->request('GET', '/infra/salles/charge-de-mission');
 
-        $this->assertResponseStatusCodeSame(401, $client->getResponse()->getStatusCode());
-        $this->assertEquals("Unauthorized",$crawler->text());
+        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
+
         $this->assertMatchesRegularExpression('/\/connexion$/', $client->getResponse()->headers->get('location'));
     }
 
@@ -64,8 +64,6 @@ class sallesTest extends WebTestCase
 
         $crawler = $client->request('GET', '/infra/salles/charge-de-mission');
 
-        $this->assertResponseStatusCodeSame(401, $client->getResponse()->getStatusCode());
-        $this->assertEquals("Unauthorized",$crawler->text());
-        $this->assertMatchesRegularExpression('/\/infra\/salles\/tech$/', $client->getResponse()->headers->get('location'));
+        $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
     }
 }
