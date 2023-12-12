@@ -16,8 +16,9 @@ class technicienTest extends WebTestCase
             '_password' => 'testTechnicien'
         ]);
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
-        $this->assertMatchesRegularExpression('/\/accueil\/tech$/', $client->getResponse()->headers->get('location'));
+        $this->assertMatchesRegularExpression('/\/auth-Success$/', $client->getResponse()->headers->get('location'));
         $client->followRedirect();
+        $this->assertMatchesRegularExpression('/\/accueil\/tech$/', $client->getResponse()->headers->get('location'));
     }
 
     public function test_envoi_formulaire_de_connexion_cas_invalide_technicien(): void

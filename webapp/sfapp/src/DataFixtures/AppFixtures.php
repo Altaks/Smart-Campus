@@ -87,6 +87,13 @@ class AppFixtures extends Fixture
 
         $manager->persist($utilisateur);
 
+        $utilisateur2 = new Utilisateur();
+        $utilisateur2->setIdentifiant("testTechnicien")
+            ->setMotDePasse("testTechnicien")
+            ->addRole("ROLE_TECHNICIEN");
+
+        $manager->persist($utilisateur2);
+
         $manager->flush();
     }
 }
