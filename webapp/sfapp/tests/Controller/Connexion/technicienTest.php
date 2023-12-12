@@ -1,31 +1,32 @@
 <?php
 
-namespace App\Tests\Controller\Connexion;
+namespace App\tests\Controller\Connexion;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class chargeDeMissionTest extends WebTestCase
+class technicienTest extends WebTestCase
 {
-    public function test_envoi_formulaire_de_connexion_cas_valide_charge_de_mission(): void
+
+    public function test_envoi_formulaire_de_connexion_cas_valide_technicien(): void
     {
         $client = static::createClient();
         $client->request('GET', '/connexion');
         $crawler = $client->submitForm('submit', [
-            '_username' => 'testChargeDeMission',
-            '_password' => 'testChargeDeMission'
+            '_username' => 'testTechnicien',
+            '_password' => 'testTechnicien'
         ]);
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
         $this->assertMatchesRegularExpression('/\/auth-Success$/', $client->getResponse()->headers->get('location'));
         $client->followRedirect();
-        $this->assertMatchesRegularExpression('/\/accueil\/charge\-de\-mission$/', $client->getResponse()->headers->get('location'));
+        $this->assertMatchesRegularExpression('/\/accueil\/tech$/', $client->getResponse()->headers->get('location'));
     }
 
-    public function test_envoi_formulaire_de_connexion_cas_invalide_charge_de_mission(): void
+    public function test_envoi_formulaire_de_connexion_cas_invalide_technicien(): void
     {
         $client = static::createClient();
         $client->request('GET', '/connexion');
         $crawler = $client->submitForm('submit', [
-            '_username' => 'testChargeDeMission',
+            '_username' => 'testTechnicien',
             '_password' => 'motDePasseInvalide'
         ]);
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
