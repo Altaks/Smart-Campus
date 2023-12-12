@@ -4,6 +4,7 @@ namespace App\Tests\Controller\Technicien;
 
 use App\Repository\UtilisateurRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class accueilTest extends WebTestCase
 {
@@ -24,7 +25,7 @@ class accueilTest extends WebTestCase
         $this->assertSelectorTextContains('h1', 'Bienvenue Technicien');
         $h2 = $crawler->filter("h2");
         $this->assertEquals('Relevés', $h2->eq(0)->text());
-        $this->assertEquals('Infrastructures',$h2->eq(1)->text());
+        $this->assertEquals('Infrastructure',$h2->eq(1)->text());
     }
 
     // Test à modifier en fonction des resultats obtenue
