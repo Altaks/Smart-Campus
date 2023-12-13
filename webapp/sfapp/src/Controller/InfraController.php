@@ -182,4 +182,17 @@ class InfraController extends AbstractController
             'listeSANonConnectes' => $listeSANonConnectes,
         ]);
     }
+
+    #[IsGranted("ROLE_CHARGE_DE_MISSION")]
+    #[Route('/infra/charge-de-mission/salles', name: 'app_infra_charge_de_mission_salles')]
+    public function charge_de_mission_salle(ManagerRegistry $doctrine): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $repository = $entityManager->getRepository('App\Entity\Salle');
+        $listeSalles = $repository->findAll();
+        return $this->render('infra/salle.html.twig', [
+            'listeSalles' => $listeSalles
+        ]);
+    }
+
 }

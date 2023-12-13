@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class sallesTest extends WebTestCase
 {
-    public function test_controleur_chargemissioncontroller_route_infra_salles_requete_en_tant_que_charge_de_mission(): void
+    public function test_controleur_infracontroller_route_infra_charge_de_mission_salles_requete_en_tant_que_charge_de_mission(): void
     {
         $client = static::createClient();
 
@@ -38,19 +38,19 @@ class sallesTest extends WebTestCase
     }
 
     // Test a modifier en fonction des resultats obtenue
-    public function test_controleur_chargemissioncontroller_route_infra_salles_requete_utilisateur_pas_connecte(): void
+    public function test_controleur_infracontroller_route_infra_charge_de_mission_salles_requete_utilisateur_pas_connecte(): void
     {
         $client = static::createClient();
-
 
         $crawler = $client->request('GET', '/infra/charge-de-mission/salles');
 
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
+
         $this->assertMatchesRegularExpression('/\/connexion$/', $client->getResponse()->headers->get('location'));
     }
 
     // Test a modifier en fonction des resultats obtenue
-    public function test_controleur_chargemissioncontroller_route_infra_salles_requete_en_tant_que_technicien(): void
+    public function test_controleur_infracontroller_route_infra_charge_de_mission_salles_requete_en_tant_que_technicien(): void
     {
         $client = static::createClient();
 
