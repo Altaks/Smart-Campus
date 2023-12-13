@@ -20,13 +20,13 @@ class infraTechnicienTest extends WebTestCase{
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $crawler = $client->request('GET', '/infra/technicien');
+        $crawler = $client->request('GET', '/infra/technicien/');
         $this->assertResponseIsSuccessful();
 
         $a = $crawler->filter("a");
-        $this->assertSame($a->eq(0)->link()->getUri(), "/infra/technicien/batiments");
-        $this->assertSame($a->eq(1)->link()->getUri(), "/infra/technicien/salles");
-        $this->assertSame($a->eq(2)->link()->getUri(), "/infra/technicien/systeme-aquisition");
+        $this->assertStringEndsWith("/infra/technicien/batiments", $a->eq(0)->link()->getUri());
+        $this->assertStringEndsWith("/infra/technicien/salles", $a->eq(1)->link()->getUri());
+        $this->assertStringEndsWith("/infra/technicien/systemes-acquisition", $a->eq(2)->link()->getUri());
     }
 }
 
