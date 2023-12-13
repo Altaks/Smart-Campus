@@ -2,6 +2,12 @@
 
 {% block title %}Batiments{% endblock %}
 
+{% set nav_links = {
+    '/releves' : "<box-icon name='stats' ></box-icon> Relevés",
+    '/infra/charge-de-mission' : "<box-icon name='buildings'></box-icon> Infrastructure",
+    '/deconnexion' : "<box-icon name='exit'></box-icon> Déconnexion"
+} %}
+
 {% block body %}
 
     <main class="flex flex-col items-center">
