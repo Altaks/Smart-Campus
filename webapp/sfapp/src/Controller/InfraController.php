@@ -62,10 +62,14 @@ class InfraController extends AbstractController
         $listeSA = $doctrine->getManager()->getRepository('App\Entity\SystemeAcquisition')->findAll();
 
         $listeSAFonctionnels = array();
+        $listeSANonConnectes = array();
 
         foreach($listeSA as $SA)
         {
             $dernierReleve = $service->getDernier($SA->getTag());
+
+            date_default_timezone_set('Europe/Paris');
+            $dateCourante = new \DateTime(date('Y-m-d H:i:s', time()-6*60));
 
             if($dernierReleve["date"] != null and
                $dernierReleve["co2"]  != null and
@@ -73,18 +77,34 @@ class InfraController extends AbstractController
                $dernierReleve["hum"]  != null    )
             {
                 date_default_timezone_set('Europe/Paris');
-                $dateCourante = new \DateTime(date('Y-m-d H:i:s', time()));
+                $dateCourante = new \DateTime(date('Y-m-d H:i:s', time()-6*60));
                 $dateReleve = new \DateTime($dernierReleve["date"]);
                 
-                if($dateCourante->diff($dateReleve)->i < 6)
+                if($dateCourante->diff($dateReleve)->invert == 0)
                 {
                     $listeSAFonctionnels[] = $SA;
                 }
+                else
+                {
+                    $listeSANonConnectes[] = $SA;
+                }
+            }
+            else
+            {
+                date_default_timezone_set('Europe/Paris');
+                $dateCourante = new \DateTime(date('Y-m-d H:i:s', time()-6*60));
+                $dateReleve = new \DateTime($dernierReleve["date"]);
+
+                if($dateCourante->diff($dateReleve)->invert == 1) {
+                    $listeSANonConnectes[] = $SA;
+                }
+
             }
         }
 
         return $this->render('infra/systemes-acquisition.html.twig', [
-            'listeSAFonctionnels' => $listeSAFonctionnels
+            'listeSAFonctionnels' => $listeSAFonctionnels,
+            'listeSANonConnectes' => $listeSANonConnectes,
         ]);
     }
 }
