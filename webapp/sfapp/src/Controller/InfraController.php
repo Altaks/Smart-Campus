@@ -71,7 +71,8 @@ class InfraController extends AbstractController
                $dernierReleve["temp"] != null and
                $dernierReleve["hum"]  != null    )
             {
-                $dateCourante = new \DateTime(date('m/d/Y h:i:s a', time()));
+                date_default_timezone_set('Europe/Paris');
+                $dateCourante = new \DateTime(date('Y-m-d H:i:s', time()));
                 $dateReleve = new \DateTime($dernierReleve["date"]);
                 
                 if($dateCourante->diff($dateReleve)->i < 6)
@@ -81,7 +82,7 @@ class InfraController extends AbstractController
             }
         }
 
-        return $this->render('infra/batiments.html.twig', [
+        return $this->render('infra/systemes-acquisition.html.twig', [
             'listeSAFonctionnels' => $listeSAFonctionnels
         ]);
     }
