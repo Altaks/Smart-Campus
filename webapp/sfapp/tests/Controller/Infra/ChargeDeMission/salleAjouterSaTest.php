@@ -87,7 +87,7 @@ class salleAjouterSaTest extends WebTestCase
         $userRepository = static::getContainer()->get(UtilisateurRepository::class);
         $testUser = $userRepository->findOneBy(['identifiant' => 'testChargeDeMission']);
 
-        // simulate $testUser being logged in
+        // simulate $testUser being logged in²
         $client->loginUser($testUser);
 
         $batimentRepository = static::getContainer()->get(BatimentRepository::class);
@@ -106,6 +106,6 @@ class salleAjouterSaTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
-        $this->assertMatchesRegularExpression('/\/infra\/charge-de-mission\/salles$/', $client->getResponse()->headers->get('location'));
+        $this->assertMatchesRegularExpression('/\/infra\/charge-de-mission\/salles\/$/', $client->getResponse()->headers->get('location'));
     }
 }
