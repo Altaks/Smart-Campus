@@ -48,5 +48,4 @@ class BatimentTest extends TestCase
         $batiment->removeSalle($salle);
         $this->assertFalse($batiment->getSalles()->contains($salle));
     }
-
 }

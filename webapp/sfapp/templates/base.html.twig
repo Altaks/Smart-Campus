@@ -27,7 +27,7 @@
             <div class="max-w-screen-xl flex flex-wrap items-center justify-content mx-auto p-4">
                 {% if nav_links is defined %}
                     {% for link, label in nav_links %}
-                        <a href="{{ link }}" class="mx-5 flex flex-row justify-center items-center gap-2">{{ label | raw }}</a>
+                        <a href="{{ link }}" class="mx-5 flex flex-row justify-center items-center gap-2 hover:underline">{{ label | raw }}</a>
                     {% endfor %}
                 {% endif %}
             </div>

@@ -18,12 +18,10 @@ class AppFixtures extends Fixture
 
         $batiment = new Batiment();
         $batiment->setNom("Batiment D");
-        $batiment->setDepartement("Info");
         $manager->persist($batiment);
 
         $batiment2 = new Batiment();
         $batiment2->setNom("Batiment C");
-        $batiment2->setDepartement("R & T");
         $manager->persist($batiment2);
 
         $salle1 = new Salle();
@@ -69,24 +67,28 @@ class AppFixtures extends Fixture
 
         $sa1 = new SystemeAcquisition();
         $sa1->setAdresseMac("00:00:00:00:00:01")
-            ->setSalle($salle1);
+            ->setSalle($salle1)
+            ->setTag(1);
 
         $manager->persist($sa1);
 
         $sa2 = new SystemeAcquisition();
         $sa2->setAdresseMac("00:00:00:00:00:02")
-            ->setSalle($salle2);
+            ->setSalle($salle2)
+            ->setTag(2);
 
         $manager->persist($sa2);
 
         $sa3 = new SystemeAcquisition();
         $sa3->setAdresseMac("00:00:00:00:00:03")
-            ->setSalle($salle3);
+            ->setSalle($salle3)
+            ->setTag(3);
 
         $manager->persist($sa3);
 
         $sa4 = new SystemeAcquisition();
         $sa4->setAdresseMac("00:00:00:00:00:04");
+        $sa4->setTag(4);
 
         $manager->persist($sa4);
 
