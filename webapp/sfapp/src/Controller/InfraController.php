@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class InfraController extends AbstractController
 {
@@ -138,6 +139,22 @@ class InfraController extends AbstractController
 
         return $this->render('infra/batiments-et-salles.html.twig', [
             'listeSalles' => $listeSalles
+        ]);
+    }
+
+    #[IsGranted("ROLE_CHARGE_DE_MISSION")]
+    #[Route('/infra/charge-de-mission/batiments', name: 'app_infra_charge_de_mission_batiments')]
+    public function charge_de_mission_batiments(ManagerRegistry $doctrine): Response
+    {
+
+        $entityManager = $doctrine->getManager();
+
+        $repository = $entityManager->getRepository('App\Entity\Batiment');
+
+        $listeBatiments = $repository->findAll();
+
+        return $this->render('infra/chargeDeMission/batiments.html.twig', [
+            'listeBatiments' => $listeBatiments
         ]);
     }
 }
