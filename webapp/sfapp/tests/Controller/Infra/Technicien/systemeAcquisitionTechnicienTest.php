@@ -43,7 +43,6 @@ class systemeAcquisitionTechnicienTest extends WebTestCase
 
         $crawler = $client->request('GET', '/infra/technicien/systemes-acquisition');
         $this->assertResponseIsSuccessful();
-
         $th = $crawler->filter('.th-non-connecte');
 
         for($i = 0; $i < $th->count(); $i++) {
@@ -64,6 +63,37 @@ class systemeAcquisitionTechnicienTest extends WebTestCase
             $this->assertEquals(null,$releve["co2"]);
             $this->assertEquals(null,$releve["hum"]);
             $this->assertEquals(null,$releve["temp"]);
+        }
+    }
+
+    public function test_controleur_infra_route_infra_systemes_acquisition_est_fonctionnel()
+    {
+        $client = static::createClient();
+
+        // retrieve the test user
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'testTechnicien']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $crawler = $client->request('GET', '/infra/technicien/systemes-acquisition');
+        $this->assertResponseIsSuccessful();
+
+        $tr = $crawler->filter('.th-fonctionnel');
+
+        for($i = 0; $i < $tr->count(); $i++) {
+            $tag = $tr->eq($i)->text();
+            $releve = getDernier(intval($tag));
+
+            $dateReleve = new DateTime($releve["date"]);
+            $date = new DateTime('2023-12-13 11:00:00');
+            $dateDiff = $date->diff($dateReleve);
+
+            $this->assertLessThan(6,$dateDiff->i);
+            $this->assertNotEquals(null,$releve["co2"]);
+            $this->assertNotEquals(null,$releve["hum"]);
+            $this->assertNotEquals(null,$releve["temp"]);
         }
     }
 
