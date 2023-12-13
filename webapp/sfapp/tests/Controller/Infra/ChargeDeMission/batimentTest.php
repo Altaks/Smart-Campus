@@ -1,11 +1,12 @@
 <?php
 
-namespace App\tests\Controller\ChargeMission;
+namespace App\tests\Controller\Infra\ChargeDeMission;
 
 use App\Controller\InfraController;
 use App\Repository\UtilisateurRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-class infraTest extends WebTestCase
+
+class batimentTest extends WebTestCase
 {
 
     public function test_controller_infra_existe(): void
