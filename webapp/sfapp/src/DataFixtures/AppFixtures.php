@@ -18,12 +18,10 @@ class AppFixtures extends Fixture
 
         $batiment = new Batiment();
         $batiment->setNom("Batiment D");
-        $batiment->setDepartement("Info");
         $manager->persist($batiment);
 
         $batiment2 = new Batiment();
         $batiment2->setNom("Batiment C");
-        $batiment2->setDepartement("R & T");
         $manager->persist($batiment2);
 
         $salle1 = new Salle();

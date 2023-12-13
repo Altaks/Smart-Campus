@@ -25,13 +25,6 @@ class Batiment
     private ?string $nom = null;
 
     /**
-     * @var string|null $departement Département du batiment
-     */
-    #[ORM\Column(length: 255)]
-    private ?string $departement = null;
-
-
-    /**
      * @var Collection|ArrayCollection $salles Salles du batiment
      */
     #[ORM\OneToMany(mappedBy: 'batiment', targetEntity: Salle::class, orphanRemoval: true)]
@@ -71,25 +64,6 @@ class Batiment
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null Département du batiment
-     */
-    public function getDepartement(): ?string
-    {
-        return $this->departement;
-    }
-
-    /**
-     * @param string $departement Département du batiment
-     * @return $this Batiment
-     */
-    public function setDepartement(string $departement): static
-    {
-        $this->departement = $departement;
 
         return $this;
     }
