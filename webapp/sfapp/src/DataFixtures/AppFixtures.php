@@ -108,6 +108,8 @@ class AppFixtures extends Fixture
         $manager->persist($utilisateur2);
 
         $manager->flush();
+
+        date_default_timezone_set('Europe/Paris');
         $listeSaFonctionnels = array();
         $listeSaFonctionnels[] = $sa1;
         foreach ($listeSaFonctionnels as $sa) {
