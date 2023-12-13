@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Tests\Controller\Technicien;
+namespace App\tests\Controller\Accueil;
 
 use App\Repository\UtilisateurRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-class accueilTest extends WebTestCase
+class accueilTechnicienTest extends WebTestCase
 {
     public function test_controleur_techniciencontroller_route_accueil_requete_en_tant_que_technicien(): void
     {
