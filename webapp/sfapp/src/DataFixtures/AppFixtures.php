@@ -108,5 +108,193 @@ class AppFixtures extends Fixture
         $manager->persist($utilisateur2);
 
         $manager->flush();
+        $listeSaFonctionnels = array();
+        $listeSaFonctionnels[] = $sa1;
+        foreach ($listeSaFonctionnels as $sa) {
+
+
+            $fichierReleve = fopen("/sfapp/" . $sa->getTag() . ".json", "w+b");
+
+            fwrite($fichierReleve, "[\n");
+
+            fwrite($fichierReleve, '{\n"id" : "' . $sa->getTag() . '",\n');
+            fwrite($fichierReleve, '"nom" : "hum",\n');
+            fwrite($fichierReleve, '"valeur" : "' . rand(0, 100) . '",\n');
+            fwrite($fichierReleve, '"dateCapture": "' . date('Y-m-d h:i:s a', time()) . '",\n');
+            fwrite($fichierReleve, '"localisation": "' . $sa->getSalle()->getNom() . '",\n');
+            fwrite($fichierReleve, '"description": null,\n');
+            fwrite($fichierReleve, '"tag": "' . $sa->getTag() . '"\n},\n');
+
+
+            fwrite($fichierReleve, '{\n"id" : "' . $sa->getTag() . '",\n');
+            fwrite($fichierReleve, '"nom" : "co2",\n');
+            fwrite($fichierReleve, '"valeur" : "' . rand(400, 1000) . '",\n');
+            fwrite($fichierReleve, '"dateCapture": "' . date('Y-m-d h:i:s a', time()) . '",\n');
+            fwrite($fichierReleve, '"localisation": "' . $sa->getSalle()->getNom() . '",\n');
+            fwrite($fichierReleve, '"description": null,\n');
+            fwrite($fichierReleve, '"tag": "' . $sa->getTag() . '"\n},\n');
+
+
+            fwrite($fichierReleve, '{\n"id" : "' . $sa->getTag() . '",\n');
+            fwrite($fichierReleve, '"nom" : "Température",\n');
+            fwrite($fichierReleve, '"valeur" : "' . rand(18, 23) . '",\n');
+            fwrite($fichierReleve, '"dateCapture": "' . date('Y-m-d h:i:s a', time()) . '",\n');
+            fwrite($fichierReleve, '"localisation": "' . $sa->getSalle()->getNom() . '",\n');
+            fwrite($fichierReleve, '"description": null,\n');
+            fwrite($fichierReleve, '"tag": "' . $sa->getTag() . '"\n},\n');
+
+            for ($i = 0; $i < 10; $i++) {
+                $time = rand(time() - (3 * 24 * 60 * 60), time() - (5 * 60));
+
+                fwrite($fichierReleve, '{\n"id" : "' . $sa->getTag() . '",\n');
+                fwrite($fichierReleve, '"nom" : "hum",\n');
+                fwrite($fichierReleve, '"valeur" : "' . rand(0, 100) . '",\n');
+                fwrite($fichierReleve, '"dateCapture": "' . date('Y-m-d h:i:s a', $time) . '",\n');
+                fwrite($fichierReleve, '"localisation": "' . $sa->getSalle()->getNom() . '",\n');
+                fwrite($fichierReleve, '"description": null,\n');
+                fwrite($fichierReleve, '"tag": "' . $sa->getTag() . '"\n},\n');
+
+
+                fwrite($fichierReleve, '{\n"id" : "' . $sa->getTag() . '",\n');
+                fwrite($fichierReleve, '"nom" : "co2",\n');
+                fwrite($fichierReleve, '"valeur" : "' . rand(400, 1000) . '",\n');
+                fwrite($fichierReleve, '"dateCapture": "' . date('Y-m-d h:i:s a', $time) . '",\n');
+                fwrite($fichierReleve, '"localisation": "' . $sa->getSalle()->getNom() . '",\n');
+                fwrite($fichierReleve, '"description": null,\n');
+                fwrite($fichierReleve, '"tag": "' . $sa->getTag() . '"\n},\n');
+
+
+                fwrite($fichierReleve, '{\n"id" : "' . $sa->getTag() . '",\n');
+                fwrite($fichierReleve, '"nom" : "Température",\n');
+                fwrite($fichierReleve, '"valeur" : "' . rand(18, 23) . '",\n');
+                fwrite($fichierReleve, '"dateCapture": "' . date('Y-m-d h:i:s a', $time) . '",\n');
+                fwrite($fichierReleve, '"localisation": "' . $sa->getSalle()->getNom() . '",\n');
+                fwrite($fichierReleve, '"description": null,\n');
+                fwrite($fichierReleve, '"tag": "' . $sa->getTag() . '"\n},\n');
+            }
+
+            fwrite($fichierReleve, "]");
+        }
+
+        $listeSaNonFonctionnels = array();
+        $listeSaNonFonctionnels[] = $sa2;
+        foreach ($listeSaNonFonctionnels as $sa) {
+
+            $fichierReleve = fopen("/sfapp/" . $sa->getTag() . ".json", "w+b");
+
+            fwrite($fichierReleve, "[\n");
+            $nonFonctionnelRand = rand(0,2);
+            if($nonFonctionnelRand == 0)
+            {
+                fwrite($fichierReleve, '{\n"id" : "' . $sa->getTag() . '",\n');
+                fwrite($fichierReleve, '"nom" : "hum",\n');
+                fwrite($fichierReleve, '"valeur" : "' . rand(0, 100) . '",\n');
+                fwrite($fichierReleve, '"dateCapture": "' . date('Y-m-d h:i:s a', time()) . '",\n');
+                fwrite($fichierReleve, '"localisation": "' . $sa->getSalle()->getNom() . '",\n');
+                fwrite($fichierReleve, '"description": null,\n');
+                fwrite($fichierReleve, '"tag": "' . $sa->getTag() . '"\n},\n');
+            }
+
+
+            if($nonFonctionnelRand == 1) {
+                fwrite($fichierReleve, '{\n"id" : "' . $sa->getTag() . '",\n');
+                fwrite($fichierReleve, '"nom" : "co2",\n');
+                fwrite($fichierReleve, '"valeur" : "' . rand(400, 1000) . '",\n');
+                fwrite($fichierReleve, '"dateCapture": "' . date('Y-m-d h:i:s a', time()) . '",\n');
+                fwrite($fichierReleve, '"localisation": "' . $sa->getSalle()->getNom() . '",\n');
+                fwrite($fichierReleve, '"description": null,\n');
+                fwrite($fichierReleve, '"tag": "' . $sa->getTag() . '"\n},\n');
+            }
+
+            if($nonFonctionnelRand == 2) {
+                fwrite($fichierReleve, '{\n"id" : "' . $sa->getTag() . '",\n');
+                fwrite($fichierReleve, '"nom" : "Température",\n');
+                fwrite($fichierReleve, '"valeur" : "' . rand(18, 23) . '",\n');
+                fwrite($fichierReleve, '"dateCapture": "' . date('Y-m-d h:i:s a', time()) . '",\n');
+                fwrite($fichierReleve, '"localisation": "' . $sa->getSalle()->getNom() . '",\n');
+                fwrite($fichierReleve, '"description": null,\n');
+                fwrite($fichierReleve, '"tag": "' . $sa->getTag() . '"\n},\n');
+            }
+
+            for ($i = 0; $i < 10; $i++) {
+                $time = rand(time() - (3 * 24 * 60 * 60), time() - (5 * 60));
+
+                if($nonFonctionnelRand == 0)
+                {
+                    fwrite($fichierReleve, '{\n"id" : "' . $sa->getTag() . '",\n');
+                    fwrite($fichierReleve, '"nom" : "hum",\n');
+                    fwrite($fichierReleve, '"valeur" : "' . rand(0, 100) . '",\n');
+                    fwrite($fichierReleve, '"dateCapture": "' . date('Y-m-d h:i:s a', $time) . '",\n');
+                    fwrite($fichierReleve, '"localisation": "' . $sa->getSalle()->getNom() . '",\n');
+                    fwrite($fichierReleve, '"description": null,\n');
+                    fwrite($fichierReleve, '"tag": "' . $sa->getTag() . '"\n},\n');
+                }
+
+
+                if($nonFonctionnelRand == 1) {
+                    fwrite($fichierReleve, '{\n"id" : "' . $sa->getTag() . '",\n');
+                    fwrite($fichierReleve, '"nom" : "co2",\n');
+                    fwrite($fichierReleve, '"valeur" : "' . rand(400, 1000) . '",\n');
+                    fwrite($fichierReleve, '"dateCapture": "' . date('Y-m-d h:i:s a', $time) . '",\n');
+                    fwrite($fichierReleve, '"localisation": "' . $sa->getSalle()->getNom() . '",\n');
+                    fwrite($fichierReleve, '"description": null,\n');
+                    fwrite($fichierReleve, '"tag": "' . $sa->getTag() . '"\n},\n');
+                }
+
+                if($nonFonctionnelRand == 2) {
+                    fwrite($fichierReleve, '{\n"id" : "' . $sa->getTag() . '",\n');
+                    fwrite($fichierReleve, '"nom" : "Température",\n');
+                    fwrite($fichierReleve, '"valeur" : "' . rand(18, 23) . '",\n');
+                    fwrite($fichierReleve, '"dateCapture": "' . date('Y-m-d h:i:s a', $time) . '",\n');
+                    fwrite($fichierReleve, '"localisation": "' . $sa->getSalle()->getNom() . '",\n');
+                    fwrite($fichierReleve, '"description": null,\n');
+                    fwrite($fichierReleve, '"tag": "' . $sa->getTag() . '"\n},\n');
+                }
+            }
+
+            fwrite($fichierReleve, "]");
+        }
+
+        $listeSaNonConnecte = array();
+        $listeSaNonConnecte[] = $sa3;
+        $listeSaNonConnecte[] = $sa4;
+        foreach ($listeSaNonConnecte as $sa) {
+
+            $fichierReleve = fopen("/sfapp/" . $sa->getTag() . ".json", "w+b");
+
+            fwrite($fichierReleve, "[\n");
+
+            for ($i = 0; $i < 10; $i++) {
+                $time = rand(time() - (3 * 24 * 60 * 60), time() - (5 * 60));
+
+                fwrite($fichierReleve, '{\n"id" : "' . $sa->getTag() . '",\n');
+                fwrite($fichierReleve, '"nom" : "hum",\n');
+                fwrite($fichierReleve, '"valeur" : "' . rand(0, 100) . '",\n');
+                fwrite($fichierReleve, '"dateCapture": "' . date('Y-m-d h:i:s a', $time) . '",\n');
+                fwrite($fichierReleve, '"localisation": "' . $sa->getSalle()->getNom() . '",\n');
+                fwrite($fichierReleve, '"description": null,\n');
+                fwrite($fichierReleve, '"tag": "' . $sa->getTag() . '"\n},\n');
+
+
+                fwrite($fichierReleve, '{\n"id" : "' . $sa->getTag() . '",\n');
+                fwrite($fichierReleve, '"nom" : "co2",\n');
+                fwrite($fichierReleve, '"valeur" : "' . rand(400, 1000) . '",\n');
+                fwrite($fichierReleve, '"dateCapture": "' . date('Y-m-d h:i:s a', $time) . '",\n');
+                fwrite($fichierReleve, '"localisation": "' . $sa->getSalle()->getNom() . '",\n');
+                fwrite($fichierReleve, '"description": null,\n');
+                fwrite($fichierReleve, '"tag": "' . $sa->getTag() . '"\n},\n');
+
+
+                fwrite($fichierReleve, '{\n"id" : "' . $sa->getTag() . '",\n');
+                fwrite($fichierReleve, '"nom" : "Température",\n');
+                fwrite($fichierReleve, '"valeur" : "' . rand(18, 23) . '",\n');
+                fwrite($fichierReleve, '"dateCapture": "' . date('Y-m-d h:i:s a', $time) . '",\n');
+                fwrite($fichierReleve, '"localisation": "' . $sa->getSalle()->getNom() . '",\n');
+                fwrite($fichierReleve, '"description": null,\n');
+                fwrite($fichierReleve, '"tag": "' . $sa->getTag() . '"\n},\n');
+            }
+
+            fwrite($fichierReleve, "]");
+        }
     }
 }
