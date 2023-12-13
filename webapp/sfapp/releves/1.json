@@ -1,0 +1,29 @@
+[
+  {
+    "id" : 1,
+    "nom" : "hum",
+    "valeur" : "50.3",
+    "dateCapture": "2023-12-13 12:50",
+    "localisation": "D302",
+    "description": null,
+    "tag": 1
+  },
+  {
+    "id" : 1,
+    "nom" : "co2",
+    "valeur" : "500",
+    "dateCapture": "2023-12-13 12:54:59",
+    "localisation": "D302",
+    "description": null,
+    "tag": 1
+  },
+  {
+    "id" : 1,
+    "nom" : "temp",
+    "valeur" : "23.4",
+    "dateCapture": "2023-12-13 12:50",
+    "localisation": "D302",
+    "description": null,
+    "tag": 1
+  }
+]
