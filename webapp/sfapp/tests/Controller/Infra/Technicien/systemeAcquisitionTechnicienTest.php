@@ -29,6 +29,43 @@ class systemeAcquisitionTechnicienTest extends WebTestCase
         $this->assertEquals("Systèmes d'acquisition fonctionnels", $h2->eq(0)->text());
     }
 
+    public function test_controleur_infra_route_infra_systemes_acquisition_est_non_connecte()
+    {
+        $client = static::createClient();
+        $service = new ReleveService();
+
+        // retrieve the test user
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'testTechnicien']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $crawler = $client->request('GET', '/infra/technicien/systemes-acquisition');
+        $this->assertResponseIsSuccessful();
+        $th = $crawler->filter('.th-non-connecte');
+
+        for($i = 0; $i < $th->count(); $i++) {
+            $tag = $th->eq($i)->text();
+            $releve = $service->getDernier(intval($tag));
+            $diff = 0;
+
+            if (!is_null($releve["date"])){
+                $currDate = new DateTime();
+                $sysDate = new DateTime($releve["date"]);
+                $diff = $currDate->diff($sysDate);
+            }
+
+
+            $this->assertTrue(is_null($releve["date"]) || $diff >= 6);
+
+            $this->assertEquals(null, $releve["date"]);
+            $this->assertEquals(null,$releve["co2"]);
+            $this->assertEquals(null,$releve["hum"]);
+            $this->assertEquals(null,$releve["temp"]);
+        }
+    }
+
     public function test_controleur_infra_route_infra_systemes_acquisition_est_fonctionnel()
     {
         $client = static::createClient();
