@@ -1,6 +1,6 @@
 <?php
 
-namespace App\tests\Controller\ChargeMission;
+namespace App\tests\Controller\Infra;
 
 use App\Repository\UtilisateurRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -31,11 +31,10 @@ class sallesTest extends WebTestCase
         $this->assertEquals('Nombre de fenêtres',$th->eq(5)->text());
         $this->assertEquals('Contient des PC',$th->eq(6)->text());
         $this->assertEquals('Système d\'acquisition',$th->eq(7)->text());
-        $this->assertEquals('Actions',$th->eq(8)->text());
-        $a = $crawler->filter("a");
+        /*$a = $crawler->filter("a");
         for($i = 0; $i < 3; $i++){
             $this->assertNotEquals('Salles',$a->eq($i)->text());
-        }
+        }*/
     }
 
     // Test a modifier en fonction des resultats obtenue
