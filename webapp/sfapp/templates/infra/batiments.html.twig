@@ -12,18 +12,37 @@
 
     <main class="flex flex-col items-center">
         <h1 class="w-full text-center text-2xl py-20">Liste des Bâtiments</h1>
-        <table class="border border-black">
-            <tr class="border border-black p-6 font-normal bg-stone-200">
-                <th class=" pl-1.5 pr-20 py-3 font-normal">Nom du bâtiment</th>
-                <th class=" pl-1.5 pr-20 py-3 font-normal">Nombre de salle</th>
-            </tr>
-            {% for batiment in listeBatiments %}
-                <tr class="border border-black bg-stone-100">
-                    <td class=" pl-1.5 pr-20 py-3 text-center">{{ batiment.nom }}</td>
-                    <td class=" pl-1.5 pr-20 py-3 text-center">{{ batiment.salles|length() }}</td>
-                </tr>
-            {% endfor %}
-        </table>
+
+        <div class="max-w-screen-xl w-1/4 mx-auto">
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                Nom du bâtiment
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Nombre de salle
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for batiment in listeBatiments %}
+
+                        <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {{ batiment.nom }}
+                            </th>
+
+                            <td class="px-6 py-4">
+                                {{ batiment.salles|length() }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </main>
 
 {% endblock %}
