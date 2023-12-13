@@ -25,7 +25,7 @@ class ConnexionController extends AbstractController
 
         $dernierIdentifiant = $authenticationUtils->getLastUsername();
 
-        return $this->render('connexion/salle.html.twig', [
+        return $this->render('connexion/index.html.twig', [
             'dernier_identifiant' => $dernierIdentifiant,
             'erreur' => $erreur,
         ]);

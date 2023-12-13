@@ -18,7 +18,7 @@ class sallesTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $crawler = $client->request('GET', '/infra/salles/charge-de-mission');
+        $crawler = $client->request('GET', '/infra/charge-de-mission/salle');
         $this->assertResponseIsSuccessful();
 
         $this->assertSelectorTextContains('h1', 'Liste des salles');
@@ -28,7 +28,7 @@ class sallesTest extends WebTestCase
         $this->assertEquals('Etage',$th->eq(2)->text());
         $this->assertEquals('Orientation',$th->eq(3)->text());
         $this->assertEquals('Nombre de porte',$th->eq(4)->text());
-        $this->assertEquals('Nombre de fenêtres',$th->eq(5)->text());
+        $this->assertEquals('Nombre de fenêtre',$th->eq(5)->text());
         $this->assertEquals('Contient des PC',$th->eq(6)->text());
         $this->assertEquals('Système d\'acquisition',$th->eq(7)->text());
         /*$a = $crawler->filter("a");
@@ -42,10 +42,10 @@ class sallesTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $crawler = $client->request('GET', '/infra/salles/charge-de-mission');
 
-        $this->assertResponseStatusCodeSame(401, $client->getResponse()->getStatusCode());
-        $this->assertEquals("Unauthorized",$crawler->text());
+        $crawler = $client->request('GET', '/infra/charge-de-mission/salle');
+
+        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
         $this->assertMatchesRegularExpression('/\/connexion$/', $client->getResponse()->headers->get('location'));
     }
 
@@ -61,10 +61,8 @@ class sallesTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $crawler = $client->request('GET', '/infra/salles/charge-de-mission');
+        $crawler = $client->request('GET', '/infra/charge-de-mission/salle');
 
-        $this->assertResponseStatusCodeSame(401, $client->getResponse()->getStatusCode());
-        $this->assertEquals("Unauthorized",$crawler->text());
-        $this->assertMatchesRegularExpression('/\/infra\/salles\/tech$/', $client->getResponse()->headers->get('location'));
+        $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
     }
 }

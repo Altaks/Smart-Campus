@@ -17,17 +17,6 @@ class InfraController extends AbstractController
 {
 
     #[IsGranted("ROLE_CHARGE_DE_MISSION")]
-    #[Route('/infra/charge-de-mission/salle', 'app_infra_technicien')]
-    public function infraTechnicien(ManagerRegistry $managerRegistry ):Response
-    {
-
-        $salleRepository = $managerRegistry->getRepository('Salle');
-        $salles = $salleRepository->findAll();
-
-        return $this->render('/infra/chargeDeMission/salle.html.twig', ['listeSalles' => $salles]);
-    }
-
-    #[IsGranted("ROLE_CHARGE_DE_MISSION")]
     #[Route('/infra/charge-de-mission/', name: 'infra_nav_charge_mission')]
     public function nav_charge_de_mission(): Response
     {
@@ -43,6 +32,19 @@ class InfraController extends AbstractController
         $listeBatiments = $repository->findAll();
         return $this->render('infra/batiments.html.twig', [
             'listeBatiments' => $listeBatiments
+        ]);
+    }
+
+
+    #[IsGranted("ROLE_CHARGE_DE_MISSION")]
+    #[Route('/infra/charge-de-mission/salle', name: 'app_infra_charge_de_mission_salle')]
+    public function charge_de_mission_salle(ManagerRegistry $doctrine): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $repository = $entityManager->getRepository('App\Entity\Salle');
+        $listeSalles = $repository->findAll();
+        return $this->render('infra/salle.html.twig', [
+            'listeSalles' => $listeSalles
         ]);
     }
 

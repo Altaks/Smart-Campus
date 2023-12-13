@@ -25,7 +25,7 @@ class AppFixtures extends Fixture
         $manager->persist($batiment2);
 
         $salle1 = new Salle();
-        $salle1->setNom("302")
+        $salle1->setNom("D302")
             ->setOrientation("No")
             ->setNbfenetres(6)
             ->setNbportes(2)
@@ -35,7 +35,7 @@ class AppFixtures extends Fixture
         $manager->persist($salle1);
 
         $salle2 = new Salle();
-        $salle2->setNom("303")
+        $salle2->setNom("D303")
             ->setOrientation("Su")
             ->setNbfenetres(2)
             ->setNbportes(1)
@@ -46,7 +46,7 @@ class AppFixtures extends Fixture
 
         $salle3 = new Salle();
 
-        $salle3->setNom("004")
+        $salle3->setNom("C004")
             ->setOrientation("Es")
             ->setNbfenetres(6)
             ->setNbportes(1)
@@ -54,6 +54,17 @@ class AppFixtures extends Fixture
             ->setBatiment($batiment2);
 
         $manager->persist($salle3);
+
+        $salle4 = new Salle();
+
+        $salle4->setNom("C005")
+            ->setOrientation("NE")
+            ->setNbfenetres(6)
+            ->setNbportes(1)
+            ->setContientpc(false)
+            ->setBatiment($batiment2);
+
+        $manager->persist($salle4);
 
         $sa1 = new SystemeAcquisition();
         $sa1->setAdresseMac("00:00:00:00:00:01")
