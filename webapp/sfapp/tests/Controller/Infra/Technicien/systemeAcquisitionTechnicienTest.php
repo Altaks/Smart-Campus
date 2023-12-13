@@ -53,7 +53,7 @@ class systemeAcquisitionTechnicienTest extends WebTestCase
             $date = new DateTime('2023-12-13 11:00:00');
             $dateDiff = $date->diff($dateReleve);
 
-            $this->assertLessThan(6,$dateDiff->days);
+            $this->assertLessThan(6,$dateDiff->i);
             $this->assertNotEquals(null,$releve["co2"]);
             $this->assertNotEquals(null,$releve["hum"]);
             $this->assertNotEquals(null,$releve["temp"]);
