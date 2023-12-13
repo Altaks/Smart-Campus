@@ -1,13 +1,22 @@
 <?php
 
-namespace App\tests\Controller\Infra\ChargeDeMission;
+namespace App\tests\Controller\ChargeMission;
 
-use App\Repository\UtilisateurRepository;
+use App\Controller\InfraController;
+use App\Repository\BatimentRepository;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Repository\UtilisateurRepository;
 
 class infraChargeDeMissionTest extends WebTestCase
 {
-    public function test_controleur_infra_route_infra_requete_en_tant_que_charge_de_mission(): void
+
+    public function test_controller_infra_existe() : void
+    {
+        $this->assertTrue(class_exists(InfraController::class));
+    }
+
+    public function test_page_ajouter_batiment_en_tant_que_charge_de_mission_existe(): void
     {
         $client = static::createClient();
 
@@ -18,16 +27,11 @@ class infraChargeDeMissionTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $crawler = $client->request('GET', '/infra/charge-de-mission/');
+        $client->request('GET', '/infra/charge-de-mission/batiment/ajouter');
         $this->assertResponseIsSuccessful();
-
-        $h2 = $crawler->filter("h2");
-        $this->assertEquals('Bâtiments', $h2->eq(0)->text());
-        $this->assertEquals('Salles',$h2->eq(1)->text());
-        $this->assertEquals("Systèmes d'acquisition",$h2->eq(2)->text());
     }
 
-    public function test_controleur_infra_route_infra_lien_batiments(): void
+    public function test_page_ajouter_batiment_contient_titre() : void
     {
         $client = static::createClient();
 
@@ -38,14 +42,13 @@ class infraChargeDeMissionTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $crawler = $client->request('GET', '/infra/charge-de-mission/');
+        $client->request('GET', '/infra/charge-de-mission/batiment/ajouter');
         $this->assertResponseIsSuccessful();
 
-        $infra_link = $crawler->filter('a#batiments')->link();
-        $this->assertStringEndsWith('/infra/charge-de-mission/batiments', $infra_link->getUri());
+        $this->assertSelectorTextContains("h1", "Ajouter un bâtiment");
     }
 
-    public function test_controleur_infra_route_infra_lien_salles(): void
+    public function test_page_ajouter_batiment_contient_formulaire() : void
     {
         $client = static::createClient();
 
@@ -56,14 +59,13 @@ class infraChargeDeMissionTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $crawler = $client->request('GET', '/infra/charge-de-mission/');
+        $client->request('GET', '/infra/charge-de-mission/batiment/ajouter');
         $this->assertResponseIsSuccessful();
 
-        $infra_link = $crawler->filter('a#salles')->link();
-        $this->assertStringEndsWith('/infra/charge-de-mission/salles', $infra_link->getUri());
+        $this->assertSelectorExists("form");
     }
 
-    public function test_controleur_infra_route_infra_lien_systemes_d_acquisition(): void
+    public function test_page_ajouter_batiment_contient_formulaire_en_post() : void
     {
         $client = static::createClient();
 
@@ -74,14 +76,74 @@ class infraChargeDeMissionTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $crawler = $client->request('GET', '/infra/charge-de-mission/');
+        $crawler = $client->request('GET', '/infra/charge-de-mission/batiment/ajouter');
         $this->assertResponseIsSuccessful();
 
-        $infra_link = $crawler->filter('a#systemesacquisition')->link();
-        $this->assertStringEndsWith('/infra/charge-de-mission/systemes-acquisition', $infra_link->getUri());
+        $form = $crawler->filter("form")->form();
+        $this->assertSame($form->getMethod(), "POST");
     }
 
-    public function test_controleur_infra_route_infra_requete_en_tant_que_technicien(): void
+    public function test_page_ajouter_batiment_contient_formulaire_avec_nom_batiment() : void
+    {
+        $client = static::createClient();
+
+        // retrieve the test user
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'testChargeDeMission']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $crawler = $client->request('GET', '/infra/charge-de-mission/batiment/ajouter');
+        $this->assertResponseIsSuccessful();
+
+        $labels = $crawler->filter("label");
+        $this->assertSame("Nom du bâtiment", $labels->eq(0)->text());
+        $this->assertSame("Ajouter", $crawler->selectButton("submit")->innerText());
+    }
+
+    public function test_page_ajouter_batiment_a_la_bdd(ManagerRegistry $registry) : void
+    {
+        $client = static::createClient();
+
+        // retrieve the test user
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'testChargeDeMission']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/infra/charge-de-mission/batiment/ajouter');
+        $this->assertResponseIsSuccessful();
+
+        $batimentRepository = static::getContainer()->get(BatimentRepository::class);
+        $batimentTest = $batimentRepository->findOneBy(['nom' => 'Amphi F']);
+        if($batimentTest != null) {
+            $registry->getManager()->remove($batimentTest);
+            $registry->getManager()->flush();
+        }
+
+        $client->submitForm('submit', [
+            'nom' => 'Amphi F',
+        ]);
+
+        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
+        $this->assertMatchesRegularExpression('/\/infra\/charge-de-mission\/batiment\/ajouter$/', $client->getResponse()->headers->get('location'));
+    }
+
+    // Test à modifier en fonction des resultats obtenue
+    public function test_page_ajouter_batiment_sans_etre_connecte(): void
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/infra/charge-de-mission/batiment/ajouter');
+
+        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
+        $this->assertMatchesRegularExpression('/\/connexion$/', $client->getResponse()->headers->get('location'));
+    }
+
+    // Test à modifier en fonction des resultats obtenue
+    public function test_page_ajouter_batiment_en_etant_connecte_en_tant_que_technicien(): void
     {
         $client = static::createClient();
 
@@ -92,8 +154,10 @@ class infraChargeDeMissionTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $client->request('GET', '/infra/charge-de-mission/');
+        $client->request('GET', '/infra/charge-de-mission/batiment/ajouter');
 
         $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
     }
+
+
 }
