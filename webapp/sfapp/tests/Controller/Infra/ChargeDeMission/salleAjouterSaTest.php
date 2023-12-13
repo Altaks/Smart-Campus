@@ -101,8 +101,8 @@ class salleAjouterSaTest extends WebTestCase
 
         $crawler = $client->request('GET', '/infra/charge-de-mission/salles/'. $salleD304->getId() .'/ajouter-sa');
 
-        $crawler = $client->submitForm('submit', [
-            'sa' => $saSansSalle->getId(),
+        $crawler = $client->submitForm('form_submit', [
+            'form[sa]' => $saSansSalle->getId(),
         ]);
 
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
