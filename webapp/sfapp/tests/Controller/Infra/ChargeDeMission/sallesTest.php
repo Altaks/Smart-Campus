@@ -18,7 +18,7 @@ class sallesTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $crawler = $client->request('GET', '/infra/charge-de-mission/salle');
+        $crawler = $client->request('GET', '/infra/charge-de-mission/salles');
         $this->assertResponseIsSuccessful();
 
         $this->assertSelectorTextContains('h1', 'Liste des salles');
@@ -43,7 +43,7 @@ class sallesTest extends WebTestCase
         $client = static::createClient();
 
 
-        $crawler = $client->request('GET', '/infra/charge-de-mission/salle');
+        $crawler = $client->request('GET', '/infra/charge-de-mission/salles');
 
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
         $this->assertMatchesRegularExpression('/\/connexion$/', $client->getResponse()->headers->get('location'));
@@ -61,7 +61,7 @@ class sallesTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $crawler = $client->request('GET', '/infra/charge-de-mission/salle');
+        $crawler = $client->request('GET', '/infra/charge-de-mission/salles');
 
         $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
     }
