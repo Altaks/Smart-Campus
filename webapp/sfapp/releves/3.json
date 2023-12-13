@@ -1,0 +1,272 @@
+[
+{
+"id" : "3",
+"nom" : "hum",
+"valeur" : "88",
+"dateCapture": "2023-12-11 03:24:49",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "co2",
+"valeur" : "445",
+"dateCapture": "2023-12-11 03:24:49",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "temp",
+"valeur" : "19",
+"dateCapture": "2023-12-11 03:24:49",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "hum",
+"valeur" : "49",
+"dateCapture": "2023-12-13 19:38:18",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "co2",
+"valeur" : "640",
+"dateCapture": "2023-12-13 19:38:18",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "temp",
+"valeur" : "19",
+"dateCapture": "2023-12-13 19:38:18",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "hum",
+"valeur" : "51",
+"dateCapture": "2023-12-13 05:25:14",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "co2",
+"valeur" : "987",
+"dateCapture": "2023-12-13 05:25:14",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "temp",
+"valeur" : "22",
+"dateCapture": "2023-12-13 05:25:14",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "hum",
+"valeur" : "61",
+"dateCapture": "2023-12-11 04:28:57",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "co2",
+"valeur" : "997",
+"dateCapture": "2023-12-11 04:28:57",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "temp",
+"valeur" : "18",
+"dateCapture": "2023-12-11 04:28:57",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "hum",
+"valeur" : "6",
+"dateCapture": "2023-12-13 00:26:17",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "co2",
+"valeur" : "564",
+"dateCapture": "2023-12-13 00:26:17",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "temp",
+"valeur" : "22",
+"dateCapture": "2023-12-13 00:26:17",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "hum",
+"valeur" : "88",
+"dateCapture": "2023-12-13 17:17:43",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "co2",
+"valeur" : "916",
+"dateCapture": "2023-12-13 17:17:43",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "temp",
+"valeur" : "18",
+"dateCapture": "2023-12-13 17:17:43",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "hum",
+"valeur" : "86",
+"dateCapture": "2023-12-12 02:38:53",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "co2",
+"valeur" : "487",
+"dateCapture": "2023-12-12 02:38:53",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "temp",
+"valeur" : "20",
+"dateCapture": "2023-12-12 02:38:53",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "hum",
+"valeur" : "84",
+"dateCapture": "2023-12-11 05:19:44",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "co2",
+"valeur" : "437",
+"dateCapture": "2023-12-11 05:19:44",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "temp",
+"valeur" : "23",
+"dateCapture": "2023-12-11 05:19:44",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "hum",
+"valeur" : "76",
+"dateCapture": "2023-12-13 14:55:09",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "co2",
+"valeur" : "786",
+"dateCapture": "2023-12-13 14:55:09",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "temp",
+"valeur" : "18",
+"dateCapture": "2023-12-13 14:55:09",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "hum",
+"valeur" : "80",
+"dateCapture": "2023-12-11 12:54:19",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "co2",
+"valeur" : "626",
+"dateCapture": "2023-12-11 12:54:19",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+},
+{
+"id" : "3",
+"nom" : "temp",
+"valeur" : "22",
+"dateCapture": "2023-12-11 12:54:19",
+"localisation": "C004",
+"description": "null",
+"tag": "3"
+}
+]
