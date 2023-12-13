@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Tests\Controller\ChargeMission;
+namespace App\Tests\Controller\Accueil;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use App\Entity\Utilisateur;
 use App\Repository\UtilisateurRepository;
 
-class accueilTest extends WebTestCase
+class accueilChargeDeMissionTest extends WebTestCase
 {
 
     public function test_controleur_chargemissioncontroller_route_accueil_requete_en_tant_que_charge_de_mission(): void
