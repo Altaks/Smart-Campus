@@ -49,6 +49,16 @@ class systemeAcquisitionTechnicienTest extends WebTestCase
         for($i = 0; $i < $th->count(); $i++) {
             $tag = $th->eq($i)->text();
             $releve = $service->getDernier(intval($tag));
+            $diff = 0;
+
+            if (!is_null($releve["date"])){
+                $currDate = new DateTime();
+                $sysDate = new DateTime($releve["date"]);
+                $diff = $currDate->diff($sysDate);
+            }
+
+
+            $this->assertTrue(is_null($releve["date"]) || $diff >= 6);
 
             $this->assertEquals(null, $releve["date"]);
             $this->assertEquals(null,$releve["co2"]);
