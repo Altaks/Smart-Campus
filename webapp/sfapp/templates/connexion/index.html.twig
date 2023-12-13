@@ -8,10 +8,10 @@
 
     <form action="{{ path('app_connexion') }}" method="post" class=" flex flex-col mt-14">
         <label for="identifiant" class="text-2xl mb-2">Identifiant</label>
-        <input type="text" id="identifiant" name="_username" value="{{ dernier_identifiant }}"  placeholder="Identifiant" class="border-none bg-gray-100 rounded py-0">
+        <input type="text" id="identifiant" name="_username" value="{{ dernier_identifiant }}"  placeholder="Identifiant" class="border-none bg-gray-100 rounded p-3 rounded-lg">
 
         <label for="mot_de_passe" class="text-2xl mt-6 mb-2">Mot de passe</label>
-        <input type="password" id="mot_de_passe" name="_password" placeholder="Mot de passe" class="border-none bg-gray-100 rounded py-0">
+        <input type="password" id="mot_de_passe" name="_password" placeholder="Mot de passe" class="border-none bg-gray-100 p-3 rounded-lg">
 
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authentificate') }}">
 
