@@ -18,7 +18,7 @@ class infraChargeDeMissionTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $crawler = $client->request('GET', '/infra/charge-de-mission');
+        $crawler = $client->request('GET', '/infra/charge-de-mission/');
         $this->assertResponseIsSuccessful();
 
         $h2 = $crawler->filter("h2");
@@ -38,7 +38,7 @@ class infraChargeDeMissionTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $crawler = $client->request('GET', '/infra/charge-de-mission');
+        $crawler = $client->request('GET', '/infra/charge-de-mission/');
         $this->assertResponseIsSuccessful();
 
         $infra_link = $crawler->filter('a#batiments')->link();
@@ -56,7 +56,7 @@ class infraChargeDeMissionTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $crawler = $client->request('GET', '/infra/charge-de-mission');
+        $crawler = $client->request('GET', '/infra/charge-de-mission/');
         $this->assertResponseIsSuccessful();
 
         $infra_link = $crawler->filter('a#salles')->link();
@@ -74,7 +74,7 @@ class infraChargeDeMissionTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $crawler = $client->request('GET', '/infra/charge-de-mission');
+        $crawler = $client->request('GET', '/infra/charge-de-mission/');
         $this->assertResponseIsSuccessful();
 
         $infra_link = $crawler->filter('a#systemesacquisition')->link();
@@ -92,7 +92,7 @@ class infraChargeDeMissionTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $client->request('GET', '/infra/charge-de-mission');
+        $client->request('GET', '/infra/charge-de-mission/');
 
         $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
     }
