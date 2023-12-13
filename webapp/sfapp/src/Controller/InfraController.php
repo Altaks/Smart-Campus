@@ -23,6 +23,13 @@ class InfraController extends AbstractController
         return $this->render('infra/index.html.twig', []);
     }
 
+    #[IsGranted("ROLE_TECHNICIEN")]
+    #[Route('/infra/technicien/', name: 'infra_nav_technicien')]
+    public function nav_technicien(): Response
+    {
+        return $this->render('infra/index.html.twig', []);
+    }
+
     #[IsGranted("ROLE_CHARGE_DE_MISSION")]
     #[Route('/infra/charge-de-mission/batiments', name: 'app_infra_charge_de_mission_batiments')]
     public function charge_de_mission_batiments(ManagerRegistry $doctrine): Response
