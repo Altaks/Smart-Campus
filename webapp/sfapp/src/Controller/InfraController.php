@@ -3,16 +3,19 @@
 namespace App\Controller;
 
 
-
 use App\Entity\Batiment;
+use App\Entity\Salle;
+use App\Entity\SystemeAcquisition;
+use App\Service\releveService;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\Request;
-use App\Service\releveService;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class InfraController extends AbstractController
@@ -74,16 +77,56 @@ class InfraController extends AbstractController
         ]);
     }
 
-
     #[IsGranted("ROLE_CHARGE_DE_MISSION")]
-    #[Route('/infra/charge-de-mission/salles', name: 'app_infra_charge_de_mission_salle')]
-    public function charge_de_mission_salle(ManagerRegistry $doctrine): Response
+    #[Route('/infra/charge-de-mission/salles/{id}/ajouter-sa', name: 'app_infra_ajouter_sa')]
+    public function charge_de_mission_ajouter_sa(int $id, ManagerRegistry $doctrine, Request $request): Response
     {
-        $entityManager = $doctrine->getManager();
-        $repository = $entityManager->getRepository('App\Entity\Salle');
-        $listeSalles = $repository->findAll();
-        return $this->render('infra/salle.html.twig', [
-            'listeSalles' => $listeSalles
+        $salle = $doctrine->getManager()->getRepository('App\Entity\Salle')->findOneBy(['id' => $id]);
+
+        if($salle == null){
+            throw $this->createNotFoundException("La salle n'existe pas");
+        } else if($salle->getSystemeAcquisition() != null){
+            throw $this->createNotFoundException("La salle dispose déjà d'un système d'acquisition");
+        }
+
+        $systemesAcquisition = $doctrine->getManager()->getRepository('App\Entity\SystemeAcquisition')->findAll();
+
+        $sa_non_utilises = [];
+
+        foreach ($systemesAcquisition as $sa){
+            if($sa->getSalle() == null){
+                $sa_non_utilises[] = $sa;
+            }
+        }
+
+        $form = $this->createFormBuilder()
+            ->add('sa', EntityType::class, [
+                'label' => "Sélectionner le système d'acquisition :",
+                'class' => SystemeAcquisition::class,
+                'choice_label' => 'tag',
+                'choices' => $sa_non_utilises
+            ])
+            ->add('submit', SubmitType::class, ['label' => 'Ajouter'])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+
+            $data = $form->getData();
+
+            $sa_choisi = $data['sa'];
+            $salle->setSystemeAcquisition($sa_choisi);
+
+            $doctrine->getManager()->persist($salle);
+            $doctrine->getManager()->flush();
+
+            return $this->redirect('/infra/charge-de-mission/salles/');
+        }
+
+        return $this->render('infra/ajouter-sa.html.twig', [
+            'salle_nom' => $salle->getNom(),
+            'form' => $form
         ]);
     }
 

@@ -56,13 +56,12 @@ class AppFixtures extends Fixture
         $manager->persist($salle3);
 
         $salle4 = new Salle();
-
-        $salle4->setNom("C005")
-            ->setOrientation("NE")
-            ->setNbfenetres(6)
+        $salle4->setNom("D304")
+            ->setOrientation("Su")
+            ->setNbfenetres(2)
             ->setNbportes(1)
-            ->setContientpc(false)
-            ->setBatiment($batiment2);
+            ->setContientpc(true)
+            ->setBatiment($batiment);
 
         $manager->persist($salle4);
 
