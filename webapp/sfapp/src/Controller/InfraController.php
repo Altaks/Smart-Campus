@@ -55,6 +55,7 @@ class InfraController extends AbstractController
         ]);
     }
 
+    #[IsGranted("ROLE_TECHNICIEN")]
     #[Route('/infra/technicien/systemes-acquisition', name: 'app_infra_technicien_systeme_acquisition')]
     public function technicien_systemes_acquisition(ManagerRegistry $doctrine, releveService $service): Response
     {
