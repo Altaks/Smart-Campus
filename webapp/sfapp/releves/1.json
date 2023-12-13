@@ -1,29 +1,299 @@
 [
-  {
-    "id" : 1,
-    "nom" : "hum",
-    "valeur" : "50.3",
-    "dateCapture": "2023-12-13 12:50",
-    "localisation": "D302",
-    "description": null,
-    "tag": 1
-  },
-  {
-    "id" : 1,
-    "nom" : "co2",
-    "valeur" : "500",
-    "dateCapture": "2023-12-13 12:54:59",
-    "localisation": "D302",
-    "description": null,
-    "tag": 1
-  },
-  {
-    "id" : 1,
-    "nom" : "temp",
-    "valeur" : "23.4",
-    "dateCapture": "2023-12-13 12:50",
-    "localisation": "D302",
-    "description": null,
-    "tag": 1
-  }
+{
+"id" : "1",
+"nom" : "hum",
+"valeur" : "31",
+"dateCapture": "2023-12-13 20:53:00",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "co2",
+"valeur" : "857",
+"dateCapture": "2023-12-13 20:53:00",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "temp",
+"valeur" : "20",
+"dateCapture": "2023-12-13 20:53:00",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "hum",
+"valeur" : "23",
+"dateCapture": "2023-12-13 20:19:38",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "co2",
+"valeur" : "733",
+"dateCapture": "2023-12-13 20:19:38",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "temp",
+"valeur" : "20",
+"dateCapture": "2023-12-13 20:19:38",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "hum",
+"valeur" : "15",
+"dateCapture": "2023-12-11 04:36:08",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "co2",
+"valeur" : "442",
+"dateCapture": "2023-12-11 04:36:08",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "temp",
+"valeur" : "19",
+"dateCapture": "2023-12-11 04:36:08",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "hum",
+"valeur" : "9",
+"dateCapture": "2023-12-12 23:25:39",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "co2",
+"valeur" : "880",
+"dateCapture": "2023-12-12 23:25:39",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "temp",
+"valeur" : "18",
+"dateCapture": "2023-12-12 23:25:39",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "hum",
+"valeur" : "96",
+"dateCapture": "2023-12-12 08:47:21",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "co2",
+"valeur" : "814",
+"dateCapture": "2023-12-12 08:47:21",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "temp",
+"valeur" : "22",
+"dateCapture": "2023-12-12 08:47:21",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "hum",
+"valeur" : "77",
+"dateCapture": "2023-12-11 04:18:50",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "co2",
+"valeur" : "674",
+"dateCapture": "2023-12-11 04:18:50",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "temp",
+"valeur" : "19",
+"dateCapture": "2023-12-11 04:18:50",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "hum",
+"valeur" : "78",
+"dateCapture": "2023-12-12 23:17:46",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "co2",
+"valeur" : "749",
+"dateCapture": "2023-12-12 23:17:46",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "temp",
+"valeur" : "21",
+"dateCapture": "2023-12-12 23:17:46",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "hum",
+"valeur" : "54",
+"dateCapture": "2023-12-13 01:38:33",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "co2",
+"valeur" : "923",
+"dateCapture": "2023-12-13 01:38:33",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "temp",
+"valeur" : "21",
+"dateCapture": "2023-12-13 01:38:33",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "hum",
+"valeur" : "98",
+"dateCapture": "2023-12-10 23:49:43",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "co2",
+"valeur" : "423",
+"dateCapture": "2023-12-10 23:49:43",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "temp",
+"valeur" : "18",
+"dateCapture": "2023-12-10 23:49:43",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "hum",
+"valeur" : "81",
+"dateCapture": "2023-12-13 00:07:48",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "co2",
+"valeur" : "497",
+"dateCapture": "2023-12-13 00:07:48",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "temp",
+"valeur" : "21",
+"dateCapture": "2023-12-13 00:07:48",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "hum",
+"valeur" : "39",
+"dateCapture": "2023-12-11 07:05:44",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "co2",
+"valeur" : "596",
+"dateCapture": "2023-12-11 07:05:44",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+},
+{
+"id" : "1",
+"nom" : "temp",
+"valeur" : "18",
+"dateCapture": "2023-12-11 07:05:44",
+"localisation": "D302",
+"description": "null",
+"tag": "1"
+}
 ]
