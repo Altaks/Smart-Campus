@@ -32,6 +32,9 @@ class SystemeAcquisition
     #[ORM\Column(length: 17)]
     private ?string $adresseMac = null;
 
+    #[ORM\Column]
+    private ?int $tag = null;
+
     /**
      * @return int|null ID du système d'acquisition
      */
@@ -92,6 +95,18 @@ class SystemeAcquisition
             throw new InvalidArgumentException("L'adresse mac n'est pas valide");
         }
         $this->adresseMac = $adresseMac;
+
+        return $this;
+    }
+
+    public function getTag(): ?int
+    {
+        return $this->tag;
+    }
+
+    public function setTag(int $tag): static
+    {
+        $this->tag = $tag;
 
         return $this;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Controller\Connexion;
+namespace App\tests\Controller\Connexion;
 
 use http\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
