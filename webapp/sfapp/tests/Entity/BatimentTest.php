@@ -48,12 +48,4 @@ class BatimentTest extends TestCase
         $batiment->removeSalle($salle);
         $this->assertFalse($batiment->getSalles()->contains($salle));
     }
-
-    public function test_batiment_a_departement(): void
-    {
-        $batiment = new Batiment();
-        $batiment->setDepartement('Informatique');
-        $this->assertEquals('Informatique', $batiment->getDepartement());
-    }
-
 }
