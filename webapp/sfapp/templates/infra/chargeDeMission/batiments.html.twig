@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Batiments{% endblock %}
+
+{% set nav_links = {
+    '/releves' : "<box-icon name='stats' ></box-icon> Relevés",
+    '/infra/charge-de-mission' : "<box-icon name='buildings'></box-icon> Infrastructure",
+    '/deconnexion' : "<box-icon name='exit'></box-icon> Déconnexion"
+} %}
+
+{% block body %}
+
+    <main class="flex flex-col items-center">
+        <h1 class="w-full text-center text-2xl py-20">Liste des Bâtiments</h1>
+        <table class="border border-black">
+            <tr class="border border-black p-6 font-normal bg-stone-200">
+                <th class=" pl-1.5 pr-20 py-3 font-normal">Nom du bâtiment</th>
+                <th class=" pl-1.5 pr-20 py-3 font-normal">Nombre de salle</th>
+            </tr>
+            {% for batiment in listeBatiments %}
+                <tr class="border border-black bg-stone-100">
+                    <td class=" pl-1.5 pr-20 py-3 text-center">{{ batiment.nom }}</td>
+                    <td class=" pl-1.5 pr-20 py-3 text-center">{{ batiment.salles|length() }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </main>
+
+{% endblock %}
