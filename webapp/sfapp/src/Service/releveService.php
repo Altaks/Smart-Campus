@@ -12,9 +12,15 @@ class releveService{
 
         chdir("/app/sfapp/releves");
 
+
+
         $fileName = "{$tag}.json";
 
         $file = file_get_contents($fileName);
+
+        if (!file_exists($fileName)){
+            return ["date" => null, "co2" => null, "temp" => null, "hum" => null];
+        }
 
         $json = json_decode($file, true);
 
