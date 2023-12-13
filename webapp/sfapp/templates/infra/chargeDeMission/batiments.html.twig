@@ -12,7 +12,7 @@
                 <th class=" pl-1.5 pr-20 py-3 font-normal">Nombre de salle</th>
             </tr>
             {% for batiment in listeBatiments %}
-                <tr class="border border-black">
+                <tr class="border border-black bg-stone-100">
                     <td class=" pl-1.5 pr-20 py-3 text-center">{{ batiment.nom }}</td>
                     <td class=" pl-1.5 pr-20 py-3 text-center">{{ batiment.salles|length() }}</td>
                 </tr>
