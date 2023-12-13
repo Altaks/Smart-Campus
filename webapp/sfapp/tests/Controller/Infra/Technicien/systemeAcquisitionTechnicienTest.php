@@ -59,4 +59,19 @@ class systemeAcquisitionTechnicienTest extends WebTestCase
             $this->assertNotEquals(null,$releve["temp"]);
         }
     }
+
+    public function test_controleur_infra_route_infra_systemes_acquisition_requete_en_tant_que_charge_de_mission(){
+        $client = static::createClient();
+
+        // retrieve the test user
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'testChargeDeMission']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $crawler = $client->request('GET', '/infra/technicien/systemes-acquisition');
+
+        $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
+    }
 }
