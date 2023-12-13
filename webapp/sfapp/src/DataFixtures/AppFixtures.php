@@ -63,7 +63,7 @@ class AppFixtures extends Fixture
             ->setContientpc(true)
             ->setBatiment($batiment);
 
-        $manager->persist($salle1);
+        $manager->persist($salle4);
 
         $sa1 = new SystemeAcquisition();
         $sa1->setAdresseMac("00:00:00:00:00:01")

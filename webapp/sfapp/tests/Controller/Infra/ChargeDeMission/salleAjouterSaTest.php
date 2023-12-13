@@ -4,6 +4,7 @@ namespace App\Tests\Controller\Infra\ChargeDeMission;
 
 use App\Repository\BatimentRepository;
 use App\Repository\SalleRepository;
+use App\Repository\SystemeAcquisitionRepository;
 use App\Repository\UtilisateurRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use function PHPUnit\Framework\assertEquals;
@@ -25,10 +26,10 @@ class salleAjouterSaTest extends WebTestCase
         $batimentD = $batimentRepository->findOneBy(['nom' => 'Batiment D']);
 
         $salleRepository = static::getContainer()->get(SalleRepository::class);
-        $salleD304 = $salleRepository->findOneBy(['batiment' => $batimentD->getId(), 'nom' => '304']);
+        $salleD304 = $salleRepository->findOneBy(['batiment' => $batimentD->getId(), 'nom' => 'D304']);
 
 
-        $crawler = $client->request('GET', '/infra/charge-de-mission/salles/'+ $salleD304->getId() +'/ajouter-sa');
+        $crawler = $client->request('GET', '/infra/charge-de-mission/salles/' . $salleD304->getId() . '/ajouter-sa');
         $this->assertResponseIsSuccessful();
 
         $this->assertSelectorTextContains('h1', 'Ajouter un système d\'acquisition à la salle D304');
@@ -47,9 +48,9 @@ class salleAjouterSaTest extends WebTestCase
         $batimentD = $batimentRepository->findOneBy(['nom' => 'Batiment D']);
 
         $salleRepository = static::getContainer()->get(SalleRepository::class);
-        $salleD304 = $salleRepository->findOneBy(['batiment' => $batimentD->getId(), 'nom' => '304']);
+        $salleD304 = $salleRepository->findOneBy(['batiment' => $batimentD->getId(), 'nom' => 'D304']);
 
-        $crawler = $client->request('GET', '/infra/charge-de-mission/salles/'+ $salleD304->getId() +'/ajouter-sa');
+        $crawler = $client->request('GET', '/infra/charge-de-mission/salles/' . $salleD304->getId() . '/ajouter-sa');
 
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
         $this->assertMatchesRegularExpression('/\/connexion$/', $client->getResponse()->headers->get('location'));
@@ -71,9 +72,9 @@ class salleAjouterSaTest extends WebTestCase
         $batimentD = $batimentRepository->findOneBy(['nom' => 'Batiment D']);
 
         $salleRepository = static::getContainer()->get(SalleRepository::class);
-        $salleD304 = $salleRepository->findOneBy(['batiment' => $batimentD->getId(), 'nom' => '304']);
+        $salleD304 = $salleRepository->findOneBy(['batiment' => $batimentD->getId(), 'nom' => 'D304']);
 
-        $crawler = $client->request('GET', '/infra/charge-de-mission/salles/'+ $salleD304->getId() +'/ajouter-sa');
+        $crawler = $client->request('GET', '/infra/charge-de-mission/salles/' . $salleD304->getId() . '/ajouter-sa');
 
         $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
     }
@@ -93,7 +94,7 @@ class salleAjouterSaTest extends WebTestCase
         $batimentD = $batimentRepository->findOneBy(['nom' => 'Batiment D']);
 
         $salleRepository = static::getContainer()->get(SalleRepository::class);
-        $salleD304 = $salleRepository->findOneBy(['batiment' => $batimentD->getId(), 'nom' => '304']);
+        $salleD304 = $salleRepository->findOneBy(['batiment' => $batimentD->getId(), 'nom' => 'D304']);
 
         $saRepository = static::getContainer()->get(SystemeAcquisitionRepository::class);
         $saSansSalle = $saRepository->findOneBy(['adresseMac' => "00:00:00:00:00:04"]);
