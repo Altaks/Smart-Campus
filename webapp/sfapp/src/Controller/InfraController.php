@@ -44,7 +44,7 @@ class InfraController extends AbstractController
 
 
     #[IsGranted("ROLE_CHARGE_DE_MISSION")]
-    #[Route('/infra/charge-de-mission/salles', name: 'app_infra_charge_de_mission_salle')]
+    #[Route('/infra/charge-de-mission/salles', name: 'app_infra_charge_de_mission_salles')]
     public function charge_de_mission_salle(ManagerRegistry $doctrine): Response
     {
         $entityManager = $doctrine->getManager();
