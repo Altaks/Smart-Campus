@@ -42,5 +42,6 @@ class ConnexionController extends AbstractController
         } elseif ($this->isGranted("ROLE_TECHNICIEN")){
             return $this->redirect('/accueil/tech');
         }
+
     }
 }
