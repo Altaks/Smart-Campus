@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,6 +33,34 @@ class InfraController extends AbstractController
         $listeBatiments = $repository->findAll();
         return $this->render('infra/batiments.html.twig', [
             'listeBatiments' => $listeBatiments
+        ]);
+    }
+
+    #[IsGranted("ROLE_CHARGE_DE_MISSION")]
+    #[Route('/infra/charge-de-mission/batiments/ajouter', name: 'app_infra_charge_de_mission_ajouter_batiments')]
+    public function charge_de_mission_ajouter_batiment(Request $request, ManagerRegistry $doctrine): Response
+    {
+        $batiment = new Batiment();
+        $form = $this->createFormBuilder($batiment)
+            ->add('nom', TextType::class, [
+                'label' => 'Nom du bâtiment',
+                'attr' => array(
+                    'placeholder' => 'Bâtiment A'
+            )])
+            ->getForm();
+
+        if ($form->isSubmitted()) {
+            $batiment = $form->getData();
+
+            $entityManager = $doctrine->getManager();
+            $entityManager->persist($batiment);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_infra_charge_de_mission_batiments');
+        }
+
+        return $this->render('infra/batimentAjouter.html.twig', [
+            'form' => $form
         ]);
     }
 
