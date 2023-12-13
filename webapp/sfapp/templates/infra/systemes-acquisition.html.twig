@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% set nav_links = {
+    '/deconnexion' : "<box-icon name='exit'></box-icon> Déconnexion"
+} %}
+
+{% block title %}Systemes d'acquisition{% endblock %}
+
+{% block body %}
+    <main class="flex flex-col items-center">
+        <h1 class="w-full text-center text-2xl py-20">Liste des systèmes d'acquisition</h1>
+        <div class="p-4 bg-gray-200 rounded-2xl">
+            <h2>Systèmes d'acquisition fonctionnels</h2>
+            <table class="border border-black">
+                <tr class="border border-black p-6 font-normal bg-stone-200">
+                    <th class=" pl-1.5 pr-20 py-3 font-normal">Tag</th>
+                    <th class=" pl-1.5 pr-20 py-3 font-normal">Bâtiment</th>
+                    <th class=" pl-1.5 pr-20 py-3 font-normal">Salle</th>
+                    <th class=" pl-1.5 pr-20 py-3 font-normal">Adresse MAC</th>
+                </tr>
+                {% for systemeAcquisition in listesSAFonctionnels %}
+                    <tr class="border border-black bg-stone-100">
+                        <th class="th-fonctionnel pl-1.5 pr-20 py-3 text-center">{{ systemeAcquisition.tag }}</th>
+                        <td class=" pl-1.5 pr-20 py-3 text-center">{{ systemeAcquisition.salle.batiment.nom }}</td>
+                        <td class=" pl-1.5 pr-20 py-3 text-center">{{ systemeAcquisition.salle.nom }}</td>
+                        <td class=" pl-1.5 pr-20 py-3 text-center">{{ systemeAcquisition.adresseMac }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </main>
+
+{% endblock %}

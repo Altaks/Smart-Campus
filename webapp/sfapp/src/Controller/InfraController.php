@@ -55,4 +55,34 @@ class InfraController extends AbstractController
         ]);
     }
 
+    #[Route('/infra/technicien/systemes-acquisition', name: 'app_infra_technicien_systeme_acquisition')]
+    public function technicien_systemes_acquisition(ManagerRegistry $doctrine, releveService $service): Response
+    {
+        $listeSA = $doctrine->getManager()->getRepository('App\Entity\SystemeAcquisition')->findAll();
+
+        $listeSAFonctionnels = array();
+
+        foreach($listeSA as $SA)
+        {
+            $dernierReleve = $service->getDernier($SA->getTag());
+
+            if($dernierReleve["date"] != null and
+               $dernierReleve["co2"]  != null and
+               $dernierReleve["temp"] != null and
+               $dernierReleve["hum"]  != null    )
+            {
+                $dateCourante = new \DateTime(date('m/d/Y h:i:s a', time()));
+                $dateReleve = new \DateTime($dernierReleve["date"]);
+                
+                if($dateCourante->diff($dateReleve)->i < 6)
+                {
+                    $listeSAFonctionnels[] = $SA;
+                }
+            }
+        }
+
+        return $this->render('infra/batiments.html.twig', [
+            'listeSAFonctionnels' => $listeSAFonctionnels
+        ]);
+    }
 }
