@@ -50,6 +50,8 @@ class InfraController extends AbstractController
             )])
             ->getForm();
 
+        $form->handleRequest($request);
+
         if ($form->isSubmitted()) {
             $batiment = $form->getData();
 
