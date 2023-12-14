@@ -28,6 +28,48 @@ class systemeAcquisitionTechnicienTest extends WebTestCase
         $h2 = $crawler->filter("h2");
         $this->assertEquals("Systèmes d'acquisition fonctionnels", $h2->eq(0)->text());
     }
+    public function test_controleur_infra_route_infra_systemes_acquisition_est_non_fonctionnel()
+    {
+        $client = static::createClient();
+        $service = new ReleveService();
+
+        // retrieve the test user
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'testTechnicien']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $crawler = $client->request('GET', '/infra/technicien/systemes-acquisition');
+        $this->assertResponseIsSuccessful();
+
+        $th = $crawler->filter('.th-non-fonctionnel');
+
+        for($i = 0; $i < $th->count(); $i++) {
+            $tag = $th->eq($i)->text();
+            $releve = $service->getDernier(intval($tag));
+
+            $this->assertNotEquals(null, $releve["date"]);
+
+            $dateCourante = new DateTime(date('Y-m-d H:i:s', time()-6*60));
+            $dateReleve = new DateTime($releve["date"]);
+            $this->assertTrue($dateCourante->diff($dateReleve)->invert != 1);
+
+            $this->assertNotTrue(is_null($releve["date"]));
+            $count = 0;
+            if (is_null($releve["co2"])){
+                $count+=1;
+            }
+            if (is_null($releve["temp"])){
+                $count+=1;
+            }
+            if (is_null($releve["hum"])){
+                $count+=1;
+            }
+            $this->assertTrue($count > 0 && $count < 3);
+
+        }
+    }
 
     public function test_controleur_infra_route_infra_systemes_acquisition_est_non_connecte()
     {
@@ -48,27 +90,22 @@ class systemeAcquisitionTechnicienTest extends WebTestCase
         for($i = 0; $i < $th->count(); $i++) {
             $tag = $th->eq($i)->text();
             $releve = $service->getDernier(intval($tag));
-            $diff = 0;
 
-            if (!is_null($releve["date"])){
-                $currDate = new DateTime();
-                $sysDate = new DateTime($releve["date"]);
-                $diff = $currDate->diff($sysDate);
+            if (!is_null($releve["date"])) {
+
+                $dateCourante = new DateTime(date('Y-m-d H:i:s', time()-6*60));
+                $dateReleve = new DateTime($releve["date"]);
+                $this->assertTrue($dateCourante->diff($dateReleve)->invert == 1);
+            }else{
+                $this->assertNull($releve["date"]);
             }
-
-
-            $this->assertTrue(is_null($releve["date"]) || $diff >= 6);
-
-            $this->assertEquals(null, $releve["date"]);
-            $this->assertEquals(null,$releve["co2"]);
-            $this->assertEquals(null,$releve["hum"]);
-            $this->assertEquals(null,$releve["temp"]);
         }
     }
 
     public function test_controleur_infra_route_infra_systemes_acquisition_est_fonctionnel()
     {
         $client = static::createClient();
+        $service = new ReleveService();
 
         // retrieve the test user
         $userRepository = static::getContainer()->get(UtilisateurRepository::class);
@@ -84,13 +121,15 @@ class systemeAcquisitionTechnicienTest extends WebTestCase
 
         for($i = 0; $i < $tr->count(); $i++) {
             $tag = $tr->eq($i)->text();
-            $releve = getDernier(intval($tag));
+            $releve = $service->getDernier(intval($tag));
 
-            $dateReleve = new DateTime($releve["date"]);
-            $date = new DateTime('2023-12-13 11:00:00');
-            $dateDiff = $date->diff($dateReleve);
+            $this->assertNotEquals(null, $releve["date"]);
+            if (!is_null($releve["date"])) {
 
-            $this->assertLessThan(6,$dateDiff->i);
+                $dateCourante = new DateTime(date('Y-m-d H:i:s', time()-6*60));
+                $dateReleve = new DateTime($releve["date"]);
+                $this->assertTrue($dateCourante->diff($dateReleve)->invert != 1);
+            }
             $this->assertNotEquals(null,$releve["co2"]);
             $this->assertNotEquals(null,$releve["hum"]);
             $this->assertNotEquals(null,$releve["temp"]);

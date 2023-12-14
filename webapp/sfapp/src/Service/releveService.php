@@ -46,7 +46,7 @@ class releveService{
                     $date2 = new DateTime($releve["dateCapture"]);
                     $diff = $date1->diff($date2);
 
-                    if ($diff->i < 5 && $diff->i > -5){
+                    if (!($diff->y != 0 || $diff->m != 0 || $diff->d != 0 || $diff->h != 0) && $diff->i < 5 && $diff->i > -5){
                         $valuesFetch[$type]=$releve["valeur"];
                         $valuesRead[$type]=true;
                     }

@@ -137,6 +137,7 @@ class InfraController extends AbstractController
         $listeSA = $doctrine->getManager()->getRepository('App\Entity\SystemeAcquisition')->findAll();
 
         $listeSAFonctionnels = array();
+        $listeSANonFonctionnels = array();
         $listeSANonConnectes = array();
 
         foreach($listeSA as $SA)
@@ -173,6 +174,10 @@ class InfraController extends AbstractController
                 if($dateCourante->diff($dateReleve)->invert == 1) {
                     $listeSANonConnectes[] = $SA;
                 }
+                else
+                {
+                    $listeSANonFonctionnels[] = $SA;
+                }
 
             }
         }
@@ -180,6 +185,7 @@ class InfraController extends AbstractController
         return $this->render('infra/systemes-acquisition.html.twig', [
             'listeSAFonctionnels' => $listeSAFonctionnels,
             'listeSANonConnectes' => $listeSANonConnectes,
+            'listeSANonFonctionnels' => $listeSANonFonctionnels
         ]);
     }
 
