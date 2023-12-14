@@ -201,4 +201,16 @@ class InfraController extends AbstractController
         ]);
     }
 
+
+    #[IsGranted("ROLE_TECHNICIEN")]
+    #[Route('/infra/technicien/salles', name: 'app_infra_technicien_salles')]
+    public function technicien_salle(ManagerRegistry $doctrine): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $repository = $entityManager->getRepository('App\Entity\Salle');
+        $listeSalles = $repository->findAll();
+        return $this->render('infra/salle.html.twig', [
+            'listeSalles' => $listeSalles
+        ]);
+    }
 }
