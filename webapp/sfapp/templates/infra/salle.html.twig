@@ -108,7 +108,8 @@
                         </td>
                         {% if is_granted('ROLE_CHARGE_DE_MISSION') %}
                         <td class="px-6 py-4 flex">
-                            <a href="salles/{{ salle.id }}/ajouter-sa"><img class="w-1/4 h-auto" src="/images/ajouterSa.png"/></a>
+                            {% if salle.SystemeAcquisition is null %}<a href="salles/{{ salle.id }}/ajouter-sa"><img class="w-1/4 h-auto" src="/images/ajouterSa.png"/></a>{% endif %}
+                            {% if salle.SystemeAcquisition is not null %}-{% endif %}
                         </td>
                         {% endif %}
                     </tr>
