@@ -2,142 +2,203 @@
 
 namespace App\Controller;
 
+
 use App\Entity\Batiment;
 use App\Entity\Salle;
+use App\Entity\SystemeAcquisition;
+use App\Service\releveService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class InfraController extends AbstractController
 {
-    
-    #[Route('/infra/systemes-acquisition', name: 'infra_liste_systemes-acquisition')]
-    public function systemesAcquisition(ManagerRegistry $managerRegistry): Response
+
+    #[IsGranted("ROLE_CHARGE_DE_MISSION")]
+    #[Route('/infra/charge-de-mission/', name: 'infra_nav_charge_mission')]
+    public function nav_charge_de_mission(): Response
     {
-        $entityManager = $managerRegistry->getManager();
-        $dispositifsRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
+        return $this->render('infra/index.html.twig', []);
+    }
 
-        $listeDispositifs = $dispositifsRepository->findAll();
+    #[IsGranted("ROLE_TECHNICIEN")]
+    #[Route('/infra/technicien/', name: 'infra_nav_technicien')]
+    public function nav_technicien(): Response
+    {
+        return $this->render('infra/index.html.twig', []);
+    }
 
-        return $this->render('infra/liste-systemes-acquisition.html.twig', [
-            'dispositifs' => $listeDispositifs
+    #[IsGranted("ROLE_CHARGE_DE_MISSION")]
+    #[Route('/infra/charge-de-mission/batiments', name: 'app_infra_charge_de_mission_batiments')]
+    public function charge_de_mission_batiments(ManagerRegistry $doctrine): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $repository = $entityManager->getRepository('App\Entity\Batiment');
+        $listeBatiments = $repository->findAll();
+        return $this->render('infra/batiments.html.twig', [
+            'listeBatiments' => $listeBatiments
         ]);
     }
 
-    #[Route('/infra/systemes-acquisition/modifier/{id}', name: 'infra-modifier-systemes-acquisition')]
-    public function modifierSystemesAcquisition(ManagerRegistry $managerRegistry, ?int $id, Request $request) : Response
+    #[IsGranted("ROLE_CHARGE_DE_MISSION")]
+    #[Route('/infra/charge-de-mission/batiments/ajouter', name: 'app_infra_charge_de_mission_ajouter_batiments')]
+    public function charge_de_mission_ajouter_batiment(Request $request, ManagerRegistry $doctrine): Response
     {
+        $batiment = new Batiment();
+        $form = $this->createFormBuilder($batiment)
+            ->add('nom', TextType::class, [
+                'label' => 'Nom du bâtiment',
+                'attr' => array(
+                    'placeholder' => 'Bâtiment A'
+            )])
+            ->getForm();
 
-        $erreur = null;
+        $form->handleRequest($request);
 
-        $entityManager = $managerRegistry->getManager();
+        if ($form->isSubmitted()) {
+            $batiment = $form->getData();
 
-        $systemeAcquisitionRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
-        $batimentRepository = $entityManager->getRepository('App\Entity\Batiment');
-        $sallesRepository = $entityManager->getRepository('App\Entity\Salle');
+            $entityManager = $doctrine->getManager();
+            $entityManager->persist($batiment);
+            $entityManager->flush();
 
-        $systemeAcquisition = $systemeAcquisitionRepository->findOneBy(
-            array('id' => $id)
-        );
+            return $this->redirectToRoute('app_infra_charge_de_mission_batiments');
+        }
 
-        if ($request->getMethod() == 'POST') {
+        return $this->render('infra/batimentAjouter.html.twig', [
+            'form' => $form
+        ]);
+    }
 
-            // check if the mac address format is correct
+    #[IsGranted("ROLE_CHARGE_DE_MISSION")]
+    #[Route('/infra/charge-de-mission/salles/{id}/ajouter-sa', name: 'app_infra_ajouter_sa')]
+    public function charge_de_mission_ajouter_sa(int $id, ManagerRegistry $doctrine, Request $request): Response
+    {
+        $salle = $doctrine->getManager()->getRepository('App\Entity\Salle')->findOneBy(['id' => $id]);
 
-            $address = strtoupper($_POST['adresseMac']);
+        if($salle == null){
+            throw $this->createNotFoundException("La salle n'existe pas");
+        } else if($salle->getSystemeAcquisition() != null){
+            throw $this->createNotFoundException("La salle dispose déjà d'un système d'acquisition");
+        }
 
-            if (!preg_match('/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/', $_POST['adresseMac'])) {
-                $erreur = ['code' => 2, 'mac' => $_POST['adresseMac']];
-            }
-            else {
-                $tempSysteme = $systemeAcquisitionRepository->findOneBy(
-                    array('adresse_mac' => $address)
-                );
+        $systemesAcquisition = $doctrine->getManager()->getRepository('App\Entity\SystemeAcquisition')->findAll();
 
-                if ($tempSysteme != null && ($tempSysteme->getId() != $systemeAcquisition->getId())) {
-                    $erreur = ['code' => 3, 'mac' => $_POST['adresseMac'], 'systeme' => $tempSysteme->getId()];
-                } elseif ($_POST['salle'] != '-1') {
-                    $tempSysteme = $systemeAcquisitionRepository->findOneBy(
-                        array('salle' => $_POST['salle'])
-                    );
+        $sa_non_utilises = [];
 
-                    if ($tempSysteme != null && ($tempSysteme->getId() != $systemeAcquisition->getId())) {
-                        $batiment = $tempSysteme->getSalle()->getBatiment()->getNom();
-                        $salle = $tempSysteme->getSalle()->getNumero();
-                        $erreur = ['code' => 1, 'batiment' => $batiment , 'salle' => $salle, 'systeme-lie' => $tempSysteme->getId()];
-                    }
-                }
-            }
-
-            if ($erreur == null) {
-                $systemeAcquisition->setAdresseMac($address);
-                if ($_POST['salle'] != '-1'){
-                    $systemeAcquisition->setSalle($sallesRepository->findOneBy(
-                        array('id' => $_POST['salle'])
-                    ));
-                } else {
-                    $systemeAcquisition->setSalle(null);
-                }
-                $entityManager->flush();
-                return $this->redirectToRoute('infra_liste_systemes-acquisition');
+        foreach ($systemesAcquisition as $sa){
+            if($sa->getSalle() == null){
+                $sa_non_utilises[] = $sa;
             }
         }
 
-        $listeBatiments = $batimentRepository->findAll();
-        $listeSalles = $sallesRepository->findAll();
+        $form = $this->createFormBuilder()
+            ->add('sa', EntityType::class, [
+                'label' => "Sélectionner le système d'acquisition :",
+                'class' => SystemeAcquisition::class,
+                'choice_label' => 'tag',
+                'choices' => $sa_non_utilises
+            ])
+            ->add('submit', SubmitType::class, ['label' => 'Ajouter'])
+            ->getForm();
 
-        return $this->render('infra/modifier-sa.html.twig', [
-            'id' => $id,
-            'systeme' => $systemeAcquisition,
-            'erreur' => $erreur,
-            'systemeAcquisition' => $systemeAcquisition,
-            'listeBatiments' => $listeBatiments,
-            'listeSalles' => $listeSalles
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+
+            $data = $form->getData();
+
+            $sa_choisi = $data['sa'];
+            $salle->setSystemeAcquisition($sa_choisi);
+
+            $doctrine->getManager()->persist($salle);
+            $doctrine->getManager()->flush();
+
+            return $this->redirect('/infra/charge-de-mission/salles/');
+        }
+
+        return $this->render('infra/ajouter-sa.html.twig', [
+            'salle_nom' => $salle->getNom(),
+            'form' => $form
         ]);
     }
 
-    #[Route('/infra/systemes-acquisition/modifier/{id}/valider', name: 'infra-valider-modifier-systemes-acquisition')]
-    public function validerModifierSystemesAcquisition(ManagerRegistry $managerRegistry, int $id) : Response
+    #[IsGranted("ROLE_TECHNICIEN")]
+    #[Route('/infra/technicien/systemes-acquisition', name: 'app_infra_technicien_systeme_acquisition')]
+    public function technicien_systemes_acquisition(ManagerRegistry $doctrine, releveService $service): Response
     {
-        $entityManager = $managerRegistry->getManager();
+        $listeSA = $doctrine->getManager()->getRepository('App\Entity\SystemeAcquisition')->findAll();
 
-        $systemeAcquisitionRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
-        $batimentRepository = $entityManager->getRepository('App\Entity\Batiment');
-        $sallesRepository = $entityManager->getRepository('App\Entity\Salle');
+        $listeSAFonctionnels = array();
+        $listeSANonFonctionnels = array();
+        $listeSANonConnectes = array();
 
-        $systemeAcquisition = $systemeAcquisitionRepository->findOneBy(
-            array('id' => $id)
-        );
+        foreach($listeSA as $SA)
+        {
+            $dernierReleve = $service->getDernier($SA->getTag());
 
-        $listeBatiments = $batimentRepository->findAll();
-        $listeSalles = $sallesRepository->findAll();
+            date_default_timezone_set('Europe/Paris');
+            $dateCourante = new \DateTime(date('Y-m-d H:i:s', time()-6*60));
 
-        $systemeAcquisition->setAdresseMac($_POST['adresseMac']);
-        $systemeAcquisition->setSalle($sallesRepository->findOneBy(
-            array('id' => $_POST['salle'])
-        ));
+            if($dernierReleve["date"] != null and
+               $dernierReleve["co2"]  != null and
+               $dernierReleve["temp"] != null and
+               $dernierReleve["hum"]  != null    )
+            {
+                date_default_timezone_set('Europe/Paris');
+                $dateCourante = new \DateTime(date('Y-m-d H:i:s', time()-6*60));
+                $dateReleve = new \DateTime($dernierReleve["date"]);
+                
+                if($dateCourante->diff($dateReleve)->invert == 0)
+                {
+                    $listeSAFonctionnels[] = $SA;
+                }
+                else
+                {
+                    $listeSANonConnectes[] = $SA;
+                }
+            }
+            else
+            {
+                date_default_timezone_set('Europe/Paris');
+                $dateCourante = new \DateTime(date('Y-m-d H:i:s', time()-6*60));
+                $dateReleve = new \DateTime($dernierReleve["date"]);
 
-        $entityManager->persist($systemeAcquisition);
-        $entityManager->flush();
+                if($dateCourante->diff($dateReleve)->invert == 1) {
+                    $listeSANonConnectes[] = $SA;
+                }
+                else
+                {
+                    $listeSANonFonctionnels[] = $SA;
+                }
 
-        return $this->redirectToRoute('infra_liste_systemes-acquisition');
+            }
+        }
+
+        return $this->render('infra/systemes-acquisition.html.twig', [
+            'listeSAFonctionnels' => $listeSAFonctionnels,
+            'listeSANonConnectes' => $listeSANonConnectes,
+            'listeSANonFonctionnels' => $listeSANonFonctionnels
+        ]);
     }
 
-    #[Route('/infra/batiments-et-salles', name: 'app_infra_batiments-et-salles')]
-    public function batimentsEtSalles(ManagerRegistry $doctrine): Response
+    #[IsGranted("ROLE_CHARGE_DE_MISSION")]
+    #[Route('/infra/charge-de-mission/salles', name: 'app_infra_charge_de_mission_salles')]
+    public function charge_de_mission_salle(ManagerRegistry $doctrine): Response
     {
-
         $entityManager = $doctrine->getManager();
-
         $repository = $entityManager->getRepository('App\Entity\Salle');
-
         $listeSalles = $repository->findAll();
-
-        return $this->render('infra/batiments-et-salles.html.twig', [
+        return $this->render('infra/salle.html.twig', [
             'listeSalles' => $listeSalles
         ]);
     }
+
 }

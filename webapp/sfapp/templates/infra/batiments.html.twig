@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Batiments{% endblock %}
+
+{% set nav_links = {
+    '/releves' : "<box-icon name='stats' ></box-icon> Relevés",
+    '/infra/charge-de-mission' : "<box-icon name='buildings'></box-icon> Infrastructure",
+    '/deconnexion' : "<box-icon name='exit'></box-icon> Déconnexion"
+} %}
+
+{% block body %}
+
+    <main class="flex flex-col items-center">
+        <h1 class="w-full text-center text-2xl py-5 mt-10">Liste des Bâtiments</h1>
+        {% if is_granted('ROLE_CHARGE_DE_MISSION') %}
+            <div class="w-1/4 flex flex-row-reverse my-6">
+                <a href="/infra/charge-de-mission/batiments/ajouter">
+                    <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5
+                    mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        Ajouter un bâtiment
+                    </button>
+                </a>
+            </div>
+        {% endif %}
+        <div class="max-w-screen-xl w-1/4 mx-auto">
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                Nom du bâtiment
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Nombre de salle
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for batiment in listeBatiments %}
+
+                        <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {{ batiment.nom }}
+                            </th>
+
+                            <td class="px-6 py-4">
+                                {{ batiment.salles|length() }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+{% endblock %}

@@ -34,13 +34,12 @@ class SystemeAcquisition
     #[ORM\Column(length: 17)]
     private ?string $adresseMac = null;
 
+
     #[ORM\OneToMany(mappedBy: 'systemeAcquisition', targetEntity: Releve::class)]
     private Collection $releves;
 
-    public function __construct()
-    {
-        $this->releves = new ArrayCollection();
-    }
+    #[ORM\Column]
+    private ?int $tag = null;
 
     /**
      * @return int|null ID du système d'acquisition
@@ -106,32 +105,14 @@ class SystemeAcquisition
         return $this;
     }
 
-    /**
-     * @return Collection<int, Releve>
-     */
-    public function getReleves(): Collection
+    public function getTag(): ?int
     {
-        return $this->releves;
+        return $this->tag;
     }
 
-    public function addRelefe(Releve $relefe): static
+    public function setTag(int $tag): static
     {
-        if (!$this->releves->contains($relefe)) {
-            $this->releves->add($relefe);
-            $relefe->setSystemeAcquisition($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRelefe(Releve $relefe): static
-    {
-        if ($this->releves->removeElement($relefe)) {
-            // set the owning side to null (unless already changed)
-            if ($relefe->getSystemeAcquisition() === $this) {
-                $relefe->setSystemeAcquisition(null);
-            }
-        }
+        $this->tag = $tag;
 
         return $this;
     }
