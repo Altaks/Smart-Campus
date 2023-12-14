@@ -8,6 +8,11 @@
     {% set prefix = 'technicien' %}
 {% endif %}
 
+{% set nav_links = {
+    '/releves' : "<box-icon name='stats' ></box-icon> Relevés",
+    '/deconnexion' : "<box-icon name='exit'></box-icon> Déconnexion"
+} %}
+
 {% block body %}
     <div class="h-48 w-full"></div>
     <div class="mx-auto my-auto w-3/4 min-h-64 flex flex-row justify-evenly mt-12">
