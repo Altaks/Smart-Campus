@@ -2,8 +2,8 @@
 {
 "id" : "4",
 "nom" : "hum",
-"valeur" : "12",
-"dateCapture": "2023-12-11 23:03:23",
+"valeur" : "58",
+"dateCapture": "2023-12-14 05:22:33",
 "localisation": "null",
 "description": "null",
 "tag": "4"
@@ -11,8 +11,62 @@
 {
 "id" : "4",
 "nom" : "co2",
-"valeur" : "654",
-"dateCapture": "2023-12-11 23:03:23",
+"valeur" : "577",
+"dateCapture": "2023-12-14 05:22:33",
+"localisation": "null",
+"description": "null",
+"tag": "4"
+},
+{
+"id" : "4",
+"nom" : "temp",
+"valeur" : "18",
+"dateCapture": "2023-12-14 05:22:33",
+"localisation": "null",
+"description": "null",
+"tag": "4"
+},
+{
+"id" : "4",
+"nom" : "hum",
+"valeur" : "56",
+"dateCapture": "2023-12-13 08:51:54",
+"localisation": "null",
+"description": "null",
+"tag": "4"
+},
+{
+"id" : "4",
+"nom" : "co2",
+"valeur" : "609",
+"dateCapture": "2023-12-13 08:51:54",
+"localisation": "null",
+"description": "null",
+"tag": "4"
+},
+{
+"id" : "4",
+"nom" : "temp",
+"valeur" : "22",
+"dateCapture": "2023-12-13 08:51:54",
+"localisation": "null",
+"description": "null",
+"tag": "4"
+},
+{
+"id" : "4",
+"nom" : "hum",
+"valeur" : "57",
+"dateCapture": "2023-12-13 09:22:31",
+"localisation": "null",
+"description": "null",
+"tag": "4"
+},
+{
+"id" : "4",
+"nom" : "co2",
+"valeur" : "585",
+"dateCapture": "2023-12-13 09:22:31",
 "localisation": "null",
 "description": "null",
 "tag": "4"
@@ -21,7 +75,7 @@
 "id" : "4",
 "nom" : "temp",
 "valeur" : "21",
-"dateCapture": "2023-12-11 23:03:23",
+"dateCapture": "2023-12-13 09:22:31",
 "localisation": "null",
 "description": "null",
 "tag": "4"
@@ -29,8 +83,8 @@
 {
 "id" : "4",
 "nom" : "hum",
-"valeur" : "37",
-"dateCapture": "2023-12-12 20:33:27",
+"valeur" : "72",
+"dateCapture": "2023-12-12 06:31:19",
 "localisation": "null",
 "description": "null",
 "tag": "4"
@@ -38,8 +92,89 @@
 {
 "id" : "4",
 "nom" : "co2",
-"valeur" : "408",
-"dateCapture": "2023-12-12 20:33:27",
+"valeur" : "801",
+"dateCapture": "2023-12-12 06:31:19",
+"localisation": "null",
+"description": "null",
+"tag": "4"
+},
+{
+"id" : "4",
+"nom" : "temp",
+"valeur" : "22",
+"dateCapture": "2023-12-12 06:31:19",
+"localisation": "null",
+"description": "null",
+"tag": "4"
+},
+{
+"id" : "4",
+"nom" : "hum",
+"valeur" : "94",
+"dateCapture": "2023-12-12 00:14:15",
+"localisation": "null",
+"description": "null",
+"tag": "4"
+},
+{
+"id" : "4",
+"nom" : "co2",
+"valeur" : "737",
+"dateCapture": "2023-12-12 00:14:15",
+"localisation": "null",
+"description": "null",
+"tag": "4"
+},
+{
+"id" : "4",
+"nom" : "temp",
+"valeur" : "23",
+"dateCapture": "2023-12-12 00:14:15",
+"localisation": "null",
+"description": "null",
+"tag": "4"
+},
+{
+"id" : "4",
+"nom" : "hum",
+"valeur" : "80",
+"dateCapture": "2023-12-13 21:58:51",
+"localisation": "null",
+"description": "null",
+"tag": "4"
+},
+{
+"id" : "4",
+"nom" : "co2",
+"valeur" : "549",
+"dateCapture": "2023-12-13 21:58:51",
+"localisation": "null",
+"description": "null",
+"tag": "4"
+},
+{
+"id" : "4",
+"nom" : "temp",
+"valeur" : "18",
+"dateCapture": "2023-12-13 21:58:51",
+"localisation": "null",
+"description": "null",
+"tag": "4"
+},
+{
+"id" : "4",
+"nom" : "hum",
+"valeur" : "54",
+"dateCapture": "2023-12-12 01:41:05",
+"localisation": "null",
+"description": "null",
+"tag": "4"
+},
+{
+"id" : "4",
+"nom" : "co2",
+"valeur" : "708",
+"dateCapture": "2023-12-12 01:41:05",
 "localisation": "null",
 "description": "null",
 "tag": "4"
@@ -48,7 +183,7 @@
 "id" : "4",
 "nom" : "temp",
 "valeur" : "19",
-"dateCapture": "2023-12-12 20:33:27",
+"dateCapture": "2023-12-12 01:41:05",
 "localisation": "null",
 "description": "null",
 "tag": "4"
@@ -56,8 +191,8 @@
 {
 "id" : "4",
 "nom" : "hum",
-"valeur" : "87",
-"dateCapture": "2023-12-11 09:34:02",
+"valeur" : "70",
+"dateCapture": "2023-12-14 08:05:13",
 "localisation": "null",
 "description": "null",
 "tag": "4"
@@ -65,8 +200,8 @@
 {
 "id" : "4",
 "nom" : "co2",
-"valeur" : "528",
-"dateCapture": "2023-12-11 09:34:02",
+"valeur" : "816",
+"dateCapture": "2023-12-14 08:05:13",
 "localisation": "null",
 "description": "null",
 "tag": "4"
@@ -75,7 +210,7 @@
 "id" : "4",
 "nom" : "temp",
 "valeur" : "20",
-"dateCapture": "2023-12-11 09:34:02",
+"dateCapture": "2023-12-14 08:05:13",
 "localisation": "null",
 "description": "null",
 "tag": "4"
@@ -83,8 +218,8 @@
 {
 "id" : "4",
 "nom" : "hum",
-"valeur" : "82",
-"dateCapture": "2023-12-13 18:44:01",
+"valeur" : "76",
+"dateCapture": "2023-12-12 06:29:34",
 "localisation": "null",
 "description": "null",
 "tag": "4"
@@ -92,8 +227,8 @@
 {
 "id" : "4",
 "nom" : "co2",
-"valeur" : "790",
-"dateCapture": "2023-12-13 18:44:01",
+"valeur" : "884",
+"dateCapture": "2023-12-12 06:29:34",
 "localisation": "null",
 "description": "null",
 "tag": "4"
@@ -101,62 +236,8 @@
 {
 "id" : "4",
 "nom" : "temp",
-"valeur" : "21",
-"dateCapture": "2023-12-13 18:44:01",
-"localisation": "null",
-"description": "null",
-"tag": "4"
-},
-{
-"id" : "4",
-"nom" : "hum",
-"valeur" : "88",
-"dateCapture": "2023-12-13 05:25:44",
-"localisation": "null",
-"description": "null",
-"tag": "4"
-},
-{
-"id" : "4",
-"nom" : "co2",
-"valeur" : "596",
-"dateCapture": "2023-12-13 05:25:44",
-"localisation": "null",
-"description": "null",
-"tag": "4"
-},
-{
-"id" : "4",
-"nom" : "temp",
-"valeur" : "20",
-"dateCapture": "2023-12-13 05:25:44",
-"localisation": "null",
-"description": "null",
-"tag": "4"
-},
-{
-"id" : "4",
-"nom" : "hum",
-"valeur" : "4",
-"dateCapture": "2023-12-13 18:28:17",
-"localisation": "null",
-"description": "null",
-"tag": "4"
-},
-{
-"id" : "4",
-"nom" : "co2",
-"valeur" : "658",
-"dateCapture": "2023-12-13 18:28:17",
-"localisation": "null",
-"description": "null",
-"tag": "4"
-},
-{
-"id" : "4",
-"nom" : "temp",
-"valeur" : "20",
-"dateCapture": "2023-12-13 18:28:17",
+"valeur" : "19",
+"dateCapture": "2023-12-12 06:29:34",
 "localisation": "null",
 "description": "null",
 "tag": "4"
@@ -165,7 +246,7 @@
 "id" : "4",
 "nom" : "hum",
 "valeur" : "44",
-"dateCapture": "2023-12-12 18:51:41",
+"dateCapture": "2023-12-14 00:34:24",
 "localisation": "null",
 "description": "null",
 "tag": "4"
@@ -173,8 +254,8 @@
 {
 "id" : "4",
 "nom" : "co2",
-"valeur" : "664",
-"dateCapture": "2023-12-12 18:51:41",
+"valeur" : "723",
+"dateCapture": "2023-12-14 00:34:24",
 "localisation": "null",
 "description": "null",
 "tag": "4"
@@ -183,88 +264,7 @@
 "id" : "4",
 "nom" : "temp",
 "valeur" : "23",
-"dateCapture": "2023-12-12 18:51:41",
-"localisation": "null",
-"description": "null",
-"tag": "4"
-},
-{
-"id" : "4",
-"nom" : "hum",
-"valeur" : "38",
-"dateCapture": "2023-12-10 23:28:51",
-"localisation": "null",
-"description": "null",
-"tag": "4"
-},
-{
-"id" : "4",
-"nom" : "co2",
-"valeur" : "850",
-"dateCapture": "2023-12-10 23:28:51",
-"localisation": "null",
-"description": "null",
-"tag": "4"
-},
-{
-"id" : "4",
-"nom" : "temp",
-"valeur" : "19",
-"dateCapture": "2023-12-10 23:28:51",
-"localisation": "null",
-"description": "null",
-"tag": "4"
-},
-{
-"id" : "4",
-"nom" : "hum",
-"valeur" : "87",
-"dateCapture": "2023-12-12 14:41:41",
-"localisation": "null",
-"description": "null",
-"tag": "4"
-},
-{
-"id" : "4",
-"nom" : "co2",
-"valeur" : "824",
-"dateCapture": "2023-12-12 14:41:41",
-"localisation": "null",
-"description": "null",
-"tag": "4"
-},
-{
-"id" : "4",
-"nom" : "temp",
-"valeur" : "23",
-"dateCapture": "2023-12-12 14:41:41",
-"localisation": "null",
-"description": "null",
-"tag": "4"
-},
-{
-"id" : "4",
-"nom" : "hum",
-"valeur" : "7",
-"dateCapture": "2023-12-11 06:34:52",
-"localisation": "null",
-"description": "null",
-"tag": "4"
-},
-{
-"id" : "4",
-"nom" : "co2",
-"valeur" : "443",
-"dateCapture": "2023-12-11 06:34:52",
-"localisation": "null",
-"description": "null",
-"tag": "4"
-},
-{
-"id" : "4",
-"nom" : "temp",
-"valeur" : "20",
-"dateCapture": "2023-12-11 06:34:52",
+"dateCapture": "2023-12-14 00:34:24",
 "localisation": "null",
 "description": "null",
 "tag": "4"
