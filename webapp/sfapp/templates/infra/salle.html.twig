@@ -53,6 +53,11 @@
                     <th scope="col" class="px-6 py-3">
                         Système d'acquisition
                     </th>
+                    {% if is_granted('ROLE_CHARGE_DE_MISSION') %}
+                        <th scope="col" class="px-6 py-3">
+                            Actions
+                        </th>
+                    {% endif %}
                 </tr>
                 </thead>
                 <tbody>
@@ -101,6 +106,11 @@
                                 {{ salle.SystemeAcquisition.tag }}
                             {% endif %}
                         </td>
+                        {% if is_granted('ROLE_CHARGE_DE_MISSION') %}
+                        <td class="px-6 py-4 flex">
+                            <a href="salles/{{ salle.id }}/ajouter-sa"><img class="w-1/4 h-auto" src="/images/ajouterSa.png"/></a>
+                        </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
 
