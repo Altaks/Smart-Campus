@@ -35,9 +35,6 @@ class SystemeAcquisition
     private ?string $adresseMac = null;
 
 
-    #[ORM\OneToMany(mappedBy: 'systemeAcquisition', targetEntity: Releve::class)]
-    private Collection $releves;
-
     #[ORM\Column]
     private ?int $tag = null;
 

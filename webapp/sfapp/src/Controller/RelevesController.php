@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Salle;
+use App\Service\releveService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -42,11 +43,16 @@ class RelevesController extends AbstractController
         if($builder->isSubmitted() && $builder->isValid()) {
 
             $id = $builder->getData()['salle'];
-            $salle = $sallesRepository->find($id);
+            $salle = $sallesRepository->findOneBy(["id"=>$id]);
+
+            $service = new releveService();
+            $releves = $service->getAll($salle->getSystemeAcquisition()->getTag());
+
 
             return $this->render('releves/index.html.twig', [
                 'salles' => $salles,
                 'salle_actuelle' => $salle,
+                'releves' => $releves,
                 'form' => $builder->createView(),
             ]);
         }
