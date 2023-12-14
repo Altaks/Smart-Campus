@@ -3,10 +3,11 @@
 namespace App\Service;
 
 use DateTime;
+use Symfony\Component\Validator\Constraints\Date;
 
 class releveService{
 
-    public function getDernier(int $tag){
+    public function getDernier(int $tag) : array{
         $a_dir = getcwd();
 
         chdir("/app/sfapp/releves");
@@ -58,6 +59,32 @@ class releveService{
         }
         chdir($a_dir);
         return $valuesFetch;
+    }
+
+    public function getAll(int $tag) : array{
+        $a_dir = getcwd();
+
+        chdir("/app/sfapp/releves");
+
+
+
+        $fileName = "{$tag}.json";
+
+        $file = file_get_contents($fileName);
+
+        if (!file_exists($fileName)){
+            return [];
+        }
+
+        $json = json_decode($file, true);
+        $releves = array();
+
+        foreach ($json as $releve){
+            $releves[] = ['date'=>$releve['dateCapture'], 'type'=> $releve['nom'], 'valeur'=>$releve['valeur']];
+        }
+
+        chdir($a_dir);
+        return $releves;
     }
 
 }

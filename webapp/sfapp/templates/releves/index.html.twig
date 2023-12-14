@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des relevés{% endblock %}
+
+{%  set corresp = {
+    'temp' : 'température',
+    'co2' : "qualité de l'air",
+    'hum' : "humidité"
+    } %}
+
+{% block body %}
+
+    <div class="max-w-6xl w-5/6 mx-auto my-12">
+        <h1 class="my-12 text-2xl w-full text-center">Liste des relevés</h1>
+        <div class="bg-gray-50 dark:bg-gray-800 rounded-t-lg min-h-2 p-4 flex flex-row justify-between items-center shadow-md">
+            {% if salle_actuelle is not defined %}
+                <div class="flex flex-row ml-4">
+                    <span>Veuillez choisir une salle</span>
+                </div>
+            {% else %}
+                <div class="flex flex-row ml-4">
+                    <span>{{ salle_actuelle.batiment.nom }}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(0, 0, 0, 1);transform: ;msFilter:;"><path d="M10.707 17.707 16.414 12l-5.707-5.707-1.414 1.414L13.586 12l-4.293 4.293z"></path></svg>
+                    <span>{{ salle_actuelle.nom }}</span>
+                </div>
+            {% endif %}
+            <div>
+                {{ form_start(form) }}
+                <div class="flex flex-row justify-center items-center">
+                    <select class="shadow-md rounded-lg border-0 bg-white h-10 px-5 pr-16 text-sm focus:outline-none mr-5" name="{{ field_name(form.salle) }}">
+                        {% for label, value in field_choices(form.salle) %}
+                            <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="shadow-md rounded-lg border-0 bg-white h-10 w-10 text-sm focus:outline-none"><box-icon name='search'></box-icon></button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        {% if salle_actuelle is defined %}
+            {% if salle_actuelle.systemeacquisition is not null %}
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg my-12">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">
+                            Horodatage
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Type de donnée
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Valeur
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for releve in releves | sort((a, b) => (a["date"] | date("d/m/Y H:i:s")) <=> ( b["date"] | date("d/m/Y H:i:s")) ) %}
+                        <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {{ releve["date"] | date("d/m/Y H:i:s") }}
+                            </th>
+                            <td class="px-6 py-4">
+                                {{ corresp[releve["type"]] | default("-") }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ releve["valeur"] | default("-") }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="bg-red-50 dark:bg-red-800 rounded-b-lg min-h-2 p-4 flex flex-row justify-between items-center mt-5 shadow-md">
+                    <p class="w-full text-center">Système d'acquisition absent - Veuillez en faire part au chargé de mission</p>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+
+{% endblock %}

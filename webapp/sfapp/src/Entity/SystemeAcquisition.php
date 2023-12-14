@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SystemeAcquisitionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
 
@@ -31,6 +33,7 @@ class SystemeAcquisition
      */
     #[ORM\Column(length: 17)]
     private ?string $adresseMac = null;
+
 
     #[ORM\Column]
     private ?int $tag = null;

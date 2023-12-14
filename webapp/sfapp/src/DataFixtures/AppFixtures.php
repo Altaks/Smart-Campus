@@ -80,6 +80,7 @@ class AppFixtures extends Fixture
         $manager->persist($sa2);
 
         $sa3 = new SystemeAcquisition();
+        
         $sa3->setAdresseMac("00:00:00:00:00:03")
             ->setSalle($salle3)
             ->setTag(3);
@@ -91,6 +92,7 @@ class AppFixtures extends Fixture
         $sa4->setTag(4);
 
         $manager->persist($sa4);
+    
 
         $utilisateur = new Utilisateur();
         $utilisateur->setIdentifiant("testChargeDeMission")
