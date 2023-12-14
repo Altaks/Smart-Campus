@@ -47,6 +47,18 @@ class InfraController extends AbstractController
         ]);
     }
 
+    #[IsGranted("ROLE_TECHNICIEN")]
+    #[Route('/infra/technicien/batiments', name: 'app_infra_technicien_batiments')]
+    public function technicien_batiments(ManagerRegistry $doctrine): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $repository = $entityManager->getRepository('App\Entity\Batiment');
+        $listeBatiments = $repository->findAll();
+        return $this->render('infra/batiments.html.twig', [
+            'listeBatiments' => $listeBatiments
+        ]);
+    }
+
     #[IsGranted("ROLE_CHARGE_DE_MISSION")]
     #[Route('/infra/charge-de-mission/batiments/ajouter', name: 'app_infra_charge_de_mission_ajouter_batiments')]
     public function charge_de_mission_ajouter_batiment(Request $request, ManagerRegistry $doctrine): Response
