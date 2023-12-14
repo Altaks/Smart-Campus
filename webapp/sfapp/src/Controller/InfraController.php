@@ -142,6 +142,38 @@ class InfraController extends AbstractController
         ]);
     }
 
+    #[IsGranted("ROLE_CHARGE_DE_MISSION")]
+    #[Route('/infra/charge-de-mission/systemes-acquisition', name: 'app_infra_charge_de_mission_systeme_acquisition')]
+    public function charge_de_mission_systemes_acquisition(ManagerRegistry $doctrine, releveService $service): Response
+    {
+        $listeSA = $doctrine->getManager()->getRepository('App\Entity\SystemeAcquisition')->findAll();
+
+        $listeSAConnecte = array();
+        $listeSANonConnectes = array();
+
+        foreach($listeSA as $SA)
+        {
+            $dernierReleve = $service->getDernier($SA->getTag());
+
+            date_default_timezone_set('Europe/Paris');
+            $dateCourante = new \DateTime(date('Y-m-d H:i:s', time()-6*60));
+            $dateReleve = new \DateTime($dernierReleve["date"]);
+
+            if($dateCourante->diff($dateReleve)->invert == 1) {
+                $listeSANonConnectes[] = $SA;
+            }
+            else
+            {
+                $listeSAConnecte[] = $SA;
+            }
+        }
+
+        return $this->render('infra/systemes-acquisition.html.twig', [
+            'listeSAFonctionnels' => $listeSAConnecte,
+            'listeSANonConnectes' => $listeSANonConnectes
+        ]);
+    }
+
     #[IsGranted("ROLE_TECHNICIEN")]
     #[Route('/infra/technicien/systemes-acquisition', name: 'app_infra_technicien_systeme_acquisition')]
     public function technicien_systemes_acquisition(ManagerRegistry $doctrine, releveService $service): Response
