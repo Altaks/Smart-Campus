@@ -1,6 +1,6 @@
 <?php
 
-namespace App\tests\Controller\Infra;
+namespace App\tests\Controller\Infra\ChargeDeMission;
 
 use App\Repository\UtilisateurRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
