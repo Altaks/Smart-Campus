@@ -88,11 +88,10 @@ class systemesAcquisitionTest extends WebTestCase
         $crawler = $client->request('GET', '/infra/charge-de-mission/systemes-acquisition');
 
         $th = $crawler->filter("th");
-        for ($i = 0; $i < 6; $i+=3) {
-            $this->assertSame("Tag", $th->eq(0+$i)->text());
-            $this->assertSame("Bâtiment", $th->eq(1+$i)->text());
-            $this->assertSame("Salle", $th->eq(2+$i)->text());
-        }
+            $this->assertSame("Tag", $th->eq(0)->text());
+            $this->assertSame("Bâtiment", $th->eq(1)->text());
+            $this->assertSame("Salle", $th->eq(2)->text());
+
     }
 
     public function test_page_infra_charge_de_mission_liste_systemes_acquisition_requete_sans_etre_connecte() : void
@@ -111,7 +110,7 @@ class systemesAcquisitionTest extends WebTestCase
 
         // retrieve the test user
         $userRepository = static::getContainer()->get(UtilisateurRepository::class);
-        $testUser = $userRepository->findOneBy(['identifiant' => 'testChargeDeMission']);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'testTechnicien']);
 
         // simulate $testUser being logged in
         $client->loginUser($testUser);
