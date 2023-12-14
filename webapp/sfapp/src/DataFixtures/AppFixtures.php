@@ -3,7 +3,6 @@
 namespace App\DataFixtures;
 
 use App\Entity\Batiment;
-use App\Entity\Releve;
 use App\Entity\Salle;
 use App\Entity\SystemeAcquisition;
 use App\Entity\Utilisateur;
@@ -70,8 +69,6 @@ class AppFixtures extends Fixture
         $sa1->setAdresseMac("00:00:00:00:00:01")
             ->setSalle($salle1)
             ->setTag(1);
-
-        $salle1->setSystemeAcquisition($sa1);
 
         $manager->persist($sa1);
 
