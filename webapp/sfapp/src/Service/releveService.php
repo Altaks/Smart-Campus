@@ -11,9 +11,15 @@ class releveService{
 
         chdir("/app/sfapp/releves");
 
+
+
         $fileName = "{$tag}.json";
 
         $file = file_get_contents($fileName);
+
+        if (!file_exists($fileName)){
+            return ["date" => null, "co2" => null, "temp" => null, "hum" => null];
+        }
 
         $json = json_decode($file, true);
 
@@ -40,7 +46,7 @@ class releveService{
                     $date2 = new DateTime($releve["dateCapture"]);
                     $diff = $date1->diff($date2);
 
-                    if ($diff->i < 5 && $diff->i > -5){
+                    if (!($diff->y != 0 || $diff->m != 0 || $diff->d != 0 || $diff->h != 0) && $diff->i < 5 && $diff->i > -5){
                         $valuesFetch[$type]=$releve["valeur"];
                         $valuesRead[$type]=true;
                     }

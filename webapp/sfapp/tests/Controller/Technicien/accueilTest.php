@@ -88,6 +88,6 @@ class accueilTechnicienTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         $infra_link = $crawler->filter('a#infra')->link();
-        $this->assertStringEndsWith('/infra/tech', $infra_link->getUri());
+        $this->assertStringEndsWith('/infra/technicien', $infra_link->getUri());
     }
 }

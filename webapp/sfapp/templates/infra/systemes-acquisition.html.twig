@@ -1,0 +1,128 @@
+{% extends 'base.html.twig' %}
+
+
+
+{% if is_granted('ROLE_CHARGE_DE_MISSION') %}
+    {% set nav_links = {
+        '/releves' : "<box-icon name='stats' ></box-icon> Relevés",
+        '/infra/charge-de-mission/' : "<box-icon name='buildings'></box-icon> Infrastructure",
+        '/deconnexion' : "<box-icon name='exit'></box-icon> Déconnexion"
+    } %}
+{% elseif is_granted('ROLE_TECHNICIEN') %}
+    {% set nav_links = {
+        '/releves' : "<box-icon name='stats' ></box-icon> Relevés",
+        '/infra/technicien' : "<box-icon name='buildings'></box-icon> Infrastructure",
+        '/deconnexion' : "<box-icon name='exit'></box-icon> Déconnexion"
+    } %}
+{% endif %}
+
+{% block title %}Systemes d'acquisition{% endblock %}
+
+{% block body %}
+    <main class="flex flex-col items-center">
+        <h1 class="w-full text-center text-2xl py-20">Liste des systèmes d'acquisition</h1>
+        <div class="max-w-screen-xl w-5/6 mx-auto">
+            <h2>Systèmes d'acquisition fonctionnels</h2>
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Tag</th>
+                            <th scope="col" class="px-6 py-3">Bâtiment</th>
+                            <th scope="col" class="px-6 py-3">Salle</th>
+                            {% if is_granted('ROLE_TECHNICIEN') %}<th scope="col" class="px-6 py-3">Adresse MAC</th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for systemeAcquisition in listeSAFonctionnels %}
+                            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                                <th scope="row" class="th-fonctionnel px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"> {{ systemeAcquisition.tag }}</th>
+                                {% if systemeAcquisition.salle != null  %}
+                                    <td class="px-6 py-4">{{ systemeAcquisition.salle.batiment.nom }}</td>
+                                    <td class="px-6 py-4">{{ systemeAcquisition.salle.nom }}</td>
+                                {% endif %}
+                                {% if systemeAcquisition.salle == null  %}
+                                    <td class="px-6 py-4">-</td>
+                                    <td class="px-6 py-4">-</td>
+                                {% endif %}
+                                {% if is_granted('ROLE_TECHNICIEN') %}<td class="px-6 py-4">{{ systemeAcquisition.adresseMac }}</td>{% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% if is_granted('ROLE_TECHNICIEN') %}
+            <div class="max-w-screen-xl w-5/6 mx-auto mt-6">
+                <h2>Systèmes d'acquisition dysfonctionnels</h2>
+                <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Tag</th>
+                            <th scope="col" class="px-6 py-3">Bâtiment</th>
+                            <th scope="col" class="px-6 py-3">Salle</th>
+                            <!--{% if is_granted('ROLE_TECHNICIEN') %}<th scope="col" class="px-6 py-3">Statut des capteurs</th>{% endif %}-->
+                            <th scope="col" class="px-6 py-3">Adresse MAC</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for systemeAcquisition in listeSANonFonctionnels %}
+                            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                                <th scope="row" class="th-non-fonctionnel px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"> {{ systemeAcquisition.tag }}</th>
+                                {% if systemeAcquisition.salle != null  %}
+                                    <td class="px-6 py-4">{{ systemeAcquisition.salle.batiment.nom }}</td>
+                                    <td class="px-6 py-4">{{ systemeAcquisition.salle.nom }}</td>
+                                {% endif %}
+                                {% if systemeAcquisition.salle == null  %}
+                                    <td class="px-6 py-4">-</td>
+                                    <td class="px-6 py-4">-</td>
+                                {% endif %}
+                                <!--<td class="px-6 py-4">-</td>-->
+                                <td class="px-6 py-4">{{ systemeAcquisition.adresseMac }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="max-w-screen-xl w-5/6 mx-auto mt-6">
+            <h2>Systèmes d'acquisition non fonctionnels</h2>
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Tag</th>
+                        <th scope="col" class="px-6 py-3">Bâtiment</th>
+                        <th scope="col" class="px-6 py-3">Salle</th>
+                        <!--{% if is_granted('ROLE_TECHNICIEN') %}<th scope="col" class="px-6 py-3">Statut des capteurs</th>{% endif %}-->
+                        {% if is_granted('ROLE_TECHNICIEN') %}<th scope="col" class="px-6 py-3">Adresse MAC</th>{% endif %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for systemeAcquisition in listeSANonConnectes %}
+                        <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                            <th scope="row" class="th-non-connecte px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"> {{ systemeAcquisition.tag }}</th>
+                            {% if systemeAcquisition.salle != null  %}
+                                <td class="px-6 py-4">{{ systemeAcquisition.salle.batiment.nom }}</td>
+                                <td class="px-6 py-4">{{ systemeAcquisition.salle.nom }}</td>
+                            {% endif %}
+                            {% if systemeAcquisition.salle == null  %}
+                                <td class="px-6 py-4">-</td>
+                                <td class="px-6 py-4">-</td>
+                            {% endif %}
+                            {% if is_granted('ROLE_TECHNICIEN') %}
+                                <!--<td class="px-6 py-4">-</td>-->
+                                <td class="px-6 py-4">{{ systemeAcquisition.adresseMac }}</td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+{% endblock %}
