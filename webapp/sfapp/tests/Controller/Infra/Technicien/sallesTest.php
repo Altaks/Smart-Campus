@@ -1,24 +1,24 @@
 <?php
 
-namespace App\tests\Controller\Infra\ChargeDeMission;
+namespace App\tests\Controller\Infra;
 
 use App\Repository\UtilisateurRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class sallesTest extends WebTestCase
 {
-    public function test_controleur_infracontroller_route_infra_charge_de_mission_salles_requete_en_tant_que_charge_de_mission(): void
+    public function test_controleur_infracontroller_route_infra_technicien_salles_requete_en_tant_que_technicien(): void
     {
         $client = static::createClient();
 
         // retrieve the test user
         $userRepository = static::getContainer()->get(UtilisateurRepository::class);
-        $testUser = $userRepository->findOneBy(['identifiant' => 'testChargeDeMission']);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'testTechnicien']);
 
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $crawler = $client->request('GET', '/infra/charge-de-mission/salles');
+        $crawler = $client->request('GET', '/infra/technicien/salles');
         $this->assertResponseIsSuccessful();
 
         $this->assertSelectorTextContains('h1', 'Liste des salles');
@@ -38,11 +38,11 @@ class sallesTest extends WebTestCase
     }
 
     // Test a modifier en fonction des resultats obtenue
-    public function test_controleur_infracontroller_route_infra_charge_de_mission_salles_requete_utilisateur_pas_connecte(): void
+    public function test_controleur_infracontroller_route_infra_technicien_salles_requete_utilisateur_pas_connecte(): void
     {
         $client = static::createClient();
 
-        $crawler = $client->request('GET', '/infra/charge-de-mission/salles');
+        $crawler = $client->request('GET', '/infra/technicien/salles');
 
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
 
@@ -50,18 +50,18 @@ class sallesTest extends WebTestCase
     }
 
     // Test a modifier en fonction des resultats obtenue
-    public function test_controleur_infracontroller_route_infra_charge_de_mission_salles_requete_en_tant_que_technicien(): void
+    public function test_controleur_infracontroller_route_infra_technicien_salles_requete_en_tant_que_charge_de_mission(): void
     {
         $client = static::createClient();
 
         // retrieve the test user
         $userRepository = static::getContainer()->get(UtilisateurRepository::class);
-        $testUser = $userRepository->findOneBy(['identifiant' => 'testTechnicien']);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'testChargeDeMission']);
 
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $crawler = $client->request('GET', '/infra/charge-de-mission/salles');
+        $crawler = $client->request('GET', '/infra/technicien/salles');
 
         $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
     }
