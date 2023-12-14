@@ -46,7 +46,13 @@ class RelevesController extends AbstractController
             $salle = $sallesRepository->findOneBy(["id"=>$id]);
 
             $service = new releveService();
-            $releves = $service->getAll($salle->getSystemeAcquisition()->getTag());
+
+            $tag = $salle->getSystemeAcquisition()->getTag();
+            $releves = [];
+
+            if (!is_null($tag)){
+                $releves = $service->getAll($salle->getSystemeAcquisition()->getTag());
+            }
 
 
             return $this->render('releves/index.html.twig', [
