@@ -14,7 +14,7 @@
 #include "sgp30.h"
 
 // Inclusion des librairies du projet
-#include "typedef.h"
+#include "typeDef.h"
 
 // Définition des constantes
 #define LOOP_TIME_INTERVAL_MS  1000     // Temps d'attente entre chaque mesure de la qualité de l'air
@@ -29,5 +29,4 @@ void initQualAir(unsigned short * co2);
  * Fonction permettant de récupérer la qualité de l'air et l'injecter dans la variable globale co2
  */
 void taskQualAir(void * pvParameters);
-
 #endif //SOFTWARE_QUALAIR_H

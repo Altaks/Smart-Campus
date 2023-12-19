@@ -130,18 +130,15 @@ void initQualAir(unsigned short * co2)
         9,
         NULL
     );
-
     // Ecrire la baseline dans l'EEPROM
     set_baseline();
 }
 
 void taskQualAir(void *pvParameters)
 {
-    unsigned int* co2 = (unsigned int*) pvParameters; 
-
+    unsigned int* co2 = (unsigned int*) pvParameters;
     for (;;) {
-        
-        delay(2000);
+
         s16 err=0;
         u16 tvoc_ppb, co2_eq_ppm;
         err = sgp_measure_iaq_blocking_read(&tvoc_ppb, &co2_eq_ppm); // Appel de la fonction de lecture des valeurs de qualité de l'air
@@ -158,7 +155,7 @@ void taskQualAir(void *pvParameters)
             Serial.println("error reading IAQ values\n");
             *co2 = 0;
         }
+        delay(5 * 60 * 1000);
     }
-
 }
 

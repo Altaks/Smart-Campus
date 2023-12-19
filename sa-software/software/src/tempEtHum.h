@@ -2,7 +2,7 @@
 #define TEMPETHUM_H
 
 #include "DHTesp.h"
-#include "typedef.h"
+#include "typeDef.h"
 #include <cmath>
 
 
