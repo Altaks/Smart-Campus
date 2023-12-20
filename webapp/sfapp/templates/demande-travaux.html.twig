@@ -10,8 +10,8 @@
     <h1 class="text-5xl font-extrabold dark:text-white mx-auto w-max my-6">Salle {{ salle.nom }}</h1>
 
     <div class="max-w-screen-xl w-5/6 mx-auto">
+        <h2 class="py-12 text-2xl">Relevés</h2>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <h2>Relevées</h2>
             {% if listeReleves is not null %}
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -34,22 +34,22 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for releve in listeReleves %}
+                {% for date, releveInfos in listeReleves %}
                     <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ releve.date.d }} / {{ releve.date.M }} / {{ releve.date.Y }}
+                            {{ date | format_datetime('full', 'none', locale='fr') | title }}
                         </th>
                         <td class="px-6 py-4">
-                            {{ releve.date.H }} : {{ releve.date.i }} : {{ releve.date.s }}
+                            {{ date | format_datetime('none', 'short', locale='fr') }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ releve.temp }}
+                            {{ releveInfos.temp | default("-") }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ releve.co2 }}
+                            {{ releveInfos.co2 | default("-") }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ releve.hum }}
+                            {{ releveInfos.hum | default("-") }}
                         </td>
                     </tr>
                 {% endfor %}

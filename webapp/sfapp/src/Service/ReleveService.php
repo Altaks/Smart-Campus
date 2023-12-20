@@ -2,89 +2,74 @@
 
 namespace App\Service;
 
+use App\Entity\SystemeAcquisition;
 use DateTime;
-use Symfony\Component\Validator\Constraints\Date;
+use Symfony\Component\HttpClient\HttpClient;
 
 class ReleveService {
 
-    public function getDernier(int $tag) : array{
-        $a_dir = getcwd();
+    private static function conversionVersRelevesGroupes(array $array) : array {
+        $listeReleves = [];
 
-        chdir("/app/sfapp/releves");
-
-
-
-        $fileName = "{$tag}.json";
-
-        $file = file_get_contents($fileName);
-
-        if (!file_exists($fileName)){
-            return ["date" => null, "co2" => null, "temp" => null, "hum" => null];
-        }
-
-        $json = json_decode($file, true);
-
-        $valuesFetch = ["date" => null, "co2" => null, "temp" => null, "hum" => null];
-        $valuesRead = ["date" => false, "co2" => false, "temp" => false, "hum" => false];
-
-
-        foreach ($json as $releve){
-            $type = $releve["nom"];
-            if (!$valuesRead[$type]){
-
-                if (!$valuesRead["date"]){
-                    $valuesFetch[$type] = $releve["valeur"];
-
-
-
-                    $valuesFetch["date"] = $releve["dateCapture"];
-                    $valuesRead[$type] = true;
-                    $valuesRead["date"] = true;
-                }
-                else{
-
-                    $date1 = new DateTime($valuesFetch["date"]);
-                    $date2 = new DateTime($releve["dateCapture"]);
-                    $diff = $date1->diff($date2);
-
-                    if (!($diff->y != 0 || $diff->m != 0 || $diff->d != 0 || $diff->h != 0) && $diff->i < 5 && $diff->i > -5){
-                        $valuesFetch[$type]=$releve["valeur"];
-                        $valuesRead[$type]=true;
-                    }
-                }
+        foreach($array as $releve){
+            if(!array_key_exists($releve["dateCapture"], $listeReleves)){
+                $listeReleves[$releve["dateCapture"]] = ["temp" => null, "hum" => null, "co2" => null];
             }
-            if ($valuesRead["date"] && $valuesRead["co2"] && $valuesRead["temp"] && $valuesRead["hum"]){
-                break;
-            }
+            $listeReleves[$releve["dateCapture"]][$releve["nom"]] = $releve["valeur"];
         }
-        chdir($a_dir);
-        return $valuesFetch;
+        return $listeReleves;
     }
 
-    public function getAll(int $tag) : array{
-        $a_dir = getcwd();
+    public function getDernier(SystemeAcquisition $sa) : array {
+        $client = HttpClient::create([
+            'headers' => [
+                'accept' => 'application/json',
+                'dbname' => $sa->getBaseDonnees(),
+                'username' => 'm2eq3',
+                'userpass' => 'howjoc-dyjhId-hiwre0'
+            ]
+        ]);
 
-        chdir("/app/sfapp/releves");
+        $response = $client->request('GET', 'https://sae34.k8s.iut-larochelle.fr/api/captures/last' , [
+            'query' => ['page' => 1]
+        ]);
+        return static::conversionVersRelevesGroupes($response->toArray());
+    }
 
+    public function getTout(SystemeAcquisition $sa) : array{
+        $client = HttpClient::create([
+            'headers' => [
+                'accept' => 'application/json',
+                'dbname' => $sa->getBaseDonnees(),
+                'username' => 'm2eq3',
+                'userpass' => 'howjoc-dyjhId-hiwre0'
+            ]
+        ]);
 
+        $response = $client->request('GET', 'https://sae34.k8s.iut-larochelle.fr/api/captures' , [
+            'query' => ['page' => 1]
+        ]);
+        return static::conversionVersRelevesGroupes($response->toArray());
+    }
 
-        $fileName = "{$tag}.json";
+    public function getEntre(SystemeAcquisition $sa, DateTime $dateDebut, DateTime $dateFin) : array{
+        $client = HttpClient::create([
+            'headers' => [
+                'accept' => 'application/json',
+                'dbname' => $sa->getBaseDonnees(),
+                'username' => 'm2eq3',
+                'userpass' => 'howjoc-dyjhId-hiwre0'
+            ]
+        ]);
 
-        $file = file_get_contents($fileName);
-
-        if (!file_exists($fileName)){
-            return [];
-        }
-
-        $json = json_decode($file, true);
-        $releves = array();
-
-        foreach ($json as $releve){
-            $releves[] = ['date'=>$releve['dateCapture'], 'type'=> $releve['nom'], 'valeur'=>$releve['valeur']];
-        }
-
-        chdir($a_dir);
-        return $releves;
+        $response = $client->request('GET', 'https://sae34.k8s.iut-larochelle.fr/api/captures/interval' , [
+            'query' => [
+                'date1' => $dateDebut->format('Y-m-d'),
+                'date2' => $dateFin->format('Y-m-d'),
+                'page' => 1
+            ]
+        ]);
+        return static::conversionVersRelevesGroupes($response->toArray());
     }
 
 }
