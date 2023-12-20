@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class InfraController extends AbstractController
+class PlanExpController extends AbstractController
 {
 
     #[IsGranted("ROLE_CHARGE_DE_MISSION")]

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\tests\Controller\Connexion;
+namespace App\tests\Controller\Public\CdM;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

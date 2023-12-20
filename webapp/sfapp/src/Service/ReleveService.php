@@ -5,7 +5,7 @@ namespace App\Service;
 use DateTime;
 use Symfony\Component\Validator\Constraints\Date;
 
-class releveService{
+class ReleveService {
 
     public function getDernier(int $tag) : array{
         $a_dir = getcwd();
