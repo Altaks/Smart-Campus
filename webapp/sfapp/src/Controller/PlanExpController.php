@@ -298,7 +298,7 @@ class PlanExpController extends AbstractController
      * Charge de mission : Consulter les infos des salles du plan d'expérimentation
      */
     #[IsGranted("ROLE_CHARGE_DE_MISSION")]
-    #[Route('/plan', name: 'cpm_plan')]
+    #[Route('/plan', name: 'cdm_plan')]
     public function cdm_plan(ManagerRegistry $doctrine): Response
     {
         $entityManager = $doctrine->getManager();
