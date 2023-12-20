@@ -32,29 +32,22 @@ class PublicController extends AbstractController
     #[Route('/auth-Success', name: 'auth-success')]
     public function onAuthenticationSuccess(Security $security, Request $request)
     {
-        $utilisateur = $security->getUser();
-        $security->login($utilisateur);
-
-        if ($this->isGranted("ROLE_CHARGE_DE_MISSION")) {
-            return $this->redirect('/accueil/charge-de-mission');
-        } elseif ($this->isGranted("ROLE_TECHNICIEN")){
-            return $this->redirect('/accueil/tech');
-        }
-
+        return $this->redirect('/accueil');
     }
 
-    #[IsGranted("ROLE_CHARGE_DE_MISSION")]
-    #[Route('/accueil/charge-de-mission', name: 'accueil_charge_de_mission')]
-    public function indexChargeDeMission(): Response
-    {
-        return $this->render('accueil/charge-de-mission.html.twig', []);
-    }
 
-    #[IsGranted("ROLE_TECHNICIEN")]
-    #[Route('/accueil/tech', name: 'accueil_technicien')]
+    #[Route('/accueil/', name: 'personel_accueil')]
     public function indexTechnicien(): Response
     {
-        return $this->render('accueil/technicien.html.twig', []);
+        if ($this->isGranted("ROLE_TECHNICIEN")){
+            return $this->render('accueil/technicien.html.twig', []);
+        }
+        elseif ($this->isGranted("ROLE_CHARGE_DE_MISSION")){
+            return $this->render('accueil/charge-de-mission.html.twig', []);
+        }
+        else{
+            throw $this->createNotFoundException("Page non implémentée pour le moment");
+        }
     }
 
     #[Route('/releves', name: 'app_releves')]
