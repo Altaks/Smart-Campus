@@ -1,8 +1,8 @@
 #include <Arduino.h>
-#include "tempEtHum.h"
-#include "heure.h"
-#include "qualAir.h"
-#include "affichage.h"
+#include "Capteurs/tempEtHum.h"
+#include "Heure/heure.h"
+#include "Capteurs/qualAir.h"
+#include "Affichage/affichage.h"
 #include "typeDef.h"
 
 
