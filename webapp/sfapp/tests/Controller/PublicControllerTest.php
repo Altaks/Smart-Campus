@@ -111,7 +111,7 @@ class PublicControllerTest extends WebTestCase
         $nbDemandes = sizeof($demandesRepository->findBy(["type"=>"Installation", "terminee"=>false]));
 
 
-        $ul = $crawler->filter("#listeDemandesInstallation");
-        $this->assertEquals($nbDemandes, $ul->count());
+        $li = $crawler->filter("#listeDemandesInstallation")->filter('li');
+        $this->assertEquals($nbDemandes, $li->count());
     }
 }
