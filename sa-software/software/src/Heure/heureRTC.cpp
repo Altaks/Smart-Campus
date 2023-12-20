@@ -1,23 +1,23 @@
 #include <Wire.h>
 #include <RtcDS1307.h>
 
-#include "heure.h"
+#include "heureRTC.h"
 
 RtcDS1307<TwoWire> Rtc(Wire);
 
-void initHeure()
+void initHeureRTC()
 {
     Rtc.Begin(8,9);
     Rtc.SetDateTime(RtcDateTime(__DATE__,__TIME__));
     Rtc.SetIsRunning(true);
 }
 
-void setDateHeure(short annee, short mois, short jour, short heure, short minute, short seconde)
+void setDateHeureRTC(short annee, short mois, short jour, short heure, short minute, short seconde)
 {
     Rtc.SetDateTime(RtcDateTime(annee,mois,jour,heure,minute,seconde));
 }
 
-String getDate()
+String getDateRTC()
 {
     RtcDateTime maintenant = Rtc.GetDateTime();
 
@@ -75,17 +75,17 @@ String getDate()
     return maintenantStr;
 }
 
-short getAnnee()
+short getAnneeRTC()
 {
     return Rtc.GetDateTime().Year();
 }
 
-short getMois()
+short getMoisRTC()
 {
     return Rtc.GetDateTime().Month();
 }
 
-String getMoisString()
+String getMoisStringRTC()
 {
     String moisStr;
     switch(Rtc.GetDateTime().Month())
@@ -131,28 +131,28 @@ String getMoisString()
 
 }
 
-short getJour()
+short getJourRTC()
 {
     return Rtc.GetDateTime().Day();
 }
 
-String getJourSemaine()
+String getJourSemaineRTC()
 {
     String jour[7] = {"Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"};
     return jour[Rtc.GetDateTime().DayOfWeek()];
 }
 
-short getHeure()
+short getHeureRTC()
 {
     return Rtc.GetDateTime().Hour();
 }
 
-short getMinute()
+short getMinuteRTC()
 {
     return Rtc.GetDateTime().Minute();
 }
 
-short getSeconde()
+short getSecondeRTC()
 {
     return Rtc.GetDateTime().Second();
 }

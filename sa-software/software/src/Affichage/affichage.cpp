@@ -1,6 +1,6 @@
 #include "affichage.h"
 #include "typeDef.h"
-#include "heure.h"
+#include "Heure/heureLocal.h"
 
 SSD1306Wire * display;
 PAGE page = TEMPERATURE;
