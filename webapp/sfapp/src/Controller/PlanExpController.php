@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 
-use App\Entity\Batiment;
 use App\Entity\Salle;
 use App\Entity\SystemeAcquisition;
 use App\Service\releveService;
@@ -255,6 +254,41 @@ class PlanExpController extends AbstractController
         $listeSalles = $repository->findAll();
         return $this->render('infra/salle.html.twig', [
             'listeSalles' => $listeSalles
+        ]);
+    }
+
+    /*
+     * Charge de mission : Consulter les infos des salles du plan d'expérimentation
+     */
+    #[IsGranted("ROLE_CHARGE_DE_MISSION")]
+    #[Route('/plan', name: 'cpm_plan')]
+    public function cdm_plan(ManagerRegistry $doctrine): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $sallesRepository = $entityManager->getRepository('App\Entity\Salle');
+        $listeSalles = $sallesRepository->findAll();
+
+        $salleArr = Array();
+        $etatArr = Array();
+
+        for($i = 0; $i < count($listeSalles); $i++) {
+            $etat = "-";
+            for($j = 0; $j < count($listeSalles[$i]->getDemandesTravaux()); $j++) {
+                if(!$listeSalles[$i]->getDemandesTravaux()[$j]->isTerminee()) {
+                    $etat = "Installation demandée";
+                }
+                if($etat == "-") {
+                    $etat = "Opérationnel";
+                }
+            }
+            $salleArr[$listeSalles[$i]->getId()] = $listeSalles[$i];
+            $etatArr[$listeSalles[$i]->getId()] = $etat;
+
+        }
+
+        return $this->render('cdm/plan.html.twig', [
+            'salle' => $salleArr,
+            'etat' => $etatArr
         ]);
     }
 }
