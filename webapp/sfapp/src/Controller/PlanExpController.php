@@ -291,4 +291,30 @@ class PlanExpController extends AbstractController
             'etat' => $etatArr
         ]);
     }
+
+    #[IsGranted("ROLE_TECHNICIEN")]
+    #[Route('/plan/demande-travaux/{id}', name: 'app_demande_travaux')]
+    public function demande_travaux(int $id, ManagerRegistry $doctrine): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $demandeTravauxRepository = $entityManager->getRepository('App\Entity\DemandeTravaux');
+        $demandeTravaux = $demandeTravauxRepository->find($id);
+        $systemeAcquisition = $demandeTravaux->getSystemeAcquisition();
+
+        $listeReleves = null;
+
+        if($systemeAcquisition != null)
+        {
+            date_default_timezone_set('Europe/Paris');
+            $dateCourante = new \DateTime(date('Y-m-d H:i:s', time()));
+            $dateMoinsUneHeure = new \DateTime(date('Y-m-d H:i:s', time()- 1 * 60 * 60));
+            $service = new ReleveService();
+            $listeReleves = $service->getEntre($systemeAcquisition->getNom(),$dateMoinsUneHeure, $dateCourante);
+        }
+
+        return $this->render('demande-travaux.html.twig', [
+            'listeReleves' => $listeReleves,
+            'salle' => $demandeTravaux->getSalle(),
+        ]);
+    }
 }

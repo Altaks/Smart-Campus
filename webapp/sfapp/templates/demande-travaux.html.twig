@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% set nav_links = {
+    '/deconnexion' : "<box-icon name='exit'></box-icon> Déconnexion"
+} %}
+
+{% block title %}Smart Campus : Demande de travaux{% endblock %}
+
+{% block body %}
+    <h1 class="text-5xl font-extrabold dark:text-white mx-auto w-max my-6">Salle {{ salle.nom }}</h1>
+
+    <div class="max-w-screen-xl w-5/6 mx-auto">
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <h2>Relevées</h2>
+            {% if listeReleves is not null %}
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr >
+                    <th scope="col" class="px-6 py-3">
+                        Date
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Heure
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Temp (°C)
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Co2 (ppm)
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Hum (%)
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for releve in listeReleves %}
+                    <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ releve.date.d }} / {{ releve.date.M }} / {{ releve.date.Y }}
+                        </th>
+                        <td class="px-6 py-4">
+                            {{ releve.date.H }} : {{ releve.date.i }} : {{ releve.date.s }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ releve.temp }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ releve.co2 }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ releve.hum }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <p>Pas de relevé</p>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
