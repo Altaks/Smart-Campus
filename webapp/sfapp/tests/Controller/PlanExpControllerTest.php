@@ -12,6 +12,11 @@ class PlanExpControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
+        $utilisateur = $client->getContainer()->get('doctrine')->getRepository('App\Entity\Utilisateur')->findOneBy(['identifiant' => 'yghamri']);
+        $this->assertNotNull($utilisateur);
+
+        $client->loginUser($utilisateur);
+
         // Vérifier si la salle D001 existe
         $entityManager = $client->getContainer()->get('doctrine')->getManager();
         $sallesRepository = $entityManager->getRepository(Salle::class);
@@ -37,11 +42,20 @@ class PlanExpControllerTest extends WebTestCase
 
         $client->request('GET', '/plan/' . $salleD->getId() . '/demander-installation');
         $this->assertResponseRedirects("/plan");
+        $client->followRedirect();
+
+        $demande_travaux = $client->getContainer()->get('doctrine')->getRepository('App\Entity\DemandeTravaux')->findOneBy(['salle' => $salleD->getId()]);
+        $this->assertNotNull($demande_travaux);
     }
 
     public function test_cdm_demander_installation_sur_salle_invalide(): void
     {
         $client = static::createClient();
+
+        $utilisateur = $client->getContainer()->get('doctrine')->getRepository('App\Entity\Utilisateur')->findOneBy(['identifiant' => 'yghamri']);
+        $this->assertNotNull($utilisateur);
+
+        $client->loginUser($utilisateur);
 
         // La salle d'id -1 n'existe pas, le serveur doit renvoyer une erreur 404
         $client->request('GET', '/plan/-1/demander-installation');
@@ -52,11 +66,17 @@ class PlanExpControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
+        $utilisateur = $client->getContainer()->get('doctrine')->getRepository('App\Entity\Utilisateur')->findOneBy(['identifiant' => 'yghamri']);
+        $this->assertNotNull($utilisateur);
+
+        $client->loginUser($utilisateur);
+
         $entityManager = $client->getContainer()->get('doctrine')->getManager();
 
         $systemeAcquisition = new SystemeAcquisition();
         $systemeAcquisition->setNom("ESP-123");
         $systemeAcquisition->setBaseDonnees("sae34bdm2eq3");
+        $systemeAcquisition->setEtat("Non installé");
 
         $salle = new Salle();
         $salle->setNom("X001");
@@ -76,6 +96,8 @@ class PlanExpControllerTest extends WebTestCase
 
         // La salle d'id -1 n'existe pas, le serveur doit renvoyer une erreur 404
         $client->request('GET', '/plan/' . $sa->getId() . '/demander-installation');
+        $this->assertResponseRedirects();
+        $client->followRedirect();
         $this->assertResponseStatusCodeSame(404);
     }
 
