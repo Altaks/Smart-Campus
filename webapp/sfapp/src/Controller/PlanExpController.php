@@ -309,13 +309,18 @@ class PlanExpController extends AbstractController
         $etatArr = Array();
 
         for($i = 0; $i < count($listeSalles); $i++) {
-            $etat = "-";
+            $etat = "Non installé";
             for($j = 0; $j < count($listeSalles[$i]->getDemandesTravaux()); $j++) {
                 if(!$listeSalles[$i]->getDemandesTravaux()[$j]->isTerminee()) {
                     $etat = "Installation demandée";
+                    break;
                 }
-                if($etat == "-") {
+            }
+            if($etat == "Non installé") {
+                if($listeSalles[$i]->getSystemeAcquisition() != null) {
                     $etat = "Opérationnel";
+                } else {
+                    $etat = "Non installé";
                 }
             }
             $salleArr[$listeSalles[$i]->getId()] = $listeSalles[$i];
