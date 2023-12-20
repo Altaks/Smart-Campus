@@ -86,7 +86,7 @@ class AppFixtures extends Fixture
         $sa3 = new SystemeAcquisition();
         $sa3->setNom('ESP-014')
             ->setBaseDonnees("sae34bdl2eq1")
-            ->setEtat("Pas installé");
+            ->setEtat("Non installé");
 
         $salle3 = new Salle();
         $salle3->setNom("D201")
@@ -103,7 +103,8 @@ class AppFixtures extends Fixture
 
         $sa4 = new SystemeAcquisition();
         $sa4->setNom('ESP-018')
-            ->setBaseDonnees("sae34bdm1eq2");
+            ->setBaseDonnees("sae34bdm1eq2")
+            ->setEtat("Non installé");
 
         $salle4 = new Salle();
         $salle4->setNom("D204")
