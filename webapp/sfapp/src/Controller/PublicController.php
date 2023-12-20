@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\DemandeTravaux;
 use App\Entity\Salle;
 use App\Service\ReleveService;
 use Doctrine\Persistence\ManagerRegistry;
@@ -36,15 +37,27 @@ class PublicController extends AbstractController
     }
 
 
-    #[Route('/accueil/', name: 'personel_accueil')]
-    public function indexTechnicien(): Response
+    #[Route('/accueil/', name: 'accueil')]
+    public function indexTechnicien(ManagerRegistry $registry): Response
     {
         if ($this->isGranted("ROLE_TECHNICIEN")){
-            return $this->render('accueil/technicien.html.twig', []);
+
+            // US Technicien : Consulter la liste des demandes d'installation
+
+            // recupère les demandes d'installations non terminées
+            $demandesInstall = $registry->getRepository('App\Entity\DemandeTravaux')
+                ->findBy(["type"=>"Installation",
+                    "terminee"=>false]);
+
+            return $this->render('accueil-technicien.html.twig', [
+                "demandesInstall" => $demandesInstall
+            ]);
         }
+
         elseif ($this->isGranted("ROLE_CHARGE_DE_MISSION")){
             return $this->render('accueil/charge-de-mission.html.twig', []);
         }
+
         else{
             throw $this->createNotFoundException("Page non implémentée pour le moment");
         }

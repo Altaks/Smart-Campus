@@ -3,11 +3,10 @@
 namespace App\Controller;
 
 
-use App\Entity\Batiment;
 use App\Entity\DemandeTravaux;
 use App\Entity\Salle;
 use App\Entity\SystemeAcquisition;
-use App\Service\releveService;
+use App\Service\ReleveService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -270,10 +269,17 @@ class PlanExpController extends AbstractController
         $salleRepository = $entityManager->getRepository('App\Entity\Salle');
         $salle = $salleRepository->findOneBy(['id' => $id_salle]);
 
-        if($salle == null){
+        if ($salle == null) {
             throw $this->createNotFoundException("La salle n'existe pas");
-        } else if($salle->getSystemeAcquisition() != null){
+        } else if ($salle->getSystemeAcquisition() != null) {
             throw $this->createNotFoundException("La salle dispose déjà d'un système d'acquisition");
+        }
+
+        $demandeTravaux = $entityManager->getRepository('App\Entity\DemandeTravaux');
+        $demandeTravauxSalleNonTerminee = $demandeTravaux->findOneBy(['salle' => $salle->getId(), 'type' => 'Installation', 'terminee' => false]);
+
+        if($demandeTravauxSalleNonTerminee != null){
+            throw $this->createNotFoundException("La salle dispose déjà d'une demande d'installation en cours");
         }
 
         $demandeTravaux = new DemandeTravaux();
@@ -286,5 +292,41 @@ class PlanExpController extends AbstractController
         $entityManager->flush();
 
         return $this->redirect("/plan");
+    }
+
+    /*
+     * Charge de mission : Consulter les infos des salles du plan d'expérimentation
+     */
+    #[IsGranted("ROLE_CHARGE_DE_MISSION")]
+    #[Route('/plan', name: 'cpm_plan')]
+    public function cdm_plan(ManagerRegistry $doctrine): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $sallesRepository = $entityManager->getRepository('App\Entity\Salle');
+        $listeSalles = $sallesRepository->findAll();
+
+        $salleArr = Array();
+        $etatArr = Array();
+
+        for($i = 0; $i < count($listeSalles); $i++) {
+            $etat = "-";
+            for($j = 0; $j < count($listeSalles[$i]->getDemandesTravaux()); $j++) {
+                if(!$listeSalles[$i]->getDemandesTravaux()[$j]->isTerminee()) {
+                    $etat = "Installation demandée";
+                }
+                if($etat == "-") {
+                    $etat = "Opérationnel";
+                }
+            }
+            $salleArr[$listeSalles[$i]->getId()] = $listeSalles[$i];
+            $etatArr[$listeSalles[$i]->getId()] = $etat;
+
+        }
+
+        return $this->render('cdm/plan.html.twig', [
+            'salle' => $salleArr,
+            'etat' => $etatArr
+        ]);
+        
     }
 }
