@@ -41,7 +41,7 @@ class PublicControllerTest extends WebTestCase
         $client->request('GET', '/connexion');
         $crawler = $client->submitForm('submit', [
             '_username' => 'yghamri',
-            '_password' => 'pwq-yghamri'
+            '_password' => 'pwd-yghamri'
         ]);
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
         $this->assertMatchesRegularExpression('/\/auth-Success$/', $client->getResponse()->headers->get('location'));
