@@ -56,8 +56,19 @@ bool estConnecte()
 
 bool connexionWifi(const String& ssid, wpa2_auth_method_t methodeAutentification, const String& password, const String& identifiant, const String& nomUtilisateur)
 {
-    if(methodeAutentification == WPA2_AUTH_TLS)
-    WiFi.begin(ssid, password);
+    switch(methodeAutentification)
+    {
+        case WPA2_AUTH_PEAP:
+            WiFi.begin(ssid, WPA2_AUTH_PEAP, identifiant, nomUtilisateur, password);
+            break;
+        case WPA2_AUTH_TTLS:
+            WiFi.begin(ssid, WPA2_AUTH_TTLS, identifiant, nomUtilisateur, password);
+            break;
+        case WPA2_AUTH_TLS:
+            WiFi.begin(ssid, password);
+            break;
+    }
+    
     
     for(int counter = 0 ; counter <= 60 && WiFi.status() != WL_CONNECTED ; counter++)
     {

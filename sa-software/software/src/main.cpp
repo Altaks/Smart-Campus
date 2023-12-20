@@ -12,8 +12,11 @@
 TempEtHum* tempEtHum;
 unsigned short* co2;
 Donnees* donnees;
+const String* nomReseau    = new String("eduroam");
+const char* password       = "";
+const char* identifiant    = "apanis";
+const char* nomUtilisateur = "apanis";
 
-const String* nomReseau = new String("eduspot");
 
 void setup() {
     tempEtHum = new TempEtHum();
@@ -26,24 +29,20 @@ void setup() {
     Serial.begin(9600);
     while(!Serial);
 
-    // delay(1000);
+    delay(1000);
 
-    // //Initialise la tâche température et humidité 
-    // initTempEtHum(tempEtHum);
-  
-  
-    // //Initialise la tâche l'horodatage
-    // initHeure();
+    //Initialise la tâche température et humidité 
+    initTempEtHum(tempEtHum);
 
-    // delay(1000);
-  
-    // //Initialise la tâche de CO2
-    // initQualAir(co2);
+    delay(1000);
 
-    // delay(1000);
-    // //initAffichage(donnees);
+    //Initialise la tâche de CO2
+    initQualAir(co2);
 
-    // delay(1000);
+    delay(1000);
+    initAffichage(donnees);
+
+    delay(1000);
     initReseauStation();
 
 
@@ -98,7 +97,7 @@ void loop() {
         
         if(cnt < nbReseaux) //si le reseau est trouvé 
         {
-            if(connexionWifi(*nomReseau))
+            if(connexionWifi(*nomReseau,WPA2_AUTH_PEAP, password ,identifiant, nomUtilisateur))
             {
                 Serial.println("Connexion a "+*nomReseau+" Reussie");
                 initHeure();
@@ -114,5 +113,5 @@ void loop() {
             Serial.println("Echec de la onnexion a "+*nomReseau);
         }
     }
-    //Serial.printf("temp: %.1f; hum: %.1f; co2: %d\n",tempEtHum->temperature,tempEtHum->humidite,*co2);
+    Serial.printf("temp: %.1f; hum: %.1f; co2: %d\n",tempEtHum->temperature,tempEtHum->humidite,*co2);
 }
