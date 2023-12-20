@@ -93,12 +93,35 @@ class AppFixtures extends Fixture
             ->setOrientation("No")
             ->setNombreFenetre(2)
             ->setNombrePorte(1)
-            ->setContientpc(true)
+            ->setContientpc(false)
             ->setBatiment("Bâtiment D");
 
 
         $manager->persist($sa3);
         $manager->persist($salle3);
+
+
+        $sa4 = new SystemeAcquisition();
+        $sa4->setNom('ESP-018')
+            ->setBaseDonnees("sae34bdm1eq2");
+
+        $salle4 = new Salle();
+        $salle4->setNom("D204")
+            ->setOrientation("Su")
+            ->setNombreFenetre(6)
+            ->setNombrePorte(2)
+            ->setContientpc(true)
+            ->setBatiment("Bâtiment D");
+
+        $travaux4 = new DemandeTravaux();
+        $travaux4->setDate(new \DateTime('2023-12-20 17:00:00'))
+            ->setType('Installation')
+            ->setSalle($salle4)
+            ->setTerminee(false);
+
+        $manager->persist($sa4);
+        $manager->persist($salle4);
+        $manager->persist($travaux4);
 
 
         $manager->flush();
