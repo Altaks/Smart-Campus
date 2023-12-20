@@ -1,11 +1,12 @@
 <?php
 
 namespace App\tests\Controller;
-
+use App\Repository\UtilisateurRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class PublicControllerTest extends WebTestCase
 {
+
     public function test_formulaire_de_connexion_correspond_a_la_maquette(): void
     {
         $client = static::createClient();
@@ -87,5 +88,20 @@ class PublicControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
         $this->assertMatchesRegularExpression('/\/connexion$/', $client->getResponse()->headers->get('location'));
         $client->followRedirect();
+    }
+
+    public function test_accueil_technicien_requete_en_tant_que_technicien(): void
+    {
+        $client = static::createClient();
+
+        // retrieve the test user
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $crawler = $client->request('GET', '/accueil/');
+        $this->assertResponseIsSuccessful();
     }
 }
