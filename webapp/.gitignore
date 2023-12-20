@@ -4,4 +4,3 @@
 .env
 *.json
 **/*.json
-.env
