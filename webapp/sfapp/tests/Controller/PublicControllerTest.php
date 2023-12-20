@@ -1,7 +1,9 @@
 <?php
 
 namespace App\tests\Controller;
+use App\Repository\DemandeTravauxRepository;
 use App\Repository\UtilisateurRepository;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class PublicControllerTest extends WebTestCase
@@ -103,5 +105,13 @@ class PublicControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/accueil/');
         $this->assertResponseIsSuccessful();
+
+
+        $demandesRepository = static ::getContainer()->get(DemandeTravauxRepository::class);
+        $nbDemandes = sizeof($demandesRepository->findBy(["type"=>"Installation", "terminee"=>false]));
+
+
+        $ul = $crawler->filter("#listeDemandesInstallation");
+        $this->assertEquals($nbDemandes, $ul->count());
     }
 }
