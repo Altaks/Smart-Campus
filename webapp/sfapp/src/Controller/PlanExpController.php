@@ -4,6 +4,7 @@ namespace App\Controller;
 
 
 use App\Entity\Batiment;
+use App\Entity\DemandeTravaux;
 use App\Entity\Salle;
 use App\Entity\SystemeAcquisition;
 use App\Service\releveService;
@@ -256,5 +257,34 @@ class PlanExpController extends AbstractController
         return $this->render('infra/salle.html.twig', [
             'listeSalles' => $listeSalles
         ]);
+    }
+
+    // US : Chargé de mission : Demander l'installation d'un SA à une salle
+    #[IsGranted("ROLE_CHARGE_DE_MISSION")]
+    #[Route('/plan/{id_salle}/demander-installation', name: 'cdm_demander_install')]
+    public function cdm_demander_install(ManagerRegistry $doctrine, int $id_salle)
+    {
+
+        $entityManager = $doctrine->getManager();
+
+        $salleRepository = $entityManager->getRepository('App\Entity\Salle');
+        $salle = $salleRepository->findOneBy(['id' => $id_salle]);
+
+        if($salle == null){
+            throw $this->createNotFoundException("La salle n'existe pas");
+        } else if($salle->getSystemeAcquisition() != null){
+            throw $this->createNotFoundException("La salle dispose déjà d'un système d'acquisition");
+        }
+
+        $demandeTravaux = new DemandeTravaux();
+        $demandeTravaux->setSalle($salle);
+        $demandeTravaux->setTerminee(false);
+        $demandeTravaux->setDate(new \DateTime());
+        $demandeTravaux->setType("Installation");
+
+        $entityManager->persist($demandeTravaux);
+        $entityManager->flush();
+
+        return $this->redirect("/plan");
     }
 }
