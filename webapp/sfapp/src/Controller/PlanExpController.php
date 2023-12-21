@@ -306,14 +306,23 @@ class PlanExpController extends AbstractController
         if($systemeAcquisition != null)
         {
             date_default_timezone_set('Europe/Paris');
-            $dateCourante = new \DateTime(date('Y-m-d H:i:s', time()));
-            $dateMoinsUneHeure = new \DateTime(date('Y-m-d H:i:s', time() - 1 * 60 * 60 * 24 * 30));
+            $dateDemain = new \DateTime(date('Y-m-d H:i:s', time() + 24 * 60 * 60 ));
+            $dateHier = new \DateTime(date('Y-m-d H:i:s', time() - 24 * 60 * 60 ));
             $service = new ReleveService();
-            $listeReleves = $service->getEntre($systemeAcquisition, $dateMoinsUneHeure, $dateCourante);
+
+            $dictReleves = $service->getEntre($systemeAcquisition, $dateHier, $dateDemain);
+            $listeDatesReleves = array_keys($dictReleves);
+            foreach ($listeDatesReleves as $dateReleve) {
+                $dateMoisDeUneHeure = new \DateTime(date('Y-m-d H:i:s', time() - 1 * 60 * 60));
+                if ($dateMoisDeUneHeure->diff(new \DateTime($dateReleve))->invert == 1)
+                    unset($dictReleves[$dateReleve]);
+            }
+            arsort($dictReleves);
+
         }
 
         return $this->render('demande-travaux.html.twig', [
-            'listeReleves' => $listeReleves,
+            'listeReleves' => $dictReleves,
             'salle' => $demandeTravaux->getSalle(),
         ]);
     }
