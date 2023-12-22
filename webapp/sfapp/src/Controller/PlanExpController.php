@@ -6,7 +6,7 @@ namespace App\Controller;
 use App\Entity\DemandeTravaux;
 use App\Entity\Salle;
 use App\Entity\SystemeAcquisition;
-use App\Service\releveService;
+use App\Service\ReleveService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -259,11 +259,47 @@ class PlanExpController extends AbstractController
         ]);
     }
 
+    // US : Chargé de mission : Demander l'installation d'un SA à une salle
+    #[IsGranted("ROLE_CHARGE_DE_MISSION")]
+    #[Route('/plan/{id_salle}/demander-installation', name: 'cdm_demander_install')]
+    public function cdm_demander_install(ManagerRegistry $doctrine, int $id_salle)
+    {
+
+        $entityManager = $doctrine->getManager();
+
+        $salleRepository = $entityManager->getRepository('App\Entity\Salle');
+        $salle = $salleRepository->findOneBy(['id' => $id_salle]);
+
+        if ($salle == null) {
+            throw $this->createNotFoundException("La salle n'existe pas");
+        } else if ($salle->getSystemeAcquisition() != null) {
+            throw $this->createNotFoundException("La salle dispose déjà d'un système d'acquisition");
+        }
+
+        $demandeTravaux = $entityManager->getRepository('App\Entity\DemandeTravaux');
+        $demandeTravauxSalleNonTerminee = $demandeTravaux->findOneBy(['salle' => $salle->getId(), 'type' => 'Installation', 'terminee' => false]);
+
+        if($demandeTravauxSalleNonTerminee != null){
+            throw $this->createNotFoundException("La salle dispose déjà d'une demande d'installation en cours");
+        }
+
+        $demandeTravaux = new DemandeTravaux();
+        $demandeTravaux->setSalle($salle);
+        $demandeTravaux->setTerminee(false);
+        $demandeTravaux->setDate(new \DateTime());
+        $demandeTravaux->setType("Installation");
+
+        $entityManager->persist($demandeTravaux);
+        $entityManager->flush();
+
+        return $this->redirect("/plan");
+    }
+
     /*
      * Charge de mission : Consulter les infos des salles du plan d'expérimentation
      */
     #[IsGranted("ROLE_CHARGE_DE_MISSION")]
-    #[Route('/plan', name: 'cpm_plan')]
+    #[Route('/plan', name: 'cdm_plan')]
     public function cdm_plan(ManagerRegistry $doctrine): Response
     {
         $entityManager = $doctrine->getManager();
@@ -274,13 +310,18 @@ class PlanExpController extends AbstractController
         $etatArr = Array();
 
         for($i = 0; $i < count($listeSalles); $i++) {
-            $etat = "-";
+            $etat = "Non installé";
             for($j = 0; $j < count($listeSalles[$i]->getDemandesTravaux()); $j++) {
                 if(!$listeSalles[$i]->getDemandesTravaux()[$j]->isTerminee()) {
                     $etat = "Installation demandée";
+                    break;
                 }
-                if($etat == "-") {
+            }
+            if($etat == "Non installé") {
+                if($listeSalles[$i]->getSystemeAcquisition() != null) {
                     $etat = "Opérationnel";
+                } else {
+                    $etat = "Non installé";
                 }
             }
             $salleArr[$listeSalles[$i]->getId()] = $listeSalles[$i];
@@ -307,6 +348,10 @@ class PlanExpController extends AbstractController
 
         $sysAcquiRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
 
+        $systemeAcquisition = $demandeTravaux->getSystemeAcquisition();
+
+        $dictReleves = null;
+
         if($request->getMethod() == "POST"){
             $value = $_POST["sa"];
             if($value == "aucun"){
@@ -332,11 +377,31 @@ class PlanExpController extends AbstractController
         }
 
         $listeSysAcquiNonInstall = $sysAcquiRepository->findBy(['etat' => 'Non installé']);
+        
+        if($systemeAcquisition != null)
+        {
+            date_default_timezone_set('Europe/Paris');
+            $dateDemain = new \DateTime(date('Y-m-d H:i:s', time() + 24 * 60 * 60 ));
+            $dateHier = new \DateTime(date('Y-m-d H:i:s', time() - 24 * 60 * 60 ));
+            $service = new ReleveService();
+
+            $dictReleves = $service->getEntre($systemeAcquisition, $dateHier, $dateDemain);
+            $listeDatesReleves = array_keys($dictReleves);
+
+            $dateMoisDeUneHeure = new \DateTime(date('Y-m-d H:i:s', time() - 1 * 60 * 60));
+            foreach ($listeDatesReleves as $dateReleve) {
+                if ($dateMoisDeUneHeure->diff(new \DateTime($dateReleve))->invert == 1)
+                    unset($dictReleves[$dateReleve]);
+            }
+            krsort($dictReleves);
+            
+        }
 
         return $this->render('demande-travaux.html.twig', [
+            'listeReleves' => $dictReleves,
             'demandeTravaux' => $demandeTravaux,
             'listeSysAcqui' => $listeSysAcquiNonInstall,
-            'salle' => $salle,
+            'salle' => $salle
         ]);
     }
 }

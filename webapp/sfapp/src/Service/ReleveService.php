@@ -2,89 +2,145 @@
 
 namespace App\Service;
 
+use App\Entity\SystemeAcquisition;
 use DateTime;
-use Symfony\Component\Validator\Constraints\Date;
+use Symfony\Component\HttpClient\HttpClient;
 
+/**
+ * Classe permettant de récupérer les relevés d'un système d'acquisition en utilisant l'API de SAE34
+ * @package App\Service
+ * @author Arnaud Mazurier
+ * @version 1.0
+ */
 class ReleveService {
 
-    public function getDernier(int $tag) : array{
-        $a_dir = getcwd();
+    /**
+     * Permet de convertir un fichier JSON en relevés groupés par date avec une proximité temporelle de 5 minutes
+     * @param array $array liste de relevés en JSON convertit par Symfony et la méthode toArray d'une réponse HTTP
+     * @return array liste de relevés groupés par date avec une proximité de 5 minutes
+     */
+    private static function conversionVersRelevesGroupes(array $array) : array {
+        $listeReleves = [];
 
-        chdir("/app/sfapp/releves");
+        // Pour chaque relevé
+        foreach($array as $releve){
 
+            // Ajouter la date si elle n'existe pas déjà dans la liste des relevés
+            if(!array_key_exists($releve["dateCapture"], $listeReleves)){
+                $listeReleves[$releve["dateCapture"]] = ["temp" => null, "hum" => null, "co2" => null];
+            }
 
-
-        $fileName = "{$tag}.json";
-
-        $file = file_get_contents($fileName);
-
-        if (!file_exists($fileName)){
-            return ["date" => null, "co2" => null, "temp" => null, "hum" => null];
+            // Ajoute la valeur pour le timestamp exact
+            $listeReleves[$releve["dateCapture"]][$releve["nom"]] = $releve["valeur"];
         }
 
-        $json = json_decode($file, true);
+        // Regrouper toutes les valeurs si elles sont à moins de 5 minutes d'écart
+        $listeRelevesGroupes = [];
 
-        $valuesFetch = ["date" => null, "co2" => null, "temp" => null, "hum" => null];
-        $valuesRead = ["date" => false, "co2" => false, "temp" => false, "hum" => false];
+        // Pour chaque relevé
+        foreach($listeReleves as $date => $releve){
 
+            // Arrondi inférieur à la date qui est 5 minutes la plus proche
+            $date = new DateTime($date);
+            $date->setTime($date->format('H'), $date->format('i') - ($date->format('i') % 5), 0);
+            $date = $date->format('Y-m-d H:i:s');
 
-        foreach ($json as $releve){
-            $type = $releve["nom"];
-            if (!$valuesRead[$type]){
-
-                if (!$valuesRead["date"]){
-                    $valuesFetch[$type] = $releve["valeur"];
-
-
-
-                    $valuesFetch["date"] = $releve["dateCapture"];
-                    $valuesRead[$type] = true;
-                    $valuesRead["date"] = true;
-                }
-                else{
-
-                    $date1 = new DateTime($valuesFetch["date"]);
-                    $date2 = new DateTime($releve["dateCapture"]);
-                    $diff = $date1->diff($date2);
-
-                    if (!($diff->y != 0 || $diff->m != 0 || $diff->d != 0 || $diff->h != 0) && $diff->i < 5 && $diff->i > -5){
-                        $valuesFetch[$type]=$releve["valeur"];
-                        $valuesRead[$type]=true;
-                    }
-                }
+            // Ajouter la date si elle n'existe pas déjà dans la liste des relevés groupés
+            if(!array_key_exists($date, $listeRelevesGroupes)){
+                $listeRelevesGroupes[$date] = ["temp" => null, "hum" => null, "co2" => null];
             }
-            if ($valuesRead["date"] && $valuesRead["co2"] && $valuesRead["temp"] && $valuesRead["hum"]){
-                break;
-            }
+
+            // Ajouter les valeurs si elles n'existent pas déjà dans le relevé du timestamp donné (évite des collisions)
+            if(is_null($listeRelevesGroupes[$date]["temp"])) $listeRelevesGroupes[$date]["temp"] = $releve["temp"];
+            if(is_null($listeRelevesGroupes[$date]["hum"])) $listeRelevesGroupes[$date]["hum"] = $releve["hum"];
+            if(is_null($listeRelevesGroupes[$date]["co2"])) $listeRelevesGroupes[$date]["co2"] = $releve["co2"];
         }
-        chdir($a_dir);
-        return $valuesFetch;
+
+        return $listeRelevesGroupes;
     }
 
-    public function getAll(int $tag) : array{
-        $a_dir = getcwd();
+    /**
+     * Permet de récupérer le dernier relevé d'un système d'acquisition
+     * @param SystemeAcquisition $sa Le systeme d'acquisition dont on veut récupérer le dernier relevé
+     * @return array Une array contenant le dernier relevé du système d'acquisition, converti
+     */
+    public function getDernier(SystemeAcquisition $sa) : array {
 
-        chdir("/app/sfapp/releves");
+        // Création d'un client HTTP avec les informations de connexion
+        $client = HttpClient::create([
+            'headers' => [
+                'accept' => 'application/json',
+                'dbname' => $sa->getBaseDonnees(),
+                'username' => 'm2eq3',
+                'userpass' => 'howjoc-dyjhId-hiwre0'
+            ]
+        ]);
+
+        // Envoi de la requête HTTP
+        $response = $client->request('GET', 'https://sae34.k8s.iut-larochelle.fr/api/captures/last' , [
+            'query' => ['page' => 1]
+        ]);
+
+        // Conversion de la réponse
+        return static::conversionVersRelevesGroupes($response->toArray());
+    }
+
+    /**
+     * Permet de récupérer tous les relevés d'un système d'acquisition
+     * @param SystemeAcquisition $sa Le systeme d'acquisition dont on veut récupérer les relevés
+     * @return array Une array contenant tous les relevés du système d'acquisition, convertis
+     */
+    public function getTout(SystemeAcquisition $sa) : array {
+
+        // Création d'un client HTTP avec les informations de connexion
+        $client = HttpClient::create([
+            'headers' => [
+                'accept' => 'application/json',
+                'dbname' => $sa->getBaseDonnees(),
+                'username' => 'm2eq3',
+                'userpass' => 'howjoc-dyjhId-hiwre0'
+            ]
+        ]);
 
 
+        // Envoi de la requête HTTP
+        $response = $client->request('GET', 'https://sae34.k8s.iut-larochelle.fr/api/captures' , [
+            'query' => ['page' => 1]
+        ]);
 
-        $fileName = "{$tag}.json";
+        // Conversion de la réponse
+        return static::conversionVersRelevesGroupes($response->toArray());
+    }
 
-        $file = file_get_contents($fileName);
+    /**
+     * @param SystemeAcquisition $sa Le systeme d'acquisition dont on veut récupérer les relevés
+     * @param DateTime $dateDebut La date de début de la période, inclue, précision jusqu'au jour nécessaire
+     * @param DateTime $dateFin La date de fin de la période, exclue, précision jusqu'au jour nécessaire
+     * @return array Une array contenant tous les relevés du système d'acquisition qui sont apparus pendant la période donnée, convertis
+     */
+    public function getEntre(SystemeAcquisition $sa, DateTime $dateDebut, DateTime $dateFin) : array {
 
-        if (!file_exists($fileName)){
-            return [];
-        }
+        // Création d'un client HTTP avec les informations de connexion
+        $client = HttpClient::create([
+            'headers' => [
+                'accept' => 'application/json',
+                'dbname' => $sa->getBaseDonnees(),
+                'username' => 'm2eq3',
+                'userpass' => 'howjoc-dyjhId-hiwre0'
+            ]
+        ]);
 
-        $json = json_decode($file, true);
-        $releves = array();
+        // Envoi de la requête HTTP
+        $response = $client->request('GET', 'https://sae34.k8s.iut-larochelle.fr/api/captures/interval' , [
+            'query' => [
+                'date1' => $dateDebut->format('Y-m-d'),
+                'date2' => $dateFin->format('Y-m-d'),
+                'page' => 1
+            ]
+        ]);
 
-        foreach ($json as $releve){
-            $releves[] = ['date'=>$releve['dateCapture'], 'type'=> $releve['nom'], 'valeur'=>$releve['valeur']];
-        }
-
-        chdir($a_dir);
-        return $releves;
+        // Conversion de la réponse
+        return static::conversionVersRelevesGroupes($response->toArray());
     }
 
 }
