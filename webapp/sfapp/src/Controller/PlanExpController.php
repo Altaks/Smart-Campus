@@ -348,8 +348,6 @@ class PlanExpController extends AbstractController
 
         $sysAcquiRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
 
-        $systemeAcquisition = $demandeTravaux->getSystemeAcquisition();
-
         $dictReleves = null;
 
         if($request->getMethod() == "POST"){
@@ -377,7 +375,7 @@ class PlanExpController extends AbstractController
         }
 
         $listeSysAcquiNonInstall = $sysAcquiRepository->findBy(['etat' => 'Non installé']);
-        
+        $systemeAcquisition = $demandeTravaux->getSystemeAcquisition();
         if($systemeAcquisition != null)
         {
             date_default_timezone_set('Europe/Paris');
