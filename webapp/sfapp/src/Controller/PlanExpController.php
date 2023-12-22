@@ -312,8 +312,9 @@ class PlanExpController extends AbstractController
 
             $dictReleves = $service->getEntre($systemeAcquisition, $dateHier, $dateDemain);
             $listeDatesReleves = array_keys($dictReleves);
+
+            $dateMoisDeUneHeure = new \DateTime(date('Y-m-d H:i:s', time() - 1 * 60 * 60));
             foreach ($listeDatesReleves as $dateReleve) {
-                $dateMoisDeUneHeure = new \DateTime(date('Y-m-d H:i:s', time() - 1 * 60 * 60));
                 if ($dateMoisDeUneHeure->diff(new \DateTime($dateReleve))->invert == 1)
                     unset($dictReleves[$dateReleve]);
             }
