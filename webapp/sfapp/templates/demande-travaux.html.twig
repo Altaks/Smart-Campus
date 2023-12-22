@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Demande travaux : Salle {{ salle.nom }}{% endblock %}
+
+{% block body %}
+
+
+    <div class="relative overflow-x-auto max-w-7xl mx-auto">
+        <h1 class="text-2xl py-12 text-center">Salle {{ salle.nom }}</h1>
+
+        {{ form_start(form) }}
+
+
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}

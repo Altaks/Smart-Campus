@@ -10,6 +10,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
@@ -198,7 +199,7 @@ class PlanExpController extends AbstractController
                 date_default_timezone_set('Europe/Paris');
                 $dateCourante = new \DateTime(date('Y-m-d H:i:s', time()-6*60));
                 $dateReleve = new \DateTime($dernierReleve["date"]);
-                
+
                 if($dateCourante->diff($dateReleve)->invert == 0)
                 {
                     $listeSAFonctionnels[] = $SA;
@@ -289,6 +290,64 @@ class PlanExpController extends AbstractController
         return $this->render('cdm/plan.html.twig', [
             'salle' => $salleArr,
             'etat' => $etatArr
+        ]);
+    }
+
+    #[IsGranted("ROLE_TECHNICIEN")]
+    #[Route('/demande-travaux/{id}', name: 'demande_travaux')]
+    public function demande_travaux(int $id, ManagerRegistry $doctrine, Request $request): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $travauxRepository = $entityManager->getRepository('App\Entity\DemandeTravaux');
+        $demandeTravaux = $travauxRepository->findOneBy(['id' => $id]);
+
+        $salleRepository = $entityManager->getRepository('App\Entity\Salle');
+        $salle = $salleRepository->findOneBy(['id' => $demandeTravaux->getSalle()->getId()]);
+
+        $sysAcquiRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
+        $listeSysAcquiNonInstall = $sysAcquiRepository->findBy(['etat' => 'Non installé']);
+
+
+
+        $form = $this->createFormBuilder()
+            ->add('sa', EntityType::class, [
+                'class' => SystemeAcquisition::class,
+                'choices' => ($demandeTravaux->getSystemeAcquisition() != null)?
+                    ([$listeSysAcquiNonInstall,
+                    'Aucun' => null
+                        ]) :
+                    ([
+                        $listeSysAcquiNonInstall
+                    ]),
+                'choice_label' => 'nom',
+                'multiple' => false,
+                'required' => false,
+                'expanded' => false,
+                'empty_data' => 'Aucun',
+                'placeholder' => ($demandeTravaux->getSystemeAcquisition() != null)?($demandeTravaux->getSystemeAcquisition()->getNom()):('Aucun'),
+                'attr' => array(
+                    'onchange' => 'this.form.submit()',
+                )
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted())
+        {
+            if($form->getData()['sa']) {
+                $sysAcqui = $form->getData()['sa'];
+                $demandeTravaux->setSystemeAcquisition($sysAcqui);
+                $sysAcqui->setEtat('Installation');
+                $doctrine->getManager()->flush();
+            }
+        }
+
+        return $this->render('demande-travaux.html.twig', [
+            'demandeTravaux' => $demandeTravaux,
+            'listeSysAcqui' => $listeSysAcquiNonInstall,
+            'salle' => $salle,
+            'form' => $form
         ]);
     }
 }
