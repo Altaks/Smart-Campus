@@ -318,8 +318,8 @@ class PlanExpController extends AbstractController
                 if ($dateMoisDeUneHeure->diff(new \DateTime($dateReleve))->invert == 1)
                     unset($dictReleves[$dateReleve]);
             }
-            arsort($dictReleves);
-
+            krsort($dictReleves);
+            
         }
 
         return $this->render('demande-travaux.html.twig', [
