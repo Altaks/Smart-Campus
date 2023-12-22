@@ -393,7 +393,13 @@ class PlanExpController extends AbstractController
                 if ($dateMoisDeUneHeure->diff(new \DateTime($dateReleve))->invert == 1)
                     unset($dictReleves[$dateReleve]);
             }
-            krsort($dictReleves);
+            if (empty($dictReleves)){
+                $dictReleves = null;
+            }
+            else{
+                krsort($dictReleves);
+            }
+
             
         }
 
