@@ -21,7 +21,7 @@
             <ul id="listeDemandesInstallation" class="text-xl space-y-1 text-gray-800 list-none list-inside dark:text-gray-400">
 
                 {% for demande in demandesInstall %}
-                    <li class="my-2"><a href="/demande-travaux/{{ demande.id }}">{{ demande.date | date('d M Y')}}  -  {{ demande.salle.nom }}</a></li>
+                    <li class="my-2"><a href="/plan/demande-travaux/{{ demande.id }}">{{ demande.date | date('d M Y')}}  -  {{ demande.salle.nom }}</a></li>
                 {% endfor %}
             </ul>
 

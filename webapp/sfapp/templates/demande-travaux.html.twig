@@ -7,11 +7,19 @@
 
     <div class="relative overflow-x-auto max-w-7xl mx-auto">
         <h1 class="text-2xl py-12 text-center">Salle {{ salle.nom }}</h1>
-
-        {{ form_start(form) }}
-
-
-        {{ form_end(form) }}
+        <form action="/plan/demande-travaux/{{ demandeTravaux.id }}" method="post">
+            <select name="sa" onchange="form.submit()">
+                {% if demandeTravaux.systemeAcquisition is null %}
+                    <option id="option" selected value="aucun">Aucun</option>
+                {% else %}
+                    <option id="option" selected value="{{ demandeTravaux.systemeAcquisition.id }}">{{ demandeTravaux.systemeAcquisition.nom }}</option>
+                    <option id="option" value="aucun">Aucun</option>
+                {% endif %}
+                {% for systeme in listeSysAcqui %}
+                    <option id="option" value="{{ systeme.id }}">{{ systeme.nom }}</option>
+                {% endfor %}
+            </select>
+        </form>
     </div>
 
 {% endblock %}

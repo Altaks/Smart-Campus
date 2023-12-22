@@ -49,13 +49,13 @@ class PlanExpControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UtilisateurRepository::class);
-        $testUser = $userRepository->findOneBy(['identifiant' => 'yghamri']);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
 
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
         $travauxRepository = static ::getContainer()->get(DemandeTravauxRepository::class);
-        $travaux = $travauxRepository->findOne();
+        $travaux = $travauxRepository->findAll();
 
         for($i = 0; $i < count($travaux); $i++) {
             $client->request('GET', '/plan/demande-travaux/'.$travaux[$i]->getId());
@@ -63,17 +63,17 @@ class PlanExpControllerTest extends WebTestCase
         }
     }
 
-    public function test_demande_travaux_route_connexion_invalide_technicien(): void
+    public function test_demande_travaux_route_connexion_invalide_charge_de_mission(): void
     {
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UtilisateurRepository::class);
-        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'yghamri']);
 
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
         $travauxRepository = static ::getContainer()->get(DemandeTravauxRepository::class);
-        $travaux = $travauxRepository->findOne();
+        $travaux = $travauxRepository->findAll();
 
         for($i = 0; $i < count($travaux); $i++) {
             $client->request('GET', '/plan/demande-travaux/'.$travaux[$i]->getId());
@@ -86,11 +86,11 @@ class PlanExpControllerTest extends WebTestCase
         $client = static::createClient();
 
         $travauxRepository = static ::getContainer()->get(DemandeTravauxRepository::class);
-        $travaux = $travauxRepository->findOne();
+        $travaux = $travauxRepository->findAll();
 
         for($i = 0; $i < count($travaux); $i++) {
             $client->request('GET', '/plan/demande-travaux/'.$travaux[$i]->getId());
-            $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
+            $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
         }
     }
 
@@ -98,7 +98,7 @@ class PlanExpControllerTest extends WebTestCase
 
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UtilisateurRepository::class);
-        $testUser = $userRepository->findOneBy(['identifiant' => 'yghamri']);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
 
         // simulate $testUser being logged in
         $client->loginUser($testUser);
@@ -107,13 +107,21 @@ class PlanExpControllerTest extends WebTestCase
         $nbSystemesAcquisitionNonInstalle = count($systemesAcquisitionRepository->findBy(['etat' => 'Non installé']));
 
         $travauxRepository = static ::getContainer()->get(DemandeTravauxRepository::class);
-        $travaux = $travauxRepository->findOne();
+        $travaux = $travauxRepository->findAll();
 
         for($i = 0; $i < count($travaux); $i++) {
             $crawler = $client->request('GET', '/plan/demande-travaux/'.$travaux[$i]->getId());
 
-            $option = $crawler->filter("#listeSANonInstalle")->filter('option');
-            $this->assertEquals($nbSystemesAcquisitionNonInstalle, $option->count());
+            $option = $crawler->filter("#option")->filter('option');
+
+            if( $travaux[$i]->getSystemeAcquisition() == null){
+                $this->assertEquals($nbSystemesAcquisitionNonInstalle+1, $option->count());
+            }
+            else{
+                $this->assertEquals($nbSystemesAcquisitionNonInstalle+2, $option->count());
+            }
+
+
         }
     }
 }
