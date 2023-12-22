@@ -71,20 +71,7 @@
                         {{ salle.nombreFenetre }}
                     </td>
                     <td class="px-6 py-4">
-                        {% if etat[salle.id] == 'Installation demandée' %}
-                            <div class="p-1 bg-amber-500 text-white rounded-lg flex flex-row justify-evenly items-center">
-                                <span>Installation demandée</span>
-                            </div>
-                        {% elseif etat[salle.id] == 'Opérationnel' %}
-                            <div class="p-1 bg-emerald-500 text-white rounded-lg flex flex-row justify-evenly items-center">
-                                <span>Opérationnel</span>
-                            </div>
-                        {% elseif etat[salle.id] == 'Non installé' %}
-                            <a href="/plan/{{ salle.id }}/demander-installation" class="p-1 bg-blue-500 hover:bg-blue-700 duration-300 text-white rounded-lg flex flex-row justify-evenly items-center">
-                                <span>Demander une installation</span>
-                                <box-icon name='right-arrow-alt' color='#ffffff' ></box-icon>
-                            </a>
-                        {% endif %}
+                        {{ etat[salle.id] }}
                     </td>
                 </tr>
                 </tbody>

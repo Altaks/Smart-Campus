@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 
-use App\Entity\DemandeTravaux;
 use App\Entity\Salle;
 use App\Entity\SystemeAcquisition;
 use App\Service\ReleveService;
@@ -258,47 +257,11 @@ class PlanExpController extends AbstractController
         ]);
     }
 
-    // US : Chargé de mission : Demander l'installation d'un SA à une salle
-    #[IsGranted("ROLE_CHARGE_DE_MISSION")]
-    #[Route('/plan/{id_salle}/demander-installation', name: 'cdm_demander_install')]
-    public function cdm_demander_install(ManagerRegistry $doctrine, int $id_salle)
-    {
-
-        $entityManager = $doctrine->getManager();
-
-        $salleRepository = $entityManager->getRepository('App\Entity\Salle');
-        $salle = $salleRepository->findOneBy(['id' => $id_salle]);
-
-        if ($salle == null) {
-            throw $this->createNotFoundException("La salle n'existe pas");
-        } else if ($salle->getSystemeAcquisition() != null) {
-            throw $this->createNotFoundException("La salle dispose déjà d'un système d'acquisition");
-        }
-
-        $demandeTravaux = $entityManager->getRepository('App\Entity\DemandeTravaux');
-        $demandeTravauxSalleNonTerminee = $demandeTravaux->findOneBy(['salle' => $salle->getId(), 'type' => 'Installation', 'terminee' => false]);
-
-        if($demandeTravauxSalleNonTerminee != null){
-            throw $this->createNotFoundException("La salle dispose déjà d'une demande d'installation en cours");
-        }
-
-        $demandeTravaux = new DemandeTravaux();
-        $demandeTravaux->setSalle($salle);
-        $demandeTravaux->setTerminee(false);
-        $demandeTravaux->setDate(new \DateTime());
-        $demandeTravaux->setType("Installation");
-
-        $entityManager->persist($demandeTravaux);
-        $entityManager->flush();
-
-        return $this->redirect("/plan");
-    }
-
     /*
      * Charge de mission : Consulter les infos des salles du plan d'expérimentation
      */
     #[IsGranted("ROLE_CHARGE_DE_MISSION")]
-    #[Route('/plan', name: 'cdm_plan')]
+    #[Route('/plan', name: 'cpm_plan')]
     public function cdm_plan(ManagerRegistry $doctrine): Response
     {
         $entityManager = $doctrine->getManager();
@@ -309,18 +272,13 @@ class PlanExpController extends AbstractController
         $etatArr = Array();
 
         for($i = 0; $i < count($listeSalles); $i++) {
-            $etat = "Non installé";
+            $etat = "-";
             for($j = 0; $j < count($listeSalles[$i]->getDemandesTravaux()); $j++) {
                 if(!$listeSalles[$i]->getDemandesTravaux()[$j]->isTerminee()) {
                     $etat = "Installation demandée";
-                    break;
                 }
-            }
-            if($etat == "Non installé") {
-                if($listeSalles[$i]->getSystemeAcquisition() != null) {
+                if($etat == "-") {
                     $etat = "Opérationnel";
-                } else {
-                    $etat = "Non installé";
                 }
             }
             $salleArr[$listeSalles[$i]->getId()] = $listeSalles[$i];
@@ -332,7 +290,6 @@ class PlanExpController extends AbstractController
             'salle' => $salleArr,
             'etat' => $etatArr
         ]);
-        
     }
 
     #[IsGranted("ROLE_TECHNICIEN")]
