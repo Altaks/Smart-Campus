@@ -343,7 +343,7 @@ class PlanExpController extends AbstractController
         $demandeTravaux = $demandeTravauxRepository->find($id);
         $systemeAcquisition = $demandeTravaux->getSystemeAcquisition();
 
-        $listeReleves = null;
+        $dictReleves = null;
 
         if($systemeAcquisition != null)
         {

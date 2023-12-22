@@ -10,9 +10,9 @@
     <h1 class="text-5xl font-extrabold dark:text-white mx-auto w-max my-6">Salle {{ salle.nom }}</h1>
 
     <div class="max-w-screen-xl w-5/6 mx-auto">
-        <h2 class="py-12 text-2xl">Relevés</h2>
+        <h2 class="mt-12 mb-4 text-3xl">Relevés</h2>
+        {% if listeReleves is not null %}
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-            {% if listeReleves is not null %}
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr >
@@ -55,10 +55,10 @@
                 {% endfor %}
                 </tbody>
             </table>
-            {% else %}
-                <p>Pas de relevé</p>
-            {% endif %}
         </div>
+        {% else %}
+            <p class="text-lg italic text-gray-700">Pas de relevé</p>
+        {% endif %}
     </div>
 
 {% endblock %}
