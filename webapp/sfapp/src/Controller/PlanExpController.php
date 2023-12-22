@@ -332,6 +332,41 @@ class PlanExpController extends AbstractController
             'salle' => $salleArr,
             'etat' => $etatArr
         ]);
-        
+    }
+
+    #[IsGranted("ROLE_TECHNICIEN")]
+    #[Route('/plan/demande-travaux/{id}', name: 'app_demande_travaux')]
+    public function demande_travaux(int $id, ManagerRegistry $doctrine): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $demandeTravauxRepository = $entityManager->getRepository('App\Entity\DemandeTravaux');
+        $demandeTravaux = $demandeTravauxRepository->find($id);
+        $systemeAcquisition = $demandeTravaux->getSystemeAcquisition();
+
+        $listeReleves = null;
+
+        if($systemeAcquisition != null)
+        {
+            date_default_timezone_set('Europe/Paris');
+            $dateDemain = new \DateTime(date('Y-m-d H:i:s', time() + 24 * 60 * 60 ));
+            $dateHier = new \DateTime(date('Y-m-d H:i:s', time() - 24 * 60 * 60 ));
+            $service = new ReleveService();
+
+            $dictReleves = $service->getEntre($systemeAcquisition, $dateHier, $dateDemain);
+            $listeDatesReleves = array_keys($dictReleves);
+
+            $dateMoisDeUneHeure = new \DateTime(date('Y-m-d H:i:s', time() - 1 * 60 * 60));
+            foreach ($listeDatesReleves as $dateReleve) {
+                if ($dateMoisDeUneHeure->diff(new \DateTime($dateReleve))->invert == 1)
+                    unset($dictReleves[$dateReleve]);
+            }
+            krsort($dictReleves);
+            
+        }
+
+        return $this->render('demande-travaux.html.twig', [
+            'listeReleves' => $dictReleves,
+            'salle' => $demandeTravaux->getSalle(),
+        ]);
     }
 }

@@ -55,8 +55,6 @@ class AppFixtures extends Fixture
         $manager->persist($salle1);
         $manager->persist($travaux1);
 
-
-
         $sa2 = new SystemeAcquisition();
         $sa2->setNom('ESP-007')
             ->setBaseDonnees("sae34bdm1eq2")
@@ -103,7 +101,7 @@ class AppFixtures extends Fixture
 
         $sa4 = new SystemeAcquisition();
         $sa4->setNom('ESP-018')
-            ->setBaseDonnees("sae34bdm1eq2")
+            ->setBaseDonnees("sae34bdm2eq3")
             ->setEtat("Non installé");
 
         $salle4 = new Salle();
@@ -118,6 +116,7 @@ class AppFixtures extends Fixture
         $travaux4->setDate(new \DateTime('2023-12-20 17:00:00'))
             ->setType('Installation')
             ->setSalle($salle4)
+            ->setSystemeAcquisition($sa4)
             ->setTerminee(false);
 
         $manager->persist($sa4);

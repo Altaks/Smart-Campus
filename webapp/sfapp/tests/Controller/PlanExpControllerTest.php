@@ -10,7 +10,6 @@ use App\Repository\UtilisateurRepository;
 
 class PlanExpControllerTest extends WebTestCase
 {
-    
     public function test_cdm_demander_installation_sur_salle_valide(): void
     {
         $client = static::createClient();
@@ -120,7 +119,7 @@ class PlanExpControllerTest extends WebTestCase
         $client->request('GET', '/plan/' . $salle->getId() . '/demander-installation');
         $this->assertResponseStatusCodeSame(404);
     }
-    
+
     public function test_cdm_plan_route_connexion_valide(): void
     {
         $client = static::createClient();
