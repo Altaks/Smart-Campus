@@ -6,9 +6,9 @@
 
 
     <div class="relative overflow-x-auto max-w-7xl mx-auto">
-        <h1 class="text-2xl py-12 text-center">Salle {{ salle.nom }}</h1>
-        <form action="/plan/demande-travaux/{{ demandeTravaux.id }}" method="post">
-            <select name="sa" onchange="form.submit()">
+        <h1 class="lg:text-4xl text-6xl py-12 text-center">Salle {{ salle.nom }}</h1>
+        <form class="lg:w-1/6 lg:mr-auto mr-6 ml-6" action="/plan/demande-travaux/{{ demandeTravaux.id }}" method="post">
+            <select class="w-full lg:text-xl text-4xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" name="sa" onchange="form.submit()">
                 {% if demandeTravaux.systemeAcquisition is null %}
                     <option id="option" selected value="aucun">Aucun</option>
                 {% else %}
