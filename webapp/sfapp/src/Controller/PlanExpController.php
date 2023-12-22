@@ -11,6 +11,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
@@ -199,7 +200,7 @@ class PlanExpController extends AbstractController
                 date_default_timezone_set('Europe/Paris');
                 $dateCourante = new \DateTime(date('Y-m-d H:i:s', time()-6*60));
                 $dateReleve = new \DateTime($dernierReleve["date"]);
-                
+
                 if($dateCourante->diff($dateReleve)->invert == 0)
                 {
                     $listeSAFonctionnels[] = $SA;
@@ -335,16 +336,46 @@ class PlanExpController extends AbstractController
     }
 
     #[IsGranted("ROLE_TECHNICIEN")]
-    #[Route('/plan/demande-travaux/{id}', name: 'app_demande_travaux')]
-    public function demande_travaux(int $id, ManagerRegistry $doctrine): Response
+    #[Route('/plan/demande-travaux/{id}', name: 'demande_travaux')]
+    public function demande_travaux(int $id, ManagerRegistry $doctrine, Request $request): Response
     {
         $entityManager = $doctrine->getManager();
-        $demandeTravauxRepository = $entityManager->getRepository('App\Entity\DemandeTravaux');
-        $demandeTravaux = $demandeTravauxRepository->find($id);
-        $systemeAcquisition = $demandeTravaux->getSystemeAcquisition();
+        $travauxRepository = $entityManager->getRepository('App\Entity\DemandeTravaux');
+        $demandeTravaux = $travauxRepository->findOneBy(['id' => $id]);
+
+        $salleRepository = $entityManager->getRepository('App\Entity\Salle');
+        $salle = $salleRepository->findOneBy(['id' => $demandeTravaux->getSalle()->getId()]);
+
+        $sysAcquiRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
 
         $dictReleves = null;
 
+        if($request->getMethod() == "POST"){
+            $value = $_POST["sa"];
+            if($value == "aucun"){
+                $sa = $demandeTravaux->getSystemeAcquisition();
+                if ($sa != null){
+                    $sa->setEtat('Non installé');
+                    $demandeTravaux->setSystemeAcquisition(null);
+                    $entityManager->flush();
+                }
+            }
+            else{
+                $a_sa = $demandeTravaux->getSystemeAcquisition();
+                $n_sa = $sysAcquiRepository->findOneBy(["id" => $value]);
+                if ($a_sa != $n_sa){
+                    if ($a_sa != null){
+                        $a_sa->setEtat('Non installé');
+                    }
+                    $demandeTravaux->setSystemeAcquisition($n_sa);
+                    $n_sa->setEtat('Installation');
+                    $entityManager->flush();
+                }
+            }
+        }
+
+        $listeSysAcquiNonInstall = $sysAcquiRepository->findBy(['etat' => 'Non installé']);
+        $systemeAcquisition = $demandeTravaux->getSystemeAcquisition();
         if($systemeAcquisition != null)
         {
             date_default_timezone_set('Europe/Paris');
@@ -360,13 +391,21 @@ class PlanExpController extends AbstractController
                 if ($dateMoisDeUneHeure->diff(new \DateTime($dateReleve))->invert == 1)
                     unset($dictReleves[$dateReleve]);
             }
-            krsort($dictReleves);
+            if (empty($dictReleves)){
+                $dictReleves = null;
+            }
+            else{
+                krsort($dictReleves);
+            }
+
             
         }
 
         return $this->render('demande-travaux.html.twig', [
             'listeReleves' => $dictReleves,
-            'salle' => $demandeTravaux->getSalle(),
+            'demandeTravaux' => $demandeTravaux,
+            'listeSysAcqui' => $listeSysAcquiNonInstall,
+            'salle' => $salle
         ]);
     }
 }
