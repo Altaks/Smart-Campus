@@ -15,6 +15,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class PlanExpController extends AbstractController
 {
 
+    // Routes du chargé de mission
+
     /*
      * Charge de mission : Consulter les infos des salles du plan d'expérimentation
      */
@@ -58,8 +60,8 @@ class PlanExpController extends AbstractController
 
     // US : Chargé de mission : Demander l'installation d'un SA à une salle
     #[IsGranted("ROLE_CHARGE_DE_MISSION")]
-    #[Route('/plan/{id_salle}/demander-installation', name: 'cdm_demander_install')]
-    public function cdm_demander_install(ManagerRegistry $doctrine, int $id_salle)
+    #[Route('/plan/{id_salle}/demander-installation', name: 'cdm_demander_installation')]
+    public function cdm_demander_installation(ManagerRegistry $doctrine, int $id_salle)
     {
 
         $entityManager = $doctrine->getManager();
@@ -92,7 +94,47 @@ class PlanExpController extends AbstractController
         return $this->redirectToRoute("cdm_plan");
     }
 
+    #[Route('/plan/ajouter_salle', name: 'cdm_ajouter_salle')]
+    public function cdm_ajouter_salle(): Response
+    {
+        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
+        return $this->render('plan/charge_de_mission/ajouter_salle.html.twig', []);
+    }
 
+    #[Route('/plan/retirer_salle/{id}', name: 'cdm_retirer_salle')]
+    public function cdm_retirer_salle(): Response
+    {
+        // full redirect
+        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
+    }
+
+    #[Route('/plan/modifier_salle/{id}', name: 'cdm_modifier_salle')]
+    public function cdm_modifier_salle(): Response
+    {
+        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
+        return $this->render('plan/charge_de_mission/modifier_salle.html.twig', []);
+    }
+
+    #[Route('/plan/lister_salles', name: 'cdm_lister_salles')]
+    public function cdm_lister_salles(ManagerRegistry $doctrine): Response
+    {
+        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
+        return $this->render('plan/charge_de_mission/lister_salles.html.twig', []);
+    }
+
+    #[Route('/plan/seuils_alertes', name: 'cdm_seuils_alertes')]
+    public function cdm_seuils_alertes(ManagerRegistry $doctrine): Response
+    {
+        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
+        return $this->render('plan/charge_de_mission/seuils_alertes.html.twig', []);
+    }
+
+    #[Route('/plan/{id_salle}/demander-reparation', name: 'cdm_demander_reparation')]
+    public function cdm_demander_reparation(ManagerRegistry $doctrine, int $id_salle)
+    {
+        // full redirect
+        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
+    }
 
     #[IsGranted("ROLE_TECHNICIEN")]
     #[Route('/plan/demande-travaux/{id}', name: 'demande_travaux')]
@@ -159,7 +201,7 @@ class PlanExpController extends AbstractController
                 krsort($dictReleves);
             }
 
-            
+
         }
 
         return $this->render('plan/technicien/demande_de_travaux.html.twig', [
@@ -168,5 +210,40 @@ class PlanExpController extends AbstractController
             'listeSysAcqui' => $listeSysAcquiNonInstall,
             'salle' => $salle
         ]);
+    }
+
+    #[Route('/plan/ajouter_sa', name: 'technicien_ajouter_sa')]
+    public function technicien_ajouter_sa(ManagerRegistry $doctrine, Request $request): Response
+    {
+        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
+        return $this->render('plan/technicien/ajouter_sa.html.twig', []);
+    }
+
+    #[Route('/plan/retirer_sa/<id>', name: 'technicien_retirer_sa')]
+    public function technicien_retirer_sa(ManagerRegistry $doctrine, Request $request): Response
+    {
+        // full redirect
+        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
+    }
+
+    #[Route('/plan/lister_sa', name: 'technicien_liste_sa')]
+    public function technicien_liste_sa(ManagerRegistry $doctrine, releveService $service): Response
+    {
+        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
+        return $this->render('plan/technicien/liste_sa.html.twig', []);
+    }
+
+    #[Route('/plan/demande-travaux/{id}', name: 'technicien_demande_travaux')]
+    public function technicien_demande_travaux(int $id, ManagerRegistry $doctrine, Request $request): Response
+    {
+        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
+        return $this->render('plan/technicien/demande_de_travaux.html.twig', []);
+    }
+
+    #[Route('/plan/{id}/declarer-operationnel', name: 'technicien_declarer_operationnel')]
+    public function technicien_declarer_operationnel(int $id, ManagerRegistry $doctrine, Request $request): Response
+    {
+        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
+        // full redirect
     }
 }

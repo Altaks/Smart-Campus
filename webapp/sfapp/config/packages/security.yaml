@@ -29,6 +29,9 @@ security:
                 check_path: app_connexion
                 always_use_default_target_path: true
                 default_target_path: accueil
+            logout:
+                path: /deconnexion
+                target: accueil
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall

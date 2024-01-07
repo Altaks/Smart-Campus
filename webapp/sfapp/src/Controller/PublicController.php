@@ -2,9 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\DemandeTravaux;
-use App\Entity\Salle;
-use App\Service\ReleveService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -12,11 +9,17 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class PublicController extends AbstractController
 {
+
+    #[Route('/', name:'index')]
+    public function index(): Response
+    {
+        return $this->redirectToRoute("accueil");
+    }
+
     #[Route('/connexion', name: 'app_connexion')]
     public function connexion(AuthenticationUtils $authenticationUtils, Security $security, Request $request, ManagerRegistry $registry): Response
     {
@@ -30,6 +33,13 @@ class PublicController extends AbstractController
         ]);
     }
 
+    #[Route('/deconnexion', name: 'app_deconnexion')]
+    public function deconnexion(Security $security) : Response
+    {
+        $response = $security->logout();
+        return $response;
+    }
+
     #[Route('/accueil/', name: 'accueil')]
     public function indexTechnicien(ManagerRegistry $registry): Response
     {
@@ -39,7 +49,7 @@ class PublicController extends AbstractController
                 ->findBy(["type"=>"Installation",
                     "terminee"=>false]);
 
-            return $this->render('public/accueil.twig', [
+            return $this->render('public/accueil.html.twig', [
                 "demandesInstall" => $demandesInstall
             ]);
         }
@@ -49,8 +59,10 @@ class PublicController extends AbstractController
     }
 
     #[Route('/releves', name: 'app_releves')]
-    public function releves(ManagerRegistry $managerRegistry, Request $request): Response
+    public function releves(ManagerRegistry $managerRegistry, Request $request)
     {
+        /*
+
         $sallesRepository = $managerRegistry->getRepository('App\Entity\Salle');
 
         // Récupération de toutes les salles ayant des relevés avec du DQL
@@ -67,9 +79,11 @@ class PublicController extends AbstractController
             ]);
         }
 
-        return $this->render('releves/index.html.twig', [
+        return $this->render('public/releves.html.twig', [
             'salles' => $salles,
             'form' => $form->createView(),
         ]);
+        */
+        throw $this->createNotFoundException('Page non implémentée pour le moment');
     }
 }
