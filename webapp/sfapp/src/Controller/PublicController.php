@@ -24,43 +24,28 @@ class PublicController extends AbstractController
 
         $dernierIdentifiant = $authenticationUtils->getLastUsername();
 
-        return $this->render('connexion/index.html.twig', [
+        return $this->render('public/connexion.html.twig', [
             'dernier_identifiant' => $dernierIdentifiant,
             'erreur' => $erreur,
         ]);
     }
-
-    #[Route('/auth-Success', name: 'auth-success')]
-    public function onAuthenticationSuccess(Security $security, Request $request)
-    {
-        return $this->redirect('/accueil');
-    }
-
 
     #[Route('/accueil/', name: 'accueil')]
     public function indexTechnicien(ManagerRegistry $registry): Response
     {
         if ($this->isGranted("ROLE_TECHNICIEN")){
 
-            // US Technicien : Consulter la liste des demandes d'installation
-
-            // recupère les demandes d'installations non terminées
             $demandesInstall = $registry->getRepository('App\Entity\DemandeTravaux')
                 ->findBy(["type"=>"Installation",
                     "terminee"=>false]);
 
-            return $this->render('accueil-technicien.html.twig', [
+            return $this->render('public/accueil.twig', [
                 "demandesInstall" => $demandesInstall
             ]);
         }
+        return $this->render('public/accueil.html.twig');
 
-        elseif ($this->isGranted("ROLE_CHARGE_DE_MISSION")){
-            return $this->render('accueil/charge-de-mission.html.twig', []);
-        }
-
-        else{
-            throw $this->createNotFoundException("Page non implémentée pour le moment");
-        }
+        //l'usager et le chargé de mission n'ont pas de données en plus sur leurs pages
     }
 
     #[Route('/releves', name: 'app_releves')]
@@ -71,49 +56,20 @@ class PublicController extends AbstractController
         // Récupération de toutes les salles ayant des relevés avec du DQL
         $salles = $sallesRepository->findAll();
 
-        $builder = $this->createFormBuilder()
-            ->add('salle', ChoiceType::class, [
-                'choices' => $salles,
-                'choice_label' => function(?Salle $salle) {
-                    return $salle ? $salle->getBatiment()->getNom() . " - " . $salle->getNom() : '';
-                },
-                'choice_value' => function(?Salle $salle) {
-                    return $salle ? $salle->getId() : '';
-                },
-                'label' => 'Salle',
-                'required' => true,
-                'placeholder' => 'Choisir une salle',
-            ])
-            ->getForm();
+        $form = $this->createFormBuilder()->getForm();
+        // TODO: sélectionner seulement les salles avec un SA opérationnel
 
 
-        $builder->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()) {
 
-        if($builder->isSubmitted() && $builder->isValid()) {
-
-            $id = $builder->getData()['salle'];
-            $salle = $sallesRepository->findOneBy(["id"=>$id]);
-
-            $service = new ReleveService();
-
-            $sa = $salle->getSystemeAcquisition();
-            $releves = [];
-
-            if (!is_null($sa)){
-                $releves = $service->getAll($sa->getTag());
-            }
-
-            return $this->render('releves/index.html.twig', [
-                'salles' => $salles,
-                'salle_actuelle' => $salle,
-                'releves' => $releves,
-                'form' => $builder->createView(),
+            return $this->render('public/releves.html.twig', [
+                // data
             ]);
         }
 
         return $this->render('releves/index.html.twig', [
             'salles' => $salles,
-            'form' => $builder->createView(),
+            'form' => $form->createView(),
         ]);
     }
 }
