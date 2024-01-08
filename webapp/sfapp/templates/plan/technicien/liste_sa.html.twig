@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Systemes d'acquisition{% endblock %}
+
+{% block body %}
+    <div class="relative overflow-x-auto max-w-7xl mx-auto">
+        <h1 class="lg:text-4xl text-6xl py-12 text-center">Liste des systèmes d'acquisition</h1>
+        <div class="lg:w-1/6 lg:mr-auto mr-6 ml-6">
+            {{ form_start(form) }}
+            <select id="option" name="{{ field_name(form.choix) }}" class="form-control w-full lg:text-xl text-4xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange='this.form.submit()'>
+
+                {% for label, value in field_choices(form.choix) %}
+                    <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <div class="max-w-screen-xl w-5/6 mx-auto mt-10">
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+
+                {% if choix == "Tous les SA" %}
+                <tr >
+                    <th scope="col" class="px-6 py-3">
+                        Nom
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Salle
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Bâtiment
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Etat
+                    </th>
+                </tr>
+                </thead>
+                <thead>
+                {% for systemeAcquisition in listeSa %}
+                    <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ systemeAcquisition.nom }}
+                        </th>
+                        <td class="px-6 py-4">
+                            {% if systemeAcquisition.salle is not null %}
+                                {{ systemeAcquisition.Salle.nom }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if systemeAcquisition.salle is not null %}
+                                {{ systemeAcquisition.Salle.Batiment }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ systemeAcquisition.etat }}
+                        </td>
+                    </tr>
+                {% endfor %}
+
+
+                {% elseif choix == "En cours d'installation" or choix == "Opérationnels"%}
+                <tr >
+                    <th scope="col" class="px-6 py-3">
+                        Nom
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Salle
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Bâtiment
+                    </th>
+                </tr>
+                </thead>
+                <thead>
+
+                {% for systemeAcquisition in listeSa %}
+                <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        {{ systemeAcquisition.nom }}
+                    </th>
+                    <td class="px-6 py-4">
+                        {% if systemeAcquisition.salle is not null %}
+                            {{ systemeAcquisition.Salle.nom }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if systemeAcquisition.salle is not null %}
+                            {{ systemeAcquisition.Salle.Batiment }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+
+                {% elseif choix == "Non installés" %}
+
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        Nom
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for systemeAcquisition in listeSa %}
+                    <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ systemeAcquisition.nom }}
+                        </th>
+                    </tr>
+                {% endfor %}
+
+                {% endif %}
+
+                </tbody>
+            </table>
+        </div>
+        <p>{{ test }}</p>
+    </div>
+
+{% endblock %}

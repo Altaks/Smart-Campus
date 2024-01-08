@@ -7,6 +7,7 @@ use App\Entity\DemandeTravaux;
 use App\Service\ReleveService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -227,10 +228,67 @@ class PlanExpController extends AbstractController
     }
 
     #[Route('/plan/lister_sa', name: 'technicien_liste_sa')]
-    public function technicien_liste_sa(ManagerRegistry $doctrine, releveService $service): Response
+    public function technicien_liste_sa(ManagerRegistry $doctrine, releveService $service, Request $request): Response
     {
-        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
-        return $this->render('plan/technicien/liste_sa.html.twig', []);
+        $entityManager = $doctrine->getManager();
+        $saRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
+
+        $listeChoix = ["Tous les SA" , "En cours d'installation", "Non installés", "Opérationnels"];
+        $test = "dzef";
+        $choixParDefault = "Tous les SA";
+        if($request->getMethod() == "POST")
+        {
+            $test = "post";
+            $choixParDefault = $listeChoix[$_POST["form"]["choix"]];
+        }
+
+        $formEtats = $this->createFormBuilder()->add('choix', ChoiceType::class, [
+            'choices' => ["Tous les SA" => 0, "En cours d'installation" => 1, "Non installés" => 2, "Opérationnels" => 3],
+            'required' => true,
+            'data' => $choixParDefault,
+        ])->getForm();
+
+
+        $formEtats->handleRequest($request);
+        $listeSa = [];
+        $choix = "Tous les SA";
+
+        if($formEtats->isSubmitted() && $formEtats->isValid())
+        {
+            $choix = $listeChoix[$formEtats->getData()['choix']];
+            switch($choix)
+            {
+                case "Tous les SA":
+                    $listeSa = $saRepository->findAll();
+                    break;
+                case "En cours d'installation":
+                    $listeSa = $saRepository->findBy(['etat' => "Installation"]);
+                    break;
+                case "Non installés":
+                    $listeSa = $saRepository->findBy(['etat' => "Non installé"]);
+                    break;
+                case "Opérationnels":
+                    $listeSa = $saRepository->findBy(['etat' => "Opérationnel"]);
+                    break;
+            }
+
+            $formEtats = $this->createFormBuilder()->add('choix', ChoiceType::class, [
+                'choices' => ["Tous les SA" => 0, "En cours d'installation" => 1, "Non installés" => 2, "Opérationnels" => 3],
+                'required' => true,
+                'data' => $choix,
+            ])->getForm();
+        }
+        else
+        {
+            $listeSa = $saRepository->findAll();
+        }
+
+        return $this->render('plan/technicien/liste_sa.html.twig', [
+            'listeSa' => $listeSa,
+            'form' => $formEtats,
+            'choix' => $choix,
+            'test' => $choixParDefault
+        ]);
     }
 
     #[Route('/plan/demande-travaux/{id}', name: 'technicien_demande_travaux')]
