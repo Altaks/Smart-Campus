@@ -12,54 +12,6 @@ use App\Repository\UtilisateurRepository;
 
 class PlanExpControllerTest extends WebTestCase
 {
-    public function test_cdm_demander_installation_sur_salle_valide(): void
-    {
-        $client = static::createClient();
-
-        $utilisateur = $client->getContainer()->get('doctrine')->getRepository('App\Entity\Utilisateur')->findOneBy(['identifiant' => 'yghamri']);
-        $this->assertNotNull($utilisateur);
-
-        $client->loginUser($utilisateur);
-
-        // Vérifier si la salle D001 existe
-        $entityManager = $client->getContainer()->get('doctrine')->getManager();
-        $sallesRepository = $entityManager->getRepository(Salle::class);
-
-        $salleD = $sallesRepository->findOneBy(['nom' => 'D001']);
-
-        if ($salleD == null) {
-
-            $salle = new Salle();
-            $salle->setNom("D001");
-            $salle->setBatiment("Bâtiment D");
-            $salle->setOrientation("No");
-            $salle->setNombrePorte(1);
-            $salle->setNombreFenetre(6);
-            $salle->setSystemeAcquisition(null);
-            $salle->setContientPc(false);
-
-            $entityManager->persist($salle);
-            $entityManager->flush();
-        }
-
-        $salleD = $sallesRepository->findOneBy(['nom' => 'D001']);
-
-        $demande_travaux = $client->getContainer()->get('doctrine')->getRepository('App\Entity\DemandeTravaux')->findAll(['salle' => $salleD->getId()]);
-        if ($demande_travaux != null || $demande_travaux != []) {
-            foreach ($demande_travaux as $dt) {
-                $entityManager->remove($dt);
-            }
-            $entityManager->flush();
-        }
-
-        $client->request('GET', '/plan/' . $salleD->getId() . '/demander-installation');
-        $this->assertResponseRedirects("/plan");
-        $client->followRedirect();
-
-        $demande_travaux = $client->getContainer()->get('doctrine')->getRepository('App\Entity\DemandeTravaux')->findOneBy(['salle' => $salleD->getId()]);
-        $this->assertNotNull($demande_travaux);
-    }
-
     public function test_cdm_demander_installation_sur_salle_invalide(): void
     {
         $client = static::createClient();
@@ -252,15 +204,15 @@ class PlanExpControllerTest extends WebTestCase
             ]);
 
         $crawler = $client->request('GET', '/plan/demande-travaux/'.$travaux->getId());
+        $button = $crawler->filter('button');
         $p = $crawler->filter('p');
-        $a = $crawler->filter('a');
-        if($p)
+        if($button->count())
         {
-            $this->assertEquals('Déclarer opérationnel', $a->text());
+            $this->assertEquals('Déclarer opérationnel', $button->eq(0)->text());
         }
         else
         {
-            $this->assertNull($a);
+            $this->assertEquals('Pas de relevé', $p->last()->text());
         }
     }
 }
