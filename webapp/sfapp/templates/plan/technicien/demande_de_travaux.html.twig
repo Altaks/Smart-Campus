@@ -30,7 +30,7 @@
         <div class="lg:w-1/6 lg:mr-auto mr-6 ml-6">
             {{ form_start(form) }}
                 <label class="text-xl mb-2">{{ field_label(form.sa) }}</label>
-                <select name="{{ field_name(form.sa) }}" class="form-control w-full lg:text-xl text-4xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange='this.form.submit()'>
+                <select id="option" name="{{ field_name(form.sa) }}" class="form-control w-full lg:text-xl text-4xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange='this.form.submit()'>
 
                     {% for label, value in field_choices(form.sa) %}
                      <option value="{{ value }}">{{ label }}</option>
