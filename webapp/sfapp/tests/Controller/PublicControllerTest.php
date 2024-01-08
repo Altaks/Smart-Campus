@@ -47,9 +47,7 @@ class PublicControllerTest extends WebTestCase
             '_password' => 'pwd-yghamri'
         ]);
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
-        $this->assertMatchesRegularExpression('/\/auth-Success$/', $client->getResponse()->headers->get('location'));
-        $client->followRedirect();
-        $this->assertMatchesRegularExpression('/\/accueil$/', $client->getResponse()->headers->get('location'));
+        $this->assertMatchesRegularExpression('/\/accueil\/$/', $client->getResponse()->headers->get('location'));
     }
 
     public function test_envoi_formulaire_de_connexion_cas_invalide_charge_de_mission(): void
@@ -74,9 +72,7 @@ class PublicControllerTest extends WebTestCase
             '_password' => 'pwd-jmalki'
         ]);
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
-        $this->assertMatchesRegularExpression('/\/auth-Success$/', $client->getResponse()->headers->get('location'));
-        $client->followRedirect();
-        $this->assertMatchesRegularExpression('/\/accueil$/', $client->getResponse()->headers->get('location'));
+        $this->assertMatchesRegularExpression('/\/accueil\/$/', $client->getResponse()->headers->get('location'));
     }
 
     public function test_envoi_formulaire_de_connexion_cas_invalide_technicien(): void
