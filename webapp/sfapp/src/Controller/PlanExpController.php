@@ -153,33 +153,6 @@ class PlanExpController extends AbstractController
 
         $dictReleves = null;
 
-        // TODO: implémenter un formulaire symfony plutôt qu'un formulaire html
-        /*
-        if($request->getMethod() == "POST"){
-            $value = $_POST["sa"];
-            if($value == "aucun"){
-                $sa = $demandeTravaux->getSystemeAcquisition();
-                if ($sa != null){
-                    $sa->setEtat('Non installé');
-                    $demandeTravaux->setSystemeAcquisition(null);
-                    $entityManager->flush();
-                }
-            }
-            else{
-                $a_sa = $demandeTravaux->getSystemeAcquisition();
-                $n_sa = $sysAcquiRepository->findOneBy(["id" => $value]);
-                if ($a_sa != $n_sa){
-                    if ($a_sa != null){
-                        $a_sa->setEtat('Non installé');
-                    }
-                    $demandeTravaux->setSystemeAcquisition($n_sa);
-                    $n_sa->setEtat('Installation');
-                    $entityManager->flush();
-                }
-            }
-        }
-        */
-
         $systemeAcquisition = $demandeTravaux->getSystemeAcquisition();
         $placeHolder = 'Aucun';
 
