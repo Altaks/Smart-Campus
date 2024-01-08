@@ -1,0 +1,327 @@
+{% extends 'base.html.twig'%}
+
+{% block title %}Relevés{% endblock %}
+
+{% block body %}
+
+    <div class="w-2/3 mx-auto my-12">
+        <nav class="flex" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+                <li class="inline-flex items-center">
+                    <a href="/accueil" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                        <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
+                        </svg>
+                        Accueil
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+                        <a href="/releves" class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Relevés</a>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="w-2/3 mx-auto">
+        {{ form_start(form) }}
+            <select name="{{ field_name(form.salle) }}" class="form-control bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange="this.form.submit()">
+                <option value="" disabled>Choisir une salle</option>
+                {% for label, value in field_choices(form.salle) %}
+                    <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        {{ form_end(form) }}
+    </div>
+    <div class="w-2/3 mx-auto my-12">
+        {% if temp_dates is defined and temp_dates is not null and temp_releves is defined and temp_releves is not null %}
+            <div class="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 my-6">
+                <div class="flex justify-between">
+                    <div>
+                        <h5 class="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">Températures</h5>
+                        <p class="text-base font-normal text-gray-500 dark:text-gray-400">en °C</p>
+                    </div>
+                    <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-gray-900 dark:text-gray-400 text-center">
+                        N/A %
+                        <svg class="w-3 h-3 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13V1m0 0L1 5m4-4 4 4"/>
+                        </svg>
+                    </div>
+                </div>
+                <div id="temp-chart"></div>
+            </div>
+            <script>
+                // ApexCharts options and config
+                window.addEventListener("load", function() {
+                    let options = {
+                        chart: {
+                            height: "100%",
+                            maxWidth: "100%",
+                            type: "area",
+                            fontFamily: "Inter, sans-serif",
+                            dropShadow: {
+                                enabled: false,
+                            },
+                            toolbar: {
+                                show: false,
+                            },
+                        },
+                        tooltip: {
+                            enabled: true,
+                            x: {
+                                show: false,
+                            },
+                        },
+                        fill: {
+                            type: "gradient",
+                            gradient: {
+                                opacityFrom: 0.55,
+                                opacityTo: 0,
+                                shade: "#1C64F2",
+                                gradientToColors: ["#1C64F2"],
+                            },
+                        },
+                        dataLabels: {
+                            enabled: false,
+                        },
+                        stroke: {
+                            width: 6,
+                        },
+                        grid: {
+                            show: false,
+                            strokeDashArray: 4,
+                            padding: {
+                                left: 2,
+                                right: 2,
+                                top: 0
+                            },
+                        },
+                        series: [
+                            {
+                                name: "Températures",
+                                data: [{% for val in temp_releves %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}],
+                                color: "#1A56DB",
+                            },
+                        ],
+                        xaxis: {
+                            categories: [
+                                {% for val in temp_dates %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}
+                            ],
+                            labels: {
+                                show: false,
+                            },
+                            axisBorder: {
+                                show: false,
+                            },
+                            axisTicks: {
+                                show: false,
+                            },
+                        },
+                        yaxis: {
+                            show: false,
+                        },
+                    }
+
+                    if (document.getElementById("temp-chart") && typeof ApexCharts !== 'undefined') {
+                        const chart = new ApexCharts(document.getElementById("temp-chart"), options);
+                        chart.render();
+                    }
+                });
+            </script>
+        {% endif %}
+        {% if hum_dates is defined and hum_dates is not null and hum_releves is defined and hum_releves is not null %}
+            <div class="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 my-6">
+                <div class="flex justify-between">
+                    <div>
+                        <h5 class="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">Humidité</h5>
+                        <p class="text-base font-normal text-gray-500 dark:text-gray-400">en %</p>
+                    </div>
+                    <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-gray-900 dark:text-gray-400 text-center">
+                        N/A %
+                        <svg class="w-3 h-3 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13V1m0 0L1 5m4-4 4 4"/>
+                        </svg>
+                    </div>
+                </div>
+                <div id="hum-chart"></div>
+            </div>
+            <script>
+                // ApexCharts options and config
+                window.addEventListener("load", function() {
+                    let options = {
+                        chart: {
+                            height: "100%",
+                            maxWidth: "100%",
+                            type: "area",
+                            fontFamily: "Inter, sans-serif",
+                            dropShadow: {
+                                enabled: false,
+                            },
+                            toolbar: {
+                                show: false,
+                            },
+                        },
+                        tooltip: {
+                            enabled: true,
+                            x: {
+                                show: false,
+                            },
+                        },
+                        fill: {
+                            type: "gradient",
+                            gradient: {
+                                opacityFrom: 0.55,
+                                opacityTo: 0,
+                                shade: "#1C64F2",
+                                gradientToColors: ["#1C64F2"],
+                            },
+                        },
+                        dataLabels: {
+                            enabled: false,
+                        },
+                        stroke: {
+                            width: 6,
+                        },
+                        grid: {
+                            show: false,
+                            strokeDashArray: 4,
+                            padding: {
+                                left: 2,
+                                right: 2,
+                                top: 0
+                            },
+                        },
+                        series: [
+                            {
+                                name: "Humidité",
+                                data: [{% for val in hum_releves %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}],
+                                color: "#1A56DB",
+                            },
+                        ],
+                        xaxis: {
+                            categories: [
+                                {% for val in hum_dates %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}
+                            ],
+                            labels: {
+                                show: false,
+                            },
+                            axisBorder: {
+                                show: false,
+                            },
+                            axisTicks: {
+                                show: false,
+                            },
+                        },
+                        yaxis: {
+                            show: false,
+                        },
+                    }
+
+                    if (document.getElementById("hum-chart") && typeof ApexCharts !== 'undefined') {
+                        const chart = new ApexCharts(document.getElementById("hum-chart"), options);
+                        chart.render();
+                    }
+                });
+            </script>
+        {% endif %}
+        {% if co2_dates is defined and co2_dates is not null and co2_releves is defined and co2_releves is not null %}
+            <div class="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 my-6">
+                <div class="flex justify-between">
+                    <div>
+                        <h5 class="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">Qualité de l'air</h5>
+                        <p class="text-base font-normal text-gray-500 dark:text-gray-400">en ppm</p>
+                    </div>
+                    <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-gray-900 dark:text-gray-400 text-center">
+                        N/A %
+                        <svg class="w-3 h-3 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13V1m0 0L1 5m4-4 4 4"/>
+                        </svg>
+                    </div>
+                </div>
+                <div id="co2-chart"></div>
+            </div>
+            <script>
+                // ApexCharts options and config
+                window.addEventListener("load", function() {
+                    let options = {
+                        chart: {
+                            height: "100%",
+                            maxWidth: "100%",
+                            type: "area",
+                            fontFamily: "Inter, sans-serif",
+                            dropShadow: {
+                                enabled: false,
+                            },
+                            toolbar: {
+                                show: false,
+                            },
+                        },
+                        tooltip: {
+                            enabled: true,
+                            x: {
+                                show: false,
+                            },
+                        },
+                        fill: {
+                            type: "gradient",
+                            gradient: {
+                                opacityFrom: 0.55,
+                                opacityTo: 0,
+                                shade: "#1C64F2",
+                                gradientToColors: ["#1C64F2"],
+                            },
+                        },
+                        dataLabels: {
+                            enabled: false,
+                        },
+                        stroke: {
+                            width: 6,
+                        },
+                        grid: {
+                            show: false,
+                            strokeDashArray: 4,
+                            padding: {
+                                left: 2,
+                                right: 2,
+                                top: 0
+                            },
+                        },
+                        series: [
+                            {
+                                name: "Qualité de l'air",
+                                data: [{% for val in co2_releves %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}],
+                                color: "#1A56DB",
+                            },
+                        ],
+                        xaxis: {
+                            categories: [
+                                {% for val in co2_dates %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}
+                            ],
+                            labels: {
+                                show: false,
+                            },
+                            axisBorder: {
+                                show: false,
+                            },
+                            axisTicks: {
+                                show: false,
+                            },
+                        },
+                        yaxis: {
+                            show: false,
+                        },
+                    }
+
+                    if (document.getElementById("co2-chart") && typeof ApexCharts !== 'undefined') {
+                        const chart = new ApexCharts(document.getElementById("co2-chart"), options);
+                        chart.render();
+                    }
+                });
+            </script>
+        {% endif %}
+    </div>
+
+{% endblock %}

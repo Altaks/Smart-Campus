@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures\Test;
 
-use App\DataFixtures\Salle;
+use App\Entity\Salle;
 use App\Entity\SystemeAcquisition;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -17,15 +17,15 @@ class RelevesFixtures extends Fixture
             ->setEtat("Opérationnel");
         $manager->persist($sa18);
 
-        $salleC005 = new Salle();
-        $salleC005->setNom('C005')
+        $salleC004 = new Salle();
+        $salleC004->setNom('C004')
             ->setOrientation("No")
             ->setNombreFenetre(6)
             ->setNombrePorte(2)
             ->setContientpc(false)
             ->setBatiment("Bâtiment C")
             ->setSystemeAcquisition($sa18);
-        $manager->persist($salleC005);
+        $manager->persist($salleC004);
 
         $manager->flush();
     }

@@ -3,6 +3,7 @@
 namespace App\tests\Controller;
 use App\DataFixtures\Test\RelevesFixtures;
 use App\Repository\DemandeTravauxRepository;
+use App\Repository\SalleRepository;
 use App\Repository\UtilisateurRepository;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;

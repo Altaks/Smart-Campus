@@ -1,7 +1,5 @@
 {% extends 'base.html.twig'%}
 
-
-
 {% block title %}Smart Campus{% endblock %}
 
 {% block body %}
@@ -25,7 +23,7 @@
             </a>
         </div>
 
-    {# Partie technicien #}
+        {# Partie technicien #}
     {% elseif is_granted('ROLE_TECHNICIEN') %}
         <h1 class="text-5xl font-extrabold dark:text-white mx-auto w-max my-6">Bienvenue Technicien</h1>
 
@@ -48,7 +46,7 @@
             </div>
         </div>
 
-    {# Partie Usager #}
+        {# Partie Usager #}
     {% else %}
         <h1 class="w-full text-center text-2xl py-20">Bienvenu sur le site Smart Campus</h1>
 

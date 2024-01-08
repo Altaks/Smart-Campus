@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Salle;
+use App\Service\ReleveService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -59,31 +61,81 @@ class PublicController extends AbstractController
     }
 
     #[Route('/releves', name: 'app_releves')]
-    public function releves(ManagerRegistry $managerRegistry, Request $request)
+    public function releves(ManagerRegistry $managerRegistry, ReleveService $releveService, Request $request)
     {
-        /*
 
         $sallesRepository = $managerRegistry->getRepository('App\Entity\Salle');
 
         // Récupération de toutes les salles ayant des relevés avec du DQL
-        $salles = $sallesRepository->findAll();
+        $salles = $sallesRepository->findAllSallesAvecSAOperationnel();
 
-        $form = $this->createFormBuilder()->getForm();
-        // TODO: sélectionner seulement les salles avec un SA opérationnel
+        $form = $this->createFormBuilder()
+            ->add('salle', ChoiceType::class, [
+                'choices' => $salles,
+                'choice_label' => function(?Salle $salle) {
+                    return $salle ? $salle->getNom() : '';
+                },
+                'choice_value' => function(?Salle $salle) {
+                    return $salle ? $salle->getId() : '';
+                },
+                'label' => 'Salle',
+                'placeholder' => 'Choisir une salle',
+                'required' => true,
+                'attr' => [
+                    'class' => 'form-control'
+                ]
+            ])
+            ->getForm();
 
+        $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
 
+            $salle = $form->get('salle')->getData();
+            $sa = $salle->getSystemeAcquisition();
+
+            $releves30Jours = $releveService->getEntre($sa, new \DateTime('-1 days'), new \DateTime());
+
+            ksort($releves30Jours);
+
+            $datesTemp = [];
+            $relevesTemp = [];
+
+            $datesHum = [];
+            $relevesHum = [];
+
+            $datesCo2 = [];
+            $relevesCo2 = [];
+
+            foreach ($releves30Jours as $date => $releves){
+                if($releves['temp'] != null){
+                    $datesTemp[] = $date;
+                    $relevesTemp[] = $releves['temp'];
+                }
+                if($releves['hum'] != null){
+                    $datesHum[] = $date;
+                    $relevesHum[] = $releves['hum'];
+                }
+                if($releves['co2'] != null){
+                    $datesCo2[] = $date;
+                    $relevesCo2[] = $releves['co2'];
+                }
+            }
+
             return $this->render('public/releves.html.twig', [
                 // data
+                'form' => $form->createView(),
+                'temp_dates' => $datesTemp,
+                'temp_releves' => $relevesTemp,
+                'hum_dates' => $datesHum,
+                'hum_releves' => $relevesHum,
+                'co2_dates' => $datesCo2,
+                'co2_releves' => $relevesCo2,
             ]);
         }
 
         return $this->render('public/releves.html.twig', [
-            'salles' => $salles,
             'form' => $form->createView(),
         ]);
-        */
-        throw $this->createNotFoundException('Page non implémentée pour le moment');
     }
 }
