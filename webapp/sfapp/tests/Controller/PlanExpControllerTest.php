@@ -205,7 +205,7 @@ class PlanExpControllerTest extends WebTestCase
         }
     }
 
-    public function test_demande_travaux_nombre_salle_liste_correspond_nombre_salle_bd(){
+    public function test_demande_travaux_nombre_sa_liste_correspond_nombre_sa_bd(){
 
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UtilisateurRepository::class);
@@ -214,7 +214,7 @@ class PlanExpControllerTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $systemesAcquisitionRepository = static ::getContainer()->get(SystemeAcquisitionRepository::class);
+        $systemesAcquisitionRepository = static::getContainer()->get(SystemeAcquisitionRepository::class);
         $nbSystemesAcquisitionNonInstalle = count($systemesAcquisitionRepository->findBy(['etat' => 'Non installé']));
 
         $travauxRepository = static ::getContainer()->get(DemandeTravauxRepository::class);

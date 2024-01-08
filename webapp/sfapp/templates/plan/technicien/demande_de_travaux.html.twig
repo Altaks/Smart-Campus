@@ -5,8 +5,9 @@
 {% block body %}
 
 
+    {#
     <div class="relative overflow-x-auto max-w-7xl mx-auto">
-        <h1 class="lg:text-4xl text-6xl py-12 text-center">Salle {{ salle.nom }}</h1>
+
         <form class="lg:w-1/6 lg:mr-auto mr-6 ml-6" action="/plan/demande-travaux/{{ demandeTravaux.id }}" method="post">
             <select class="w-full lg:text-xl text-4xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" name="sa" onchange="form.submit()">
                 {% if demandeTravaux.systemeAcquisition is null %}
@@ -20,6 +21,23 @@
                 {% endfor %}
             </select>
         </form>
+    </div>
+    #}
+
+    <div class="relative overflow-x-auto max-w-7xl mx-auto">
+        <h1 class="lg:text-4xl text-6xl py-12 text-center">Salle {{ salle.nom }}</h1>
+
+        <div class="lg:w-1/6 lg:mr-auto mr-6 ml-6">
+            {{ form_start(formSystemeAcqui) }}
+                <label class="text-xl mb-2">{{ field_label(formSystemeAcqui.sa) }}</label>
+                <select id="option" name="{{ field_name(formSystemeAcqui.sa) }}" class="form-control w-full lg:text-xl text-4xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange='this.form.submit()'>
+
+                    {% for label, value in field_choices(formSystemeAcqui.sa) %}
+                     <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+            </select>
+            {{ form_end(formSystemeAcqui) }}
+        </div>
     </div>
 
     <div class="max-w-screen-xl w-5/6 mx-auto">

@@ -4,9 +4,11 @@ namespace App\Controller;
 
 
 use App\Entity\DemandeTravaux;
+use App\Entity\SystemeAcquisition;
 use App\Service\ReleveService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -151,41 +153,48 @@ class PlanExpController extends AbstractController
 
         $dictReleves = null;
 
-        // TODO: implémenter un formulaire symfony plutôt qu'un formulaire html
+        $systemeAcquisition = $demandeTravaux->getSystemeAcquisition();
+        $placeHolder = 'Aucun';
 
-        if($request->getMethod() == "POST"){
-            $value = $_POST["sa"];
-            if($value == "aucun"){
-                $sa = $demandeTravaux->getSystemeAcquisition();
-                if ($sa != null){
-                    $sa->setEtat('Non installé');
-                    $demandeTravaux->setSystemeAcquisition(null);
-                    $entityManager->flush();
-                }
-            }
-            else{
-                $a_sa = $demandeTravaux->getSystemeAcquisition();
-                $n_sa = $sysAcquiRepository->findOneBy(["id" => $value]);
-                if ($a_sa != $n_sa){
-                    if ($a_sa != null){
-                        $a_sa->setEtat('Non installé');
-                    }
-                    $demandeTravaux->setSystemeAcquisition($n_sa);
-                    $n_sa->setEtat('Installation');
-                    $entityManager->flush();
-                }
-            }
+        $listeChoix = [];
+        if ($systemeAcquisition != null){
+            $listeChoix[] = $systemeAcquisition;
+            $placeHolder = $systemeAcquisition->getNom();
         }
 
+        $listeChoix[] = null;
+
         $listeSysAcquiNonInstall = $sysAcquiRepository->findBy(['etat' => 'Non installé']);
-        $systemeAcquisition = $demandeTravaux->getSystemeAcquisition();
+
+        foreach ($listeSysAcquiNonInstall as $sys){
+            $listeChoix[] = $sys;
+        }
+
+
+        $formSystemeAcqui = $this->createFormBuilder()
+            ->add('sa', ChoiceType::class, [
+                'choices' => $listeChoix,
+                'choice_label' => function(?SystemeAcquisition $listeChoix) {
+                    return $listeChoix ? $listeChoix->getNom(): 'Aucun';
+                },
+                'choice_value' => function(?SystemeAcquisition $listeChoix) {
+                    return $listeChoix ? $listeChoix->getId() : null;
+                },
+                'label' => "Système d'acquisition",
+                'required' => true,
+                'data' => $systemeAcquisition,
+
+            ])
+            ->getForm();
+
+
+
         if($systemeAcquisition != null)
         {
             date_default_timezone_set('Europe/Paris');
             $dateDemain = new \DateTime(date('Y-m-d H:i:s', time() + 24 * 60 * 60 ));
             $dateHier = new \DateTime(date('Y-m-d H:i:s', time() - 24 * 60 * 60 ));
             $service = new ReleveService();
-
             $dictReleves = $service->getEntre($systemeAcquisition, $dateHier, $dateDemain);
             $listeDatesReleves = array_keys($dictReleves);
 
@@ -204,10 +213,33 @@ class PlanExpController extends AbstractController
 
         }
 
+        $formSystemeAcqui->handleRequest($request);
+
+        if($formSystemeAcqui->isSubmitted() && $formSystemeAcqui->isValid()) {
+
+            if ($systemeAcquisition != null){
+                $systemeAcquisition->setEtat("Non installé");
+            }
+
+            $id = $formSystemeAcqui->getData()['sa'];
+            if ($id == null){
+                $demandeTravaux->setSystemeAcquisition(null);
+                $entityManager->flush();
+                return $this->redirect('/plan/demande-travaux/' . $demandeTravaux->getId());
+            }
+
+            $sa = $sysAcquiRepository->findOneBy(['id' => $id]);
+            $demandeTravaux->setSystemeAcquisition($sa);
+            $sa->setEtat("Installation");
+            $entityManager->flush();
+
+            return $this->redirect('/plan/demande-travaux/' . $demandeTravaux->getId());
+        }
+
         return $this->render('plan/technicien/demande_de_travaux.html.twig', [
             'listeReleves' => $dictReleves,
             'demandeTravaux' => $demandeTravaux,
-            'listeSysAcqui' => $listeSysAcquiNonInstall,
+            'formSystemeAcqui' => $formSystemeAcqui,
             'salle' => $salle
         ]);
     }
@@ -231,13 +263,6 @@ class PlanExpController extends AbstractController
     {
         throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
         return $this->render('plan/technicien/liste_sa.html.twig', []);
-    }
-
-    #[Route('/plan/demande-travaux/{id}', name: 'technicien_demande_travaux')]
-    public function technicien_demande_travaux(int $id, ManagerRegistry $doctrine, Request $request): Response
-    {
-        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
-        return $this->render('plan/technicien/demande_de_travaux.html.twig', []);
     }
 
     #[Route('/plan/{id}/declarer-operationnel', name: 'technicien_declarer_operationnel')]
