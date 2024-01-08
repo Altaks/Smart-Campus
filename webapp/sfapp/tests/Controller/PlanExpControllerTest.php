@@ -27,7 +27,7 @@ class PlanExpControllerTest extends WebTestCase
 
         $salleD = $sallesRepository->findOneBy(['nom' => 'D001']);
 
-        if($salleD == null){
+        if ($salleD == null) {
 
             $salle = new Salle();
             $salle->setNom("D001");
@@ -45,8 +45,8 @@ class PlanExpControllerTest extends WebTestCase
         $salleD = $sallesRepository->findOneBy(['nom' => 'D001']);
 
         $demande_travaux = $client->getContainer()->get('doctrine')->getRepository('App\Entity\DemandeTravaux')->findAll(['salle' => $salleD->getId()]);
-        if($demande_travaux != null || $demande_travaux != []){
-            foreach($demande_travaux as $dt){
+        if ($demande_travaux != null || $demande_travaux != []) {
+            foreach ($demande_travaux as $dt) {
                 $entityManager->remove($dt);
             }
             $entityManager->flush();
@@ -74,7 +74,7 @@ class PlanExpControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(404);
     }
 
-    public function test_cdm_demander_installation_sur_salle_avec_sa() : void
+    public function test_cdm_demander_installation_sur_salle_avec_sa(): void
     {
         $client = static::createClient();
 
@@ -87,7 +87,7 @@ class PlanExpControllerTest extends WebTestCase
 
         $systemeAcquisition = $client->getContainer()->get('doctrine')->getRepository('App\Entity\SystemeAcquisition')->findOneBy(['nom' => 'ESP-123']);
 
-        if($systemeAcquisition == null) {
+        if ($systemeAcquisition == null) {
             $systemeAcquisition = new SystemeAcquisition();
             $systemeAcquisition->setNom("ESP-123");
             $systemeAcquisition->setBaseDonnees("sae34bdm2eq3");
@@ -99,7 +99,7 @@ class PlanExpControllerTest extends WebTestCase
 
         $salle = $client->getContainer()->get('doctrine')->getRepository('App\Entity\Salle')->findOneBy(['nom' => 'X001']);
 
-        if($salle == null){
+        if ($salle == null) {
             $salle = new Salle();
             $salle->setNom("X001");
             $salle->setBatiment("Bâtiment X");
@@ -165,11 +165,11 @@ class PlanExpControllerTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $travauxRepository = static ::getContainer()->get(DemandeTravauxRepository::class);
+        $travauxRepository = static::getContainer()->get(DemandeTravauxRepository::class);
         $travaux = $travauxRepository->findAll();
 
-        for($i = 0; $i < count($travaux); $i++) {
-            $client->request('GET', '/plan/demande-travaux/'.$travaux[$i]->getId());
+        for ($i = 0; $i < count($travaux); $i++) {
+            $client->request('GET', '/plan/demande-travaux/' . $travaux[$i]->getId());
             $this->assertResponseIsSuccessful();
         }
     }
@@ -183,11 +183,11 @@ class PlanExpControllerTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $travauxRepository = static ::getContainer()->get(DemandeTravauxRepository::class);
+        $travauxRepository = static::getContainer()->get(DemandeTravauxRepository::class);
         $travaux = $travauxRepository->findAll();
 
-        for($i = 0; $i < count($travaux); $i++) {
-            $client->request('GET', '/plan/demande-travaux/'.$travaux[$i]->getId());
+        for ($i = 0; $i < count($travaux); $i++) {
+            $client->request('GET', '/plan/demande-travaux/' . $travaux[$i]->getId());
             $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
         }
     }
@@ -196,11 +196,11 @@ class PlanExpControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $travauxRepository = static ::getContainer()->get(DemandeTravauxRepository::class);
+        $travauxRepository = static::getContainer()->get(DemandeTravauxRepository::class);
         $travaux = $travauxRepository->findAll();
 
-        for($i = 0; $i < count($travaux); $i++) {
-            $client->request('GET', '/plan/demande-travaux/'.$travaux[$i]->getId());
+        for ($i = 0; $i < count($travaux); $i++) {
+            $client->request('GET', '/plan/demande-travaux/' . $travaux[$i]->getId());
             $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
         }
     }
@@ -214,25 +214,53 @@ class PlanExpControllerTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $systemesAcquisitionRepository = static ::getContainer()->get(SystemeAcquisitionRepository::class);
+        $systemesAcquisitionRepository = static::getContainer()->get(SystemeAcquisitionRepository::class);
         $nbSystemesAcquisitionNonInstalle = count($systemesAcquisitionRepository->findBy(['etat' => 'Non installé']));
 
-        $travauxRepository = static ::getContainer()->get(DemandeTravauxRepository::class);
+        $travauxRepository = static::getContainer()->get(DemandeTravauxRepository::class);
         $travaux = $travauxRepository->findAll();
 
-        for($i = 0; $i < count($travaux); $i++) {
-            $crawler = $client->request('GET', '/plan/demande-travaux/'.$travaux[$i]->getId());
+        for ($i = 0; $i < count($travaux); $i++) {
+            $crawler = $client->request('GET', '/plan/demande-travaux/' . $travaux[$i]->getId());
 
             $option = $crawler->filter("#option")->filter('option');
 
-            if( $travaux[$i]->getSystemeAcquisition() == null){
-                $this->assertEquals($nbSystemesAcquisitionNonInstalle+1, $option->count());
+            if ($travaux[$i]->getSystemeAcquisition() == null) {
+                $this->assertEquals($nbSystemesAcquisitionNonInstalle + 1, $option->count());
             }
-            else{
-                $this->assertEquals($nbSystemesAcquisitionNonInstalle+2, $option->count());
+            else {
+                $this->assertEquals($nbSystemesAcquisitionNonInstalle + 2, $option->count());
             }
 
 
+        }
+    }
+
+    public function test_tech_declarer_operationnel_route():void
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $travauxRepository = static::getContainer()->get(DemandeTravauxRepository::class);
+        $travaux = $travauxRepository->findOneBy([
+            'type' => 'Installation',
+            'terminee' => 'false'
+            ]);
+
+        $crawler = $client->request('GET', '/plan/demande-travaux/'.$travaux->getId());
+        $p = $crawler->filter('p');
+        $a = $crawler->filter('a');
+        if($p)
+        {
+            $this->assertEquals('Déclarer opérationnel', $a->text());
+        }
+        else
+        {
+            $this->assertNull($a);
         }
     }
 }
