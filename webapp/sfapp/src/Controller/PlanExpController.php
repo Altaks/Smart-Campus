@@ -235,15 +235,19 @@ class PlanExpController extends AbstractController
 
         $listeChoix = ["Tous les SA" , "En cours d'installation", "Non installés", "Opérationnels"];
         $test = "dzef";
-        $choixParDefault = "Tous les SA";
+        $choixParDefault = 0;
         if($request->getMethod() == "POST")
         {
             $test = "post";
-            $choixParDefault = $listeChoix[$_POST["form"]["choix"]];
+            $choixParDefault = $_POST["form"]["choix"];
         }
 
         $formEtats = $this->createFormBuilder()->add('choix', ChoiceType::class, [
-            'choices' => ["Tous les SA" => 0, "En cours d'installation" => 1, "Non installés" => 2, "Opérationnels" => 3],
+            'choices' => array(
+                "Tous les SA" => 0,
+                "En cours d'installation" => 1,
+                "Non installés" => 2,
+                "Opérationnels" => 3),
             'required' => true,
             'data' => $choixParDefault,
         ])->getForm();
@@ -287,7 +291,7 @@ class PlanExpController extends AbstractController
             'listeSa' => $listeSa,
             'form' => $formEtats,
             'choix' => $choix,
-            'test' => $choixParDefault
+            'defaut' => $choixParDefault,
         ]);
     }
 

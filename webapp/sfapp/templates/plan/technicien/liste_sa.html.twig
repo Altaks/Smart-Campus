@@ -5,12 +5,16 @@
 {% block body %}
     <div class="relative overflow-x-auto max-w-7xl mx-auto">
         <h1 class="lg:text-4xl text-6xl py-12 text-center">Liste des systèmes d'acquisition</h1>
-        <div class="lg:w-1/6 lg:mr-auto mr-6 ml-6">
+        <div class="lg:w-1/6 lg:mr-auto">
             {{ form_start(form) }}
-            <select id="option" name="{{ field_name(form.choix) }}" class="form-control w-full lg:text-xl text-4xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange='this.form.submit()'>
+            <select id="option" name="{{ field_name(form.choix) }}" class="form-control w-max lg:text-xl text-4xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange='this.form.submit()'>
 
                 {% for label, value in field_choices(form.choix) %}
-                    <option value="{{ value }}">{{ label }}</option>
+                    {% if value == defaut %}
+                        <option value="{{ value }}" selected>{{ label }}</option>
+                    {% else %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endif %}
                 {% endfor %}
             </select>
             {{ form_end(form) }}
@@ -125,7 +129,6 @@
                 </tbody>
             </table>
         </div>
-        <p>{{ test }}</p>
     </div>
 
 {% endblock %}
