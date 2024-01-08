@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Demande travaux : Salle {{ salle.nom }}{% endblock %}
+
+{% block body %}
+
+
+    <div class="relative overflow-x-auto max-w-7xl mx-auto">
+        <h1 class="lg:text-4xl text-6xl py-12 text-center">Salle {{ salle.nom }}</h1>
+        <form class="lg:w-1/6 lg:mr-auto mr-6 ml-6" action="/plan/demande-travaux/{{ demandeTravaux.id }}" method="post">
+            <select class="w-full lg:text-xl text-4xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" name="sa" onchange="form.submit()">
+                {% if demandeTravaux.systemeAcquisition is null %}
+                    <option id="option" selected value="aucun">Aucun</option>
+                {% else %}
+                    <option id="option" selected value="{{ demandeTravaux.systemeAcquisition.id }}">{{ demandeTravaux.systemeAcquisition.nom }}</option>
+                    <option id="option" value="aucun">Aucun</option>
+                {% endif %}
+                {% for systeme in listeSysAcqui %}
+                    <option id="option" value="{{ systeme.id }}">{{ systeme.nom }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    <div class="max-w-screen-xl w-5/6 mx-auto">
+        <h2 class="mt-12 mb-4 text-3xl">Relevés</h2>
+        {% if listeReleves is not null %}
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr >
+                        <th scope="col" class="px-6 py-3">
+                            Date
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Heure
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Temp (°C)
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Co2 (ppm)
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Hum (%)
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for date, releveInfos in listeReleves %}
+                        <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {{ date | format_datetime('full', 'none', locale='fr') | title }}
+                            </th>
+                            <td class="px-6 py-4">
+                                {{ date | format_datetime('none', 'short', locale='fr') }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ releveInfos.temp | default("-") }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ releveInfos.co2 | default("-") }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ releveInfos.hum | default("-") }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-lg italic text-gray-700">Pas de relevé</p>
+        {% endif %}
+    </div>
+
+{% endblock %}
