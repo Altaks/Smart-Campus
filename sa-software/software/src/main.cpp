@@ -11,19 +11,21 @@
 
 TempEtHum* tempEtHum;
 unsigned short* co2;
+PAGE page;
 Donnees* donnees;
 const String* nomReseau    = new String("eduroam");
-const char* password       = "";
-const char* identifiant    = "apanis";
-const char* nomUtilisateur = "apanis";
-
+const char* password       = "txg;3afks64@KmMy";
+const char* identifiant    = "ksimon";
+const char* nomUtilisateur = "ksimon";
 
 void setup() {
     tempEtHum = new TempEtHum();
     co2 = new (unsigned short);
     donnees = new Donnees();
+    page = TEMPERATURE;
     donnees->tempEtHum = tempEtHum;
     donnees->co2 = co2;
+    donnees->page;
 
 
     Serial.begin(9600);
@@ -44,13 +46,10 @@ void setup() {
 
     delay(1000);
     initReseauStation();
-
-
 }
 
 void loop() {
-    Serial.println("Debut loop :");
-    delay(1000);
+    
     if(estConnecte())
     {
         Serial.println("L'ESP est connecté !");
@@ -113,5 +112,5 @@ void loop() {
             Serial.println("Echec de la onnexion a "+*nomReseau);
         }
     }
-    Serial.printf("temp: %.1f; hum: %.1f; co2: %d\n",tempEtHum->temperature,tempEtHum->humidite,*co2);
+    delay(1000);
 }

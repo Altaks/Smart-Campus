@@ -21,6 +21,7 @@ enum PAGE {
 struct Donnees{
     TempEtHum* tempEtHum;
     unsigned short * co2;
+    PAGE page;
 };
 
 

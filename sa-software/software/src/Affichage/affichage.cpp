@@ -3,7 +3,6 @@
 #include "Heure/heureLocal.h"
 
 SSD1306Wire * display;
-PAGE page = TEMPERATURE;
 
 bool initAffichage(struct Donnees* donnees)
 {
@@ -39,50 +38,54 @@ bool initAffichage(struct Donnees* donnees)
     return true;
 }
 
+void afficher(struct Donnees * donnees){
+    display->clear();
+
+    String dateTime = String(getJour()) + "/" + String(getMois()) + "/" + String(getAnnee()) + " " + String(getHeure()) + ":" + String(getMinute());
+
+    display->drawString(0, 0, dateTime);
+    switch (donnees->page) {
+        case TEMPERATURE :
+            if (donnees->tempEtHum->temperature != -1) {
+                char temp[20];
+                sprintf(temp, "Temp : %.2f°C", donnees->tempEtHum->temperature);
+                display->drawString(0, 25, temp);
+            }
+            else {
+                display->drawString(0, 25, "Temp : N/A");
+            }
+            donnees->page = HUMIDITE;
+            break;
+        case HUMIDITE :
+            if (donnees->tempEtHum->humidite != -1) {
+                char temp[17];
+                sprintf(temp, "Hum : %.2f%s", donnees->tempEtHum->humidite, "%");
+                display->drawString(0, 25, temp);
+            }
+            else {
+                display->drawString(0, 25, "Hum : N/A");
+            }
+            donnees->page = CO2;
+            break;
+        case CO2 :
+            if (*donnees->co2 != -1) {
+                char temp[17];
+                sprintf(temp, "CO2 : %d ppm", *donnees->co2);
+                display->drawString(0, 25, temp);
+            }
+            else {
+                display->drawString(0, 25, "CO2 : N/A");
+            }
+            donnees->page = TEMPERATURE;
+        break;
+    }
+    display->display();
+}
+
 void taskAffichage(void *pvParameters) {
     struct Donnees * donnees = (struct Donnees *) pvParameters;
     while(true){
-        delay(10 * 1000);
-        display->clear();
-
-        String dateTime = String(getJour()) + "/" + String(getMois()) + "/" + String(getAnnee()) + " " + String(getHeure()) + ":" + String(getMinute());
-
-        display->drawString(0, 0, dateTime);
-        switch (page) {
-            case TEMPERATURE :
-                if (donnees->tempEtHum->temperature != -1) {
-                    char temp[20];
-                    sprintf(temp, "Temp : %.2f°C", donnees->tempEtHum->temperature);
-                    display->drawString(0, 25, temp);
-                }
-                else {
-                    display->drawString(0, 25, "Temp : N/A");
-                }
-                page = HUMIDITE;
-                break;
-            case HUMIDITE :
-                if (donnees->tempEtHum->humidite != -1) {
-                    char temp[17];
-                    sprintf(temp, "Hum : %.2f%s", donnees->tempEtHum->humidite, "%");
-                    display->drawString(0, 25, temp);
-                }
-                else {
-                    display->drawString(0, 25, "Hum : N/A");
-                }
-                page = CO2;
-                break;
-            case CO2 :
-                if (*donnees->co2 != -1) {
-                    char temp[17];
-                    sprintf(temp, "CO2 : %d ppm", *donnees->co2);
-                    display->drawString(0, 25, temp);
-                }
-                else {
-                    display->drawString(0, 25, "CO2 : N/A");
-                }
-                page = TEMPERATURE;
-            break;
-        }
-        display->display();
+        delay(3 * 1000);
+        afficher(donnees);
     }
 }

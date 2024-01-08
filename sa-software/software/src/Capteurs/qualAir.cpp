@@ -155,7 +155,7 @@ void taskQualAir(void *pvParameters)
             Serial.println("error reading IAQ values\n");
             *co2 = 0;
         }
-        delay(5 * 60 * 1000);
+        delay(3 * 1000);
     }
 }
 

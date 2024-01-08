@@ -15,7 +15,7 @@ void taskTempEtHum(void *pvParameters) {
     values->temperature = (isnan(TempEtHum.temperature) ?  -1 : round(TempEtHum.temperature * 10.0)/10.0); //arrondi la valeur et reste a NaN si NaN pour ne pas "arrondir" NaN
     values->humidite = (isnan(TempEtHum.humidity) ?  -1 : round(TempEtHum.humidity * 10.0)/10.0);
     //Serial.printf("temp: %.1f; hum: %.1f;\n", values->temperature, values->humidite); //affiche dans le moniteur série les valeurs
-    delay(5 * 60 * 1000);
+    delay(3 * 1000);
   }
 }
 

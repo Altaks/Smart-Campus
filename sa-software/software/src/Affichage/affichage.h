@@ -8,4 +8,6 @@ bool initAffichage(struct Donnees*);
 
 void taskAffichage(void *pvParameters);
 
+void afficher(struct Donnees * donnees);
+
 #endif
