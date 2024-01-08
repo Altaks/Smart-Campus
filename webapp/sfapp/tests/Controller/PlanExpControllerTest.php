@@ -214,7 +214,7 @@ class PlanExpControllerTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $systemesAcquisitionRepository = static ::getContainer()->get(SystemeAcquisitionRepository::class);
+        $systemesAcquisitionRepository = static::getContainer()->get(SystemeAcquisitionRepository::class);
         $nbSystemesAcquisitionNonInstalle = count($systemesAcquisitionRepository->findBy(['etat' => 'Non installé']));
 
         $travauxRepository = static ::getContainer()->get(DemandeTravauxRepository::class);
