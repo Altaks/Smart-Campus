@@ -1,12 +1,6 @@
 {% extends 'base.html.twig'%}
 
-{% if is_granted('ROLE_CHARGE_DE_MISSION') or is_granted('ROLE_TECHNICIEN') %}
 
-    {% set nav_links = {
-        '/deconnexion' : "<box-icon name='exit'></box-icon> Déconnexion"
-    } %}
-
-{% endif %}
 
 {% block title %}Connexion{% endblock %}
 
