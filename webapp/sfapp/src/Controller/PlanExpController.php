@@ -198,7 +198,7 @@ class PlanExpController extends AbstractController
         }
 
 
-        $form = $this->createFormBuilder()
+        $formSystemeAcqui = $this->createFormBuilder()
             ->add('sa', ChoiceType::class, [
                 'choices' => $listeChoix,
                 'choice_label' => function(?SystemeAcquisition $listeChoix) {
@@ -240,15 +240,15 @@ class PlanExpController extends AbstractController
 
         }
 
-        $form->handleRequest($request);
+        $formSystemeAcqui->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()) {
+        if($formSystemeAcqui->isSubmitted() && $formSystemeAcqui->isValid()) {
 
             if ($systemeAcquisition != null){
                 $systemeAcquisition->setEtat("Non installé");
             }
 
-            $id = $form->getData()['sa'];
+            $id = $formSystemeAcqui->getData()['sa'];
             if ($id == null){
                 $demandeTravaux->setSystemeAcquisition(null);
                 $entityManager->flush();
@@ -266,7 +266,7 @@ class PlanExpController extends AbstractController
         return $this->render('plan/technicien/demande_de_travaux.html.twig', [
             'listeReleves' => $dictReleves,
             'demandeTravaux' => $demandeTravaux,
-            'form' => $form,
+            'formSystemeAcqui' => $formSystemeAcqui,
             'salle' => $salle
         ]);
     }
