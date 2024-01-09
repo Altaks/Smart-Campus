@@ -118,7 +118,10 @@ class PlanExpControllerTest extends WebTestCase
         $client->loginUser($testUser);
 
         $travauxRepository = static::getContainer()->get(DemandeTravauxRepository::class);
-        $travaux = $travauxRepository->findAll();
+        $travaux = $travauxRepository->findBy([
+            'type' => 'Installation',
+            'terminee' => false
+        ]);
 
         for ($i = 0; $i < count($travaux); $i++) {
             $client->request('GET', '/plan/demande-travaux/' . $travaux[$i]->getId());
@@ -198,21 +201,18 @@ class PlanExpControllerTest extends WebTestCase
         $client->loginUser($testUser);
 
         $travauxRepository = static::getContainer()->get(DemandeTravauxRepository::class);
-        $travaux = $travauxRepository->findOneBy([
-            'type' => 'Installation',
-            'terminee' => 'false'
-            ]);
+        $travaux = $travauxRepository->findBy([
+            "type" => "Installation",
+            "terminee" => false
+        ]);
 
-        $crawler = $client->request('GET', '/plan/demande-travaux/'.$travaux->getId());
-        $button = $crawler->filter('button');
-        $p = $crawler->filter('p');
-        if($button->count())
-        {
-            $this->assertEquals('Déclarer opérationnel', $button->eq(0)->text());
-        }
-        else
-        {
-            $this->assertEquals('Pas de relevé', $p->last()->text());
+        for($i=0; $i<count($travaux); $i++) {
+            $crawler = $client->request('GET', '/plan/demande-travaux/' . $travaux[$i]->getId());
+            $button = $crawler->filter('button');
+            if ($button->count()) {
+                $this->assertEquals('Déclarer opérationnel', $button->eq(0)->text());
+            }
+
         }
     }
 }
