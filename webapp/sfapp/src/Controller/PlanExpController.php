@@ -146,6 +146,10 @@ class PlanExpController extends AbstractController
         $travauxRepository = $entityManager->getRepository('App\Entity\DemandeTravaux');
         $demandeTravaux = $travauxRepository->findOneBy(['id' => $id]);
 
+        if($demandeTravaux->isTerminee()){
+            throw $this->createNotFoundException('La demande de travaux est déjà terminée.');
+        }
+
         $salleRepository = $entityManager->getRepository('App\Entity\Salle');
         $salle = $salleRepository->findOneBy(['id' => $demandeTravaux->getSalle()->getId()]);
 
@@ -268,7 +272,21 @@ class PlanExpController extends AbstractController
     #[Route('/plan/{id}/declarer-operationnel', name: 'technicien_declarer_operationnel')]
     public function technicien_declarer_operationnel(int $id, ManagerRegistry $doctrine, Request $request): Response
     {
-        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
-        // full redirect
+        $entityManager = $doctrine->getManager();
+        $travauxRepository = $entityManager->getRepository('App\Entity\DemandeTravaux');
+        $demandeTravaux = $travauxRepository->findOneBy(['id' => $id]);
+        $demandeTravaux->setTerminee(true);
+
+        $systemeAcquisitionRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
+        $systemeAcquisition = $systemeAcquisitionRepository->findOneBy(['id' => $demandeTravaux->getSystemeAcquisition()]);
+        $systemeAcquisition->setEtat("Opérationnel");
+
+        $salleRepository = $entityManager->getRepository('App\Entity\Salle');
+        $salle = $salleRepository->findOneBy(['id' => $demandeTravaux->getSalle()]);
+        $salle->setSystemeAcquisition($systemeAcquisition);
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute("technicien_liste_sa");
     }
 }

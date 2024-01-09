@@ -4,39 +4,31 @@
 
 {% block body %}
 
-
-    {#
-    <div class="relative overflow-x-auto max-w-7xl mx-auto">
-
-        <form class="lg:w-1/6 lg:mr-auto mr-6 ml-6" action="/plan/demande-travaux/{{ demandeTravaux.id }}" method="post">
-            <select class="w-full lg:text-xl text-4xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" name="sa" onchange="form.submit()">
-                {% if demandeTravaux.systemeAcquisition is null %}
-                    <option id="option" selected value="aucun">Aucun</option>
-                {% else %}
-                    <option id="option" selected value="{{ demandeTravaux.systemeAcquisition.id }}">{{ demandeTravaux.systemeAcquisition.nom }}</option>
-                    <option id="option" value="aucun">Aucun</option>
-                {% endif %}
-                {% for systeme in listeSysAcqui %}
-                    <option id="option" value="{{ systeme.id }}">{{ systeme.nom }}</option>
-                {% endfor %}
-            </select>
-        </form>
-    </div>
-    #}
-
-    <div class="relative overflow-x-auto max-w-7xl mx-auto">
+    <div class="relative overflow-x-auto lg:max-w-7xl mx-auto">
         <h1 class="lg:text-4xl text-6xl py-12 text-center">Salle {{ salle.nom }}</h1>
+        <div class="flex flex-row justify-between max-w-screen-xl mx-auto">
+            <div class="ml-6">
+                {{ form_start(formSystemeAcqui) }}
+                    <label class="text-xl mb-2">{{ field_label(formSystemeAcqui.sa) }}</label>
+                    <select id="option" name="{{ field_name(formSystemeAcqui.sa) }}" class="text-xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange='this.form.submit()'>
 
-        <div class="lg:w-1/6 lg:mr-auto mr-6 ml-6">
-            {{ form_start(formSystemeAcqui) }}
-                <label class="text-xl mb-2">{{ field_label(formSystemeAcqui.sa) }}</label>
-                <select id="option" name="{{ field_name(formSystemeAcqui.sa) }}" class="form-control w-full lg:text-xl text-4xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange='this.form.submit()'>
-
-                    {% for label, value in field_choices(formSystemeAcqui.sa) %}
-                     <option value="{{ value }}">{{ label }}</option>
-                    {% endfor %}
-            </select>
-            {{ form_end(formSystemeAcqui) }}
+                        {% for label, value in field_choices(formSystemeAcqui.sa) %}
+                         <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
+                </select>
+                {{ form_end(formSystemeAcqui) }}
+            </div>
+            <div class="mr-6">
+                {% if listeReleves is not null and not demandeTravaux.Terminee %}
+                    <button
+                        type="button"
+                        class="lg:text-xl text-4xl font-bold ml-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-7 focus:outline-none"
+                        onclick="window.location.href='/plan/{{ demandeTravaux.getId }}/declarer-operationnel'"
+                    >
+                        Déclarer opérationnel
+                    </button>
+                {% endif %}
+            </div>
         </div>
     </div>
 
