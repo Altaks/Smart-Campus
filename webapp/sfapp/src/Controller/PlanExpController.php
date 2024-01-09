@@ -233,14 +233,15 @@ class PlanExpController extends AbstractController
         $entityManager = $doctrine->getManager();
         $saRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
 
-        $listeChoix = ["Tous les SA" , "En cours d'installation", "Non installés", "Opérationnels"];
+        $listeChoix = ["Tous les SA" , "En cours d'installation", "Non installés", "Opérationnels", "Réparations"];
 
         $formEtats = $this->createFormBuilder()->add('choix', ChoiceType::class, [
             'choices' => array(
                 "Tous les SA" => 0,
                 "En cours d'installation" => 1,
                 "Non installés" => 2,
-                "Opérationnels" => 3),
+                "Opérationnels" => 3,
+                "Réparations" => 4),
             'required' => true,
         ])->getForm();
 
@@ -268,12 +269,54 @@ class PlanExpController extends AbstractController
                 case "Opérationnels":
                     $listeSa = $saRepository->findBy(['etat' => "Opérationnel"]);
                     break;
+                case "Réparations":
+                    $listeSa = $saRepository->findBy(['etat' => "Réparation"]);
+                    break;
             }
         }
         else
         {
             $listeSa = $saRepository->findAll();
         }
+
+        usort($listeSa, function ($sa1,$sa2){
+            $value1 = 0;
+            $value2 = 0;
+            switch($sa1->getEtat())
+            {
+                case "Réparation":
+                    $value1 = 0;
+                    break;
+                case "Installation":
+                    $value1 = 1;
+                    break;
+                case "Non installé":
+                    $value1 = 2;
+                    break;
+                case "Opérationnel":
+                    $value1 = 3;
+                    break;
+            }
+            switch($sa2->getEtat())
+            {
+                case "Réparation":
+                    $value2 = 0;
+                    break;
+                case "Installation":
+                    $value2 = 1;
+                    break;
+                case "Non installé":
+                    $value2 = 2;
+                    break;
+                case "Opérationnel":
+                    $value2 = 3;
+                    break;
+            }
+            if ($value1 == $value2) {
+                return 0;
+            }
+            return ($value1 < $value2) ? -1 : 1;
+        } );
 
         return $this->render('plan/technicien/liste_sa.html.twig', [
             'listeSa' => $listeSa,

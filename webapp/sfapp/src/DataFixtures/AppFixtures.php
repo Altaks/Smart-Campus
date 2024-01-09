@@ -123,6 +123,24 @@ class AppFixtures extends Fixture
         $manager->persist($salle4);
         $manager->persist($travaux4);
 
+        $sa5 = new SystemeAcquisition();
+        $sa5->setNom('ESP-004')
+            ->setBaseDonnees("sae34bdk2eq1")
+            ->setEtat("Réparation");
+
+        $salle5 = new Salle();
+        $salle5->setNom("D204")
+            ->setOrientation("Su")
+            ->setNombreFenetre(6)
+            ->setNombrePorte(2)
+            ->setContientpc(true)
+            ->setBatiment("Bâtiment D")
+            ->setSystemeAcquisition($sa5);
+
+        $sa5->setSalle($salle5);
+
+        $manager->persist($sa5);
+        $manager->persist($salle5);
 
         $manager->flush();
     }
