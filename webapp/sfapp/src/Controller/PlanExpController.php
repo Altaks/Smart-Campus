@@ -108,8 +108,6 @@ class PlanExpController extends AbstractController
         $salle = new Salle();
 
         $entityManager = $doctrine->getManager();
-        $salleRepository = $entityManager->getRepository('App\Entity\Salle');
-
 
         $listeOrientation = [
             'Nord' => 'No',
