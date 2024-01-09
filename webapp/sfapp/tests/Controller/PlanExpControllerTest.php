@@ -3,11 +3,12 @@
 namespace App\tests\Controller;
 
 use App\Entity\SystemeAcquisition;
+use App\Entity\Salle;
 use App\Repository\DemandeTravauxRepository;
 use App\Repository\SystemeAcquisitionRepository;
-use App\Entity\Salle;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use App\Repository\UtilisateurRepository;
+use Doctrine\ORM\EntityManager;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 
 class PlanExpControllerTest extends WebTestCase
@@ -256,5 +257,33 @@ class PlanExpControllerTest extends WebTestCase
         $client = static::createClient();
         $client->request('GET', '/plan/ajouter_sa/');
         $this->assertResponseStatusCodeSame(301, $client->getResponse()->getStatusCode());
+    }
+
+    public function test_ajouter_sa_technicien_verifiacation_formulaire()
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/ajouter_sa/');
+
+        $crawler = $client->submitForm('submit', [
+            'nom_sa' => 'ESP-999',
+            'nom_db' => 'sae34bdm2eq3'
+        ]);
+        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
+        $this->assertMatchesRegularExpression('/\/ajouter_sa$/', $client->getResponse()->headers->get('location'));
+        $client->followRedirect();
+
+        $saRepository = static::getContainer()->get(SystemeAcquisitionRepository::class);
+        $sa = $saRepository->findOneBy(['nom' => 'ESP-999']);
+        $this->assertNotEmpty($sa);
+
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager->remove($sa);
+        $entityManager->flush();
     }
 }
