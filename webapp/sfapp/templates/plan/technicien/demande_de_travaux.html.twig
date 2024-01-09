@@ -9,8 +9,8 @@
         <div class="flex flex-row justify-between max-w-screen-xl mx-auto">
             <div class="ml-6">
                 {{ form_start(formSystemeAcqui) }}
-                    <label class="text-xl mb-2">{{ field_label(formSystemeAcqui.sa) }}</label>
-                    <select id="option" name="{{ field_name(formSystemeAcqui.sa) }}" class="text-xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange='this.form.submit()'>
+                    <label class="mb-2">{{ field_label(formSystemeAcqui.sa) }}</label>
+                    <select id="option" name="{{ field_name(formSystemeAcqui.sa) }}" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange='this.form.submit()'>
 
                         {% for label, value in field_choices(formSystemeAcqui.sa) %}
                          <option value="{{ value }}">{{ label }}</option>
@@ -22,7 +22,7 @@
                 {% if listeReleves is not null and not demandeTravaux.Terminee %}
                     <button
                         type="button"
-                        class="lg:text-xl text-4xl font-bold ml-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-7 focus:outline-none"
+                        class="font-bold ml-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-7 focus:outline-none"
                         onclick="window.location.href='/plan/{{ demandeTravaux.getId }}/declarer-operationnel'"
                     >
                         Déclarer opérationnel

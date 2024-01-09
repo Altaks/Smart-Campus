@@ -160,7 +160,7 @@ class PlanExpController extends AbstractController
             $salle = $formSalle->getData();
             $entityManager->persist($salle);
             $entityManager->flush();
-            return $this->redirectToRoute('cdm_lister_salles');
+            return $this->redirectToRoute('cdm_plan');
         }
 
         return $this->render('plan/charge_de_mission/ajouter_salle.html.twig', [
