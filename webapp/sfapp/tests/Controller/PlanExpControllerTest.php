@@ -223,4 +223,38 @@ class PlanExpControllerTest extends WebTestCase
         $client->request('GET', '/plan/lister_sa/');
         $this->assertResponseStatusCodeSame(301, $client->getResponse()->getStatusCode());
     }
+
+    public function test_ajouter_sa_technicien_connexion_valide_technicien()
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/ajouter_sa/');
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function test_ajouter_sa_technicien_connexion_invalide_charge_de_mission()
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'yghamri']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/ajouter_sa/');
+        $this->assertResponseStatusCodeSame(301, $client->getResponse()->getStatusCode());
+
+    }
+
+    public function test_ajouter_sa_technicien_connexion_invalide_usager()
+    {
+        $client = static::createClient();
+        $client->request('GET', '/plan/ajouter_sa/');
+        $this->assertResponseStatusCodeSame(301, $client->getResponse()->getStatusCode());
+    }
 }
