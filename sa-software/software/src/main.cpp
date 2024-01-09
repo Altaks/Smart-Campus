@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 
+
 #include "Capteurs/tempEtHum.h"
 #include "Heure/heureLocal.h"
 #include "Capteurs/qualAir.h"
@@ -8,24 +9,51 @@
 #include "Reseaux/pointAcces.h"
 #include "Reseaux/station.h"
 #include "typeDef.h"
+#include "envois/envois.h"
 
 TempEtHum* tempEtHum;
 unsigned short* co2;
 PAGE page;
 Donnees* donnees;
+char * nomSa;
+char * salle;
+char * nomUtilistaeur = "m2eq3";
+char * pwd = "howjoc-dyjhId-hiwre0";
+char * nomBD = "sae34bdm2eq3";
+bool * presence;
+unsigned short * lum;
+
 const String* nomReseau    = new String("eduroam");
 const char* password       = "txg;3afks64@KmMy";
 const char* identifiant    = "ksimon";
 const char* nomUtilisateur = "ksimon";
 
+
+bool envoi = true;
+
+bool test = true;
+
 void setup() {
     tempEtHum = new TempEtHum();
     co2 = new (unsigned short);
-    donnees = new Donnees();
     page = TEMPERATURE;
+    salle = "C004";
+    nomSa = "ESP-018";
+    lum = new (unsigned short);
+    presence = new (bool);
+
+    donnees = new Donnees();
     donnees->tempEtHum = tempEtHum;
     donnees->co2 = co2;
     donnees->page;
+    donnees->nomSa = nomSa;
+    donnees->salle = salle;
+    donnees->nomUtilisateur;
+    donnees->pwd = pwd;
+    donnees->nomBD = nomBD;
+    donnees->presence = presence;
+
+    *presence = true;
 
 
     Serial.begin(9600);
@@ -49,7 +77,7 @@ void setup() {
 }
 
 void loop() {
-    
+
     if(estConnecte())
     {
         Serial.println("L'ESP est connecté !");
@@ -113,4 +141,21 @@ void loop() {
         }
     }
     delay(1000);
+
+    if (estConnecte() && test){
+        Serial.println("Test de l'envoi");
+        if (envoyer(donnees) == 0){
+            Serial.println("Envoi réussi");
+            test = false;
+        }
+        else{
+            Serial.println("Envoi échoué");
+        };
+    }
+    if (estConnecte() && envoi){
+        if (getDate() != "Date Error"){
+            Serial.println("Début de l'envoi des données");
+            testGetHttp();
+        }
+    }
 }

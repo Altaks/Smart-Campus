@@ -11,7 +11,7 @@ struct TempEtHum{
     float humidite;
 };
 
-// page courante dans les valeurs (1 -> Température, 2 -> Humidité, 3 -> CO2);
+// page courante dans les valeurs (1 -> Température, 2 -> Humidité, 3 -> CO2); // affichage de la luminosité et de la présence nom demandés par le client
 enum PAGE {
     TEMPERATURE,
     HUMIDITE,
@@ -21,6 +21,13 @@ enum PAGE {
 struct Donnees{
     TempEtHum* tempEtHum;
     unsigned short * co2;
+    unsigned short * lum;
+    bool * presence;
+    char * nomSa;
+    char * salle;
+    char * nomUtilisateur;
+    char * pwd;
+    char * nomBD;
     PAGE page;
 };
 
