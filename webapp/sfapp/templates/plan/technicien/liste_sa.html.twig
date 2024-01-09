@@ -49,18 +49,10 @@
                             {{ systemeAcquisition.nom }}
                         </th>
                         <td class="px-6 py-4">
-                            {% if systemeAcquisition.salle is not null %}
-                                {{ systemeAcquisition.Salle.nom }}
-                            {% else %}
-                                -
-                            {% endif %}
+                            {{ systemeAcquisition.Salle.nom|default('-') }}
                         </td>
                         <td class="px-6 py-4">
-                            {% if systemeAcquisition.salle is not null %}
-                                {{ systemeAcquisition.Salle.Batiment }}
-                            {% else %}
-                                -
-                            {% endif %}
+                            {{ systemeAcquisition.Salle.Batiment|default('-') }}
                         </td>
                         <td class="px-6 py-4">
                             {% if systemeAcquisition.etat == 'Installation' %}

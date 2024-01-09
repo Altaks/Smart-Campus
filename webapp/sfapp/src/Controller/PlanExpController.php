@@ -234,11 +234,6 @@ class PlanExpController extends AbstractController
         $saRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
 
         $listeChoix = ["Tous les SA" , "En cours d'installation", "Non installés", "Opérationnels"];
-        $choixParDefault = 0;
-        if($request->getMethod() == "POST")
-        {
-            $choixParDefault = $_POST["form"]["choix"];
-        }
 
         $formEtats = $this->createFormBuilder()->add('choix', ChoiceType::class, [
             'choices' => array(
@@ -253,10 +248,12 @@ class PlanExpController extends AbstractController
         $formEtats->handleRequest($request);
         $listeSa = [];
         $choix = "Tous les SA";
+        $choixParDefault = 0;
 
         if($formEtats->isSubmitted() && $formEtats->isValid())
         {
-            $choix = $listeChoix[$formEtats->getData()['choix']];
+            $choixParDefault = $formEtats->getData()['choix'];
+            $choix = $listeChoix[$choixParDefault];
             switch($choix)
             {
                 case "Tous les SA":
@@ -272,12 +269,6 @@ class PlanExpController extends AbstractController
                     $listeSa = $saRepository->findBy(['etat' => "Opérationnel"]);
                     break;
             }
-
-            $formEtats = $this->createFormBuilder()->add('choix', ChoiceType::class, [
-                'choices' => ["Tous les SA" => 0, "En cours d'installation" => 1, "Non installés" => 2, "Opérationnels" => 3],
-                'required' => true,
-                'data' => $choix,
-            ])->getForm();
         }
         else
         {
