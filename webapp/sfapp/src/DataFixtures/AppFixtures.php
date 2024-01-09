@@ -9,6 +9,7 @@ use App\Entity\Utilisateur;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
 class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
@@ -30,7 +31,7 @@ class AppFixtures extends Fixture
 
         $sa1 = new SystemeAcquisition();
         $sa1->setNom('ESP-003')
-            ->setBaseDonnees("sae34bdm2eq3")
+            ->setBaseDonnees("sae34bdk1eq3")
             ->setEtat("Opérationnel");
 
         $salle1 = new Salle();
@@ -57,7 +58,7 @@ class AppFixtures extends Fixture
 
         $sa2 = new SystemeAcquisition();
         $sa2->setNom('ESP-007')
-            ->setBaseDonnees("sae34bdm1eq2")
+            ->setBaseDonnees("sae34bdl1eq1")
             ->setEtat("Installation");
 
         $salle2 = new Salle();
@@ -83,7 +84,7 @@ class AppFixtures extends Fixture
 
         $sa3 = new SystemeAcquisition();
         $sa3->setNom('ESP-014')
-            ->setBaseDonnees("sae34bdl2eq1")
+            ->setBaseDonnees("sae34bdm1eq2")
             ->setEtat("Non installé");
 
         $salle3 = new Salle();

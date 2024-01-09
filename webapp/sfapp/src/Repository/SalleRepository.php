@@ -21,6 +21,14 @@ class SalleRepository extends ServiceEntityRepository
         parent::__construct($registry, Salle::class);
     }
 
+    public function findAllSallesAvecSAOperationnel(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.systemeAcquisition IS NOT NULL')
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Salle[] Returns an array of Salle objects
 //     */

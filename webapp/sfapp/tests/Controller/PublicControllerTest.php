@@ -1,8 +1,12 @@
 <?php
 
 namespace App\tests\Controller;
+use App\DataFixtures\Test\RelevesFixtures;
 use App\Repository\DemandeTravauxRepository;
+use App\Repository\SalleRepository;
 use App\Repository\UtilisateurRepository;
+use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
+use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -109,5 +113,23 @@ class PublicControllerTest extends WebTestCase
 
         $li = $crawler->filter("#demandeInstallation");
         $this->assertEquals($nbDemandes, $li->count());
+    }
+
+    public function test_accueil_requette_sans_utilisateur_connecte(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/accueil/');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'Bienvenue sur le site Smart Campus');
+    }
+
+    public function test_releve_requette_sans_utilisateur_connecte(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/releves');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'Veuillez choisir une salle');
     }
 }
