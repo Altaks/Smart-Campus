@@ -4,9 +4,11 @@ namespace App\Controller;
 
 
 use App\Entity\DemandeTravaux;
+use App\Entity\SystemeAcquisition;
 use App\Service\ReleveService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,6 +16,16 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class PlanExpController extends AbstractController
 {
+
+    private static function comparaison_etat_sa($sa1,$sa2){
+        $mapEtatValue = ["Réparation"=>0, "Installation"=>1, "Non installé"=>2, "Opérationnel"=>3];
+        $value1 = $mapEtatValue[$sa1->getEtat()];
+        $value2 = $mapEtatValue[$sa2->getEtat()];
+        if ($value1 == $value2) {
+            return 0;
+        }
+        return ($value1 < $value2) ? -1 : 1;
+    }
 
     // Routes du chargé de mission
 
@@ -144,6 +156,10 @@ class PlanExpController extends AbstractController
         $travauxRepository = $entityManager->getRepository('App\Entity\DemandeTravaux');
         $demandeTravaux = $travauxRepository->findOneBy(['id' => $id]);
 
+        if($demandeTravaux->isTerminee()){
+            throw $this->createNotFoundException('La demande de travaux est déjà terminée.');
+        }
+
         $salleRepository = $entityManager->getRepository('App\Entity\Salle');
         $salle = $salleRepository->findOneBy(['id' => $demandeTravaux->getSalle()->getId()]);
 
@@ -151,41 +167,48 @@ class PlanExpController extends AbstractController
 
         $dictReleves = null;
 
-        // TODO: implémenter un formulaire symfony plutôt qu'un formulaire html
+        $systemeAcquisition = $demandeTravaux->getSystemeAcquisition();
+        $placeHolder = 'Aucun';
 
-        if($request->getMethod() == "POST"){
-            $value = $_POST["sa"];
-            if($value == "aucun"){
-                $sa = $demandeTravaux->getSystemeAcquisition();
-                if ($sa != null){
-                    $sa->setEtat('Non installé');
-                    $demandeTravaux->setSystemeAcquisition(null);
-                    $entityManager->flush();
-                }
-            }
-            else{
-                $a_sa = $demandeTravaux->getSystemeAcquisition();
-                $n_sa = $sysAcquiRepository->findOneBy(["id" => $value]);
-                if ($a_sa != $n_sa){
-                    if ($a_sa != null){
-                        $a_sa->setEtat('Non installé');
-                    }
-                    $demandeTravaux->setSystemeAcquisition($n_sa);
-                    $n_sa->setEtat('Installation');
-                    $entityManager->flush();
-                }
-            }
+        $listeChoix = [];
+        if ($systemeAcquisition != null){
+            $listeChoix[] = $systemeAcquisition;
+            $placeHolder = $systemeAcquisition->getNom();
         }
 
+        $listeChoix[] = null;
+
         $listeSysAcquiNonInstall = $sysAcquiRepository->findBy(['etat' => 'Non installé']);
-        $systemeAcquisition = $demandeTravaux->getSystemeAcquisition();
+
+        foreach ($listeSysAcquiNonInstall as $sys){
+            $listeChoix[] = $sys;
+        }
+
+
+        $formSystemeAcqui = $this->createFormBuilder()
+            ->add('sa', ChoiceType::class, [
+                'choices' => $listeChoix,
+                'choice_label' => function(?SystemeAcquisition $listeChoix) {
+                    return $listeChoix ? $listeChoix->getNom(): 'Aucun';
+                },
+                'choice_value' => function(?SystemeAcquisition $listeChoix) {
+                    return $listeChoix ? $listeChoix->getId() : null;
+                },
+                'label' => "Système d'acquisition",
+                'required' => true,
+                'data' => $systemeAcquisition,
+
+            ])
+            ->getForm();
+
+
+
         if($systemeAcquisition != null)
         {
             date_default_timezone_set('Europe/Paris');
             $dateDemain = new \DateTime(date('Y-m-d H:i:s', time() + 24 * 60 * 60 ));
             $dateHier = new \DateTime(date('Y-m-d H:i:s', time() - 24 * 60 * 60 ));
             $service = new ReleveService();
-
             $dictReleves = $service->getEntre($systemeAcquisition, $dateHier, $dateDemain);
             $listeDatesReleves = array_keys($dictReleves);
 
@@ -204,10 +227,33 @@ class PlanExpController extends AbstractController
 
         }
 
+        $formSystemeAcqui->handleRequest($request);
+
+        if($formSystemeAcqui->isSubmitted() && $formSystemeAcqui->isValid()) {
+
+            if ($systemeAcquisition != null){
+                $systemeAcquisition->setEtat("Non installé");
+            }
+
+            $id = $formSystemeAcqui->getData()['sa'];
+            if ($id == null){
+                $demandeTravaux->setSystemeAcquisition(null);
+                $entityManager->flush();
+                return $this->redirect('/plan/demande-travaux/' . $demandeTravaux->getId());
+            }
+
+            $sa = $sysAcquiRepository->findOneBy(['id' => $id]);
+            $demandeTravaux->setSystemeAcquisition($sa);
+            $sa->setEtat("Installation");
+            $entityManager->flush();
+
+            return $this->redirect('/plan/demande-travaux/' . $demandeTravaux->getId());
+        }
+
         return $this->render('plan/technicien/demande_de_travaux.html.twig', [
             'listeReleves' => $dictReleves,
             'demandeTravaux' => $demandeTravaux,
-            'listeSysAcqui' => $listeSysAcquiNonInstall,
+            'formSystemeAcqui' => $formSystemeAcqui,
             'salle' => $salle
         ]);
     }
@@ -227,23 +273,85 @@ class PlanExpController extends AbstractController
     }
 
     #[Route('/plan/lister_sa', name: 'technicien_liste_sa')]
-    public function technicien_liste_sa(ManagerRegistry $doctrine, releveService $service): Response
+    public function technicien_liste_sa(ManagerRegistry $doctrine, releveService $service, Request $request): Response
     {
-        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
-        return $this->render('plan/technicien/liste_sa.html.twig', []);
-    }
+        $entityManager = $doctrine->getManager();
+        $saRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
 
-    #[Route('/plan/demande-travaux/{id}', name: 'technicien_demande_travaux')]
-    public function technicien_demande_travaux(int $id, ManagerRegistry $doctrine, Request $request): Response
-    {
-        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
-        return $this->render('plan/technicien/demande_de_travaux.html.twig', []);
+        $listeChoix = ["Tous les SA" , "En cours d'installation", "Non installés", "Opérationnels", "Réparations"];
+
+        $formEtats = $this->createFormBuilder()->add('choix', ChoiceType::class, [
+            'choices' => array(
+                "Tous les SA" => 0,
+                "En cours d'installation" => 1,
+                "Non installés" => 2,
+                "Opérationnels" => 3,
+                "Réparations" => 4),
+            'required' => true,
+        ])->getForm();
+
+
+        $formEtats->handleRequest($request);
+        $listeSa = [];
+        $choix = "Tous les SA";
+        $choixParDefault = 0;
+
+        if($formEtats->isSubmitted() && $formEtats->isValid())
+        {
+            $choixParDefault = $formEtats->getData()['choix'];
+            $choix = $listeChoix[$choixParDefault];
+            switch($choix)
+            {
+                case "Tous les SA":
+                    $listeSa = $saRepository->findAll();
+                    break;
+                case "En cours d'installation":
+                    $listeSa = $saRepository->findBy(['etat' => "Installation"]);
+                    break;
+                case "Non installés":
+                    $listeSa = $saRepository->findBy(['etat' => "Non installé"]);
+                    break;
+                case "Opérationnels":
+                    $listeSa = $saRepository->findBy(['etat' => "Opérationnel"]);
+                    break;
+                case "Réparations":
+                    $listeSa = $saRepository->findBy(['etat' => "Réparation"]);
+                    break;
+            }
+        }
+        else
+        {
+            $listeSa = $saRepository->findAll();
+        }
+
+        usort($listeSa, "self::comparaison_etat_sa");
+
+        return $this->render('plan/technicien/liste_sa.html.twig', [
+            'listeSa' => $listeSa,
+            'form' => $formEtats,
+            'choix' => $choix,
+            'defaut' => $choixParDefault,
+        ]);
     }
 
     #[Route('/plan/{id}/declarer-operationnel', name: 'technicien_declarer_operationnel')]
     public function technicien_declarer_operationnel(int $id, ManagerRegistry $doctrine, Request $request): Response
     {
-        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
-        // full redirect
+        $entityManager = $doctrine->getManager();
+        $travauxRepository = $entityManager->getRepository('App\Entity\DemandeTravaux');
+        $demandeTravaux = $travauxRepository->findOneBy(['id' => $id]);
+        $demandeTravaux->setTerminee(true);
+
+        $systemeAcquisitionRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
+        $systemeAcquisition = $systemeAcquisitionRepository->findOneBy(['id' => $demandeTravaux->getSystemeAcquisition()]);
+        $systemeAcquisition->setEtat("Opérationnel");
+
+        $salleRepository = $entityManager->getRepository('App\Entity\Salle');
+        $salle = $salleRepository->findOneBy(['id' => $demandeTravaux->getSalle()]);
+        $salle->setSystemeAcquisition($systemeAcquisition);
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute("technicien_liste_sa");
     }
 }
