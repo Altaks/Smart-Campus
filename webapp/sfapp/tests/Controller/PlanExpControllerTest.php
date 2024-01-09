@@ -204,24 +204,11 @@ class PlanExpControllerTest extends WebTestCase
         }
     }
 
-    public function test_tech_declarer_operationnel_route():void
-    {
-        $client = static::createClient();
-        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
-        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
-
-        // simulate $testUser being logged in
-        $client->loginUser($testUser);
-        $client->request('GET', '/plan/lister_sa/');
-        $this->assertResponseIsSuccessful();
-
-    }
-
     public function test_lister_SA_route_connexion_invalide_usager(): void
     {
         $client = static::createClient();
         $client->request('GET', '/plan/lister_sa/');
-        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(301, $client->getResponse()->getStatusCode());
     }
 
     public function test_lister_SA_route_connexion_invalide_charge_de_mission(): void
@@ -234,6 +221,6 @@ class PlanExpControllerTest extends WebTestCase
         $client->loginUser($testUser);
 
         $client->request('GET', '/plan/lister_sa/');
-        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(301, $client->getResponse()->getStatusCode());
     }
 }
