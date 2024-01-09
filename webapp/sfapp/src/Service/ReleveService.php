@@ -143,6 +143,26 @@ class ReleveService {
         return static::conversionVersRelevesGroupes($response->toArray());
     }
 
+    public function verifierNomBaseDeDonnees(string $nomBase) : bool {
+
+        // Création d'un client HTTP avec les informations de connexion
+        $client = HttpClient::create([
+            'headers' => [
+                'accept' => 'application/json',
+                'dbname' => $nomBase,
+                'username' => 'm2eq3',
+                'userpass' => 'howjoc-dyjhId-hiwre0'
+            ]
+        ]);
+
+        // Envoi de la requête HTTP
+        $response = $client->request('GET', 'https://sae34.k8s.iut-larochelle.fr/api/captures/last' , [
+            'query' => ['page' => 1]
+        ]);
+
+        return $response->getStatusCode() == 200;
+    }
+
 }
 
 ?>

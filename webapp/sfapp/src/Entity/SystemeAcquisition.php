@@ -6,8 +6,12 @@ use App\Repository\SystemeAcquisitionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SystemeAcquisitionRepository::class)]
+#[UniqueEntity('nom', message: 'Nom déjà enregistré')]
+#[UniqueEntity('baseDonnees', message: 'Base de données déjà enregistré')]
 class SystemeAcquisition
 {
     #[ORM\Id]
@@ -18,10 +22,11 @@ class SystemeAcquisition
     #[ORM\OneToOne(mappedBy: 'systemeAcquisition', cascade: ['persist', 'remove'])]
     private ?Salle $salle = null;
 
-    #[ORM\Column(length: 7)]
+    #[ORM\Column(length: 7, unique: true)]
+    #[Assert\Regex(pattern: '/^ESP\-[0-9]{3}$/', message: 'Nom invalide. Acceptés ESP-XXX avec X un chiffre')]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 12)]
+    #[ORM\Column(length: 12, unique: true)]
     private ?string $baseDonnees = null;
 
     #[ORM\Column(length: 255)]
