@@ -4,10 +4,12 @@ namespace App\tests\Controller;
 
 use App\Entity\SystemeAcquisition;
 use App\Repository\DemandeTravauxRepository;
+use App\Repository\SalleRepository;
 use App\Repository\SystemeAcquisitionRepository;
 use App\Entity\Salle;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use App\Repository\UtilisateurRepository;
+use function PHPUnit\Framework\assertEquals;
 
 
 class PlanExpControllerTest extends WebTestCase
@@ -214,5 +216,48 @@ class PlanExpControllerTest extends WebTestCase
             }
 
         }
+    }
+
+    public function test_ajouter_salle_cdm_contenu_form():void
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'yghamri']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+        $crawler = $client->request('GET', '/plan/ajouter-salle/');
+        $nbLabel = count($crawler->filter('label'));
+        $this->assertEquals(6,$nbLabel);
+
+        $client->submitForm('submit', [
+            'salle' => 'E789',
+            'batiment' => 'Bâtiment P',
+            'orientation' => 'No',
+            'fenetre' => 2,
+            'porte' => 2,
+            'ordinateur' => false
+        ]);
+        $entityManager = $client->getContainer()->get('doctrine')->getManager();
+
+        $salleRepository = static::getContainer()->get(SalleRepository::class);
+        $salle = $salleRepository->findOneBy(['nom' => 'E789']);
+        $this->assertNotEmpty($salle);
+        if(!empty($salle)) {
+            $entityManager->remove($salle);
+            $entityManager->flush();
+        }
+
+        $client->submitForm('submit', [
+            'salle' => 'D302',
+            'batiment' => 'Bâtiment D',
+            'orientation' => 'Su',
+            'fenetre' => 6,
+            'porte' => 2,
+            'ordinateur' => true
+        ]);
+
+        $nbSalleD302 = count($salleRepository->findBy(['nom' => 'D302']));
+        $this->assertEquals(1,$nbSalleD302);
     }
 }
