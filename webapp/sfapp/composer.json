@@ -21,6 +21,7 @@
         "symfony/runtime": "6.3.*",
         "symfony/security-bundle": "6.3.*",
         "symfony/twig-bundle": "6.3.*",
+        "symfony/validator": "6.3.*",
         "symfony/webpack-encore-bundle": "^2.1",
         "symfony/yaml": "6.3.*",
         "twig/extra-bundle": "^3.8",
@@ -81,6 +82,7 @@
         "symfony/maker-bundle": "^1.51",
         "symfony/phpunit-bridge": "^6.3",
         "symfony/stopwatch": "6.3.*",
+        "symfony/var-dumper": "6.3.*",
         "symfony/web-profiler-bundle": "6.3.*"
     }
 }
