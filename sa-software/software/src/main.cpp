@@ -24,9 +24,9 @@ bool * presence;
 unsigned short * lum;
 
 const String* nomReseau    = new String("eduroam");
-const char* password       = "txg;3afks64@KmMy";
-const char* identifiant    = "ksimon";
-const char* nomUtilisateur = "ksimon";
+const char* password       = "";
+const char* identifiant    = "";
+const char* nomUtilisateur = "";
 
 
 bool envoi = true;
