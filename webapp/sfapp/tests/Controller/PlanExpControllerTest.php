@@ -4,10 +4,12 @@ namespace App\tests\Controller;
 
 use App\Entity\SystemeAcquisition;
 use App\Repository\DemandeTravauxRepository;
+use App\Repository\SalleRepository;
 use App\Repository\SystemeAcquisitionRepository;
 use App\Entity\Salle;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use App\Repository\UtilisateurRepository;
+use function PHPUnit\Framework\assertEquals;
 
 
 class PlanExpControllerTest extends WebTestCase
@@ -200,7 +202,10 @@ class PlanExpControllerTest extends WebTestCase
             if ($button->count()) {
                 $this->assertEquals('Déclarer opérationnel', $button->eq(0)->text());
             }
-
+            else {
+                $p = $crawler->filter('p');
+                $this->assertEquals('Pas de relevé',$p->eq(0)->text());
+            }
         }
     }
 
@@ -222,5 +227,76 @@ class PlanExpControllerTest extends WebTestCase
 
         $client->request('GET', '/plan/lister_sa/');
         $this->assertResponseStatusCodeSame(301, $client->getResponse()->getStatusCode());
+    }
+
+    public function test_ajouter_salle_cdm_contenu_form():void
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'yghamri']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/ajouter-salle');
+
+        $client->submitForm('submit', [
+            'form[nom]' => 'E789',
+            'form[batiment]' => 'Bâtiment P',
+            'form[orientation]' => 'No',
+            'form[nombreFenetre]' => 2,
+            'form[nombrePorte]' => 2,
+            'form[contientPc]' => 1
+        ]);
+        $entityManager = $client->getContainer()->get('doctrine')->getManager();
+
+        $salleRepository = static::getContainer()->get(SalleRepository::class);
+        $salle = $salleRepository->findOneBy(['nom' => 'E789']);
+        $this->assertNotEmpty($salle);
+        if(!empty($salle)) {
+            $entityManager->remove($salle);
+            $entityManager->flush();
+        }
+
+        $nbSalleInit = count($salleRepository->findAll());
+
+        $client->request('GET', '/plan/ajouter-salle');
+
+        $client->submitForm('submit', [
+            'form[nom]' => 'D302',
+            'form[batiment]' => 'Bâtiment D',
+            'form[orientation]' => 'Su',
+            'form[nombreFenetre]' => 6,
+            'form[nombrePorte]' => 2,
+            'form[contientPc]' => 1
+        ]);
+
+        $this->assertCount($nbSalleInit, $salleRepository->findAll());
+
+        $client->request('GET', '/plan/ajouter-salle');
+
+        $client->submitForm('submit', [
+            'form[nom]' => '',
+            'form[batiment]' => 'Bâtiment U',
+            'form[orientation]' => 'NO',
+            'form[nombreFenetre]' => 6,
+            'form[nombrePorte]' => 2,
+            'form[contientPc]' => 1
+        ]);
+
+        $this->assertCount($nbSalleInit, $salleRepository->findAll());
+
+        $client->request('GET', '/plan/ajouter-salle');
+
+        $client->submitForm('submit', [
+            'form[nom]' => 'M542',
+            'form[batiment]' => '',
+            'form[orientation]' => 'NO',
+            'form[nombreFenetre]' => 6,
+            'form[nombrePorte]' => 2,
+            'form[contientPc]' => 1
+        ]);
+
+        $this->assertCount($nbSalleInit, $salleRepository->findAll());
     }
 }

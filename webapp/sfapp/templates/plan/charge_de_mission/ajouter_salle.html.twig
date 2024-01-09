@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter une salle{% endblock %}
+
+{% set orientation  = {
+    "No" : "Nord",
+    "Su" : "Sud",
+    "Es" : "Est",
+    "Ou" : "Ouest",
+    "NE" : "Nord-Est",
+    "NO" : "Nord-Ouest",
+    "SE" : "Sud-Est",
+    "SO" : "Sud-Ouest",
+} %}
+
+{% block body %}
+
+
+    <div class="relative overflow-x-auto lg:max-w-7xl mx-auto mt-2">
+        <h1 class="lg:text-4xl text-6xl py-12 text-center mb-10">Ajouter une salle</h1>
+        {{ form_start(formSalle) }}
+        <div class="m-auto grid grid-cols-3">
+
+            <div class="mb-5 mx-5">
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ field_label(formSalle.nom) }}</label>
+                <input id="nom" name="{{ field_name(formSalle.nom) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ex: A000">
+                {{ form_errors(formSalle.nom, {
+                    error_item_class: 'text-red-600 text-sm mt-1',
+                }) }}
+            </div>
+            <div class="mb-5 mx-5">
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ field_label(formSalle.batiment) }}</label>
+                <input id="batiment" name="{{ field_name(formSalle.batiment) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ex: Bâtiment A">
+                {{ form_errors(formSalle.batiment, {
+                    error_item_class: 'text-red-600 text-sm mt-1',
+                }) }}
+            </div>
+            <div class="mb-5 mx-5">
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ field_label(formSalle.orientation) }}</label>
+                <select id="orientation" name="{{ field_name(formSalle.orientation) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+
+                    {% for orientation, value in field_choices(formSalle.orientation) %}
+                        <option value="{{ value }}">{{ orientation }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-5 mx-5">
+                <label for="fenetre-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ field_label(formSalle.nombreFenetre) }}</label>
+                <div class="relative flex items-center max-w-[8rem]">
+                    <button type="button" id="decrement-button" data-input-counter-decrement="fenetre-input" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                        </svg>
+                    </button>
+                    <input type="text" id="fenetre-input" name="{{ field_name(formSalle.nombreFenetre) }}" data-input-counter data-input-counter-min="0" aria-describedby="helper-text-explanation" class="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" value="0" required>
+                    <button type="button" id="increment-button" data-input-counter-increment="fenetre-input" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="mb-5 mx-5">
+                <label for="porte-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ field_label(formSalle.nombrePorte) }}</label>
+                <div class="relative flex items-center max-w-[8rem]">
+                    <button type="button" id="decrement-button" data-input-counter-decrement="porte-input" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                        </svg>
+                    </button>
+                    <input type="text" id="porte-input" name="{{ field_name(formSalle.nombrePorte) }}" data-input-counter data-input-counter-min="1" aria-describedby="helper-text-explanation" class="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="1" value="1" required>
+                    <button type="button" id="increment-button" data-input-counter-increment="porte-input" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="mb-5 mx-5">
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ field_label(formSalle.contientPc) }}</label>
+                <div class="flex">
+                    {% for contientPc, value in field_choices(formSalle.contientPc) %}
+                        <div class="flex items-center me-4">
+                            <input id="inline-radio" type="radio" value="{{ value }}" name="{{ field_name(formSalle.contientPc) }}" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="inline-radio" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ contientPc }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                {{ form_errors(formSalle.contientPc, {
+                    error_item_class: 'text-red-600 text-sm mt-1',
+                }) }}
+            </div>
+            <div class="grid grid-cols-subgrid gap-4 col-span-3 mt-5">
+                <div class="mx-auto col-start-1">
+                    <button id="submit" type="submit" name="{{ field_name(formSalle.ajouter) }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        {{ field_label(formSalle.ajouter) }}</button>
+                </div>
+            </div>
+        </div>
+
+        {{ form_end(formSalle) }}
+    </div>
+
+{% endblock %}
