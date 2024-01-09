@@ -30,7 +30,7 @@ class AppFixtures extends Fixture
 
         $sa1 = new SystemeAcquisition();
         $sa1->setNom('ESP-003')
-            ->setBaseDonnees("sae34bdm2eq3")
+            ->setBaseDonnees("sae34bdk1eq3")
             ->setEtat("Opérationnel");
 
         $salle1 = new Salle();

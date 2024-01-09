@@ -3,21 +3,27 @@
 {% block title %}Systemes d'acquisition{% endblock %}
 
 {% block body %}
-    <div class="relative overflow-x-auto max-w-7xl mx-auto">
+    <div class="overflow max-w-7xl mx-auto">
         <h1 class="text-4xl py-12 text-center">Liste des systèmes d'acquisition</h1>
-        <div class="lg:w-1/6 lg:mr-auto mr-6 ml-6">
-            {{ form_start(form) }}
-            <select id="option" name="{{ field_name(form.choix) }}" class="form-control w-max text-xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange='this.form.submit()'>
+        <div class="flex flex-row justify-between">
+            <div class="lg:w-1/6 lg:mr-auto ml-6">
+                {{ form_start(form) }}
+                <select id="option" name="{{ field_name(form.choix) }}" class="form-control w-max text-xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange='this.form.submit()'>
 
-                {% for label, value in field_choices(form.choix) %}
-                    {% if value == defaut %}
-                        <option value="{{ value }}" selected>{{ label }}</option>
-                    {% else %}
-                        <option value="{{ value }}">{{ label }}</option>
-                    {% endif %}
-                {% endfor %}
-            </select>
-            {{ form_end(form) }}
+                    {% for label, value in field_choices(form.choix) %}
+                        {% if value == defaut %}
+                            <option value="{{ value }}" selected>{{ label }}</option>
+                        {% else %}
+                            <option value="{{ value }}">{{ label }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                {{ form_end(form) }}
+            </div>
+
+                <a href="ajouter_sa" class="lg:w-1/6 lg:ml-auto mr-6 mt-2.5 whitespace-nowrap">
+                    <span class="text-xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg px-4 py-3 hover:bg-gray-200 hover:cursor-pointer">Ajouter un système</span>
+                </a>
         </div>
     </div>
 

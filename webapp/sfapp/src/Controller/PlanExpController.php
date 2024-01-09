@@ -9,10 +9,13 @@ use App\Service\ReleveService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PlanExpController extends AbstractController
 {
@@ -258,11 +261,49 @@ class PlanExpController extends AbstractController
         ]);
     }
 
+    #[IsGranted("ROLE_TECHNICIEN")]
     #[Route('/plan/ajouter_sa', name: 'technicien_ajouter_sa')]
     public function technicien_ajouter_sa(ManagerRegistry $doctrine, Request $request): Response
     {
-        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
-        return $this->render('plan/technicien/ajouter_sa.html.twig', []);
+        $sa = new SystemeAcquisition();
+
+        $form = $this->createFormBuilder($sa)
+            ->add('nom', TextType::class)
+            ->add('baseDonnees', TextType::class)
+            ->add('save', SubmitType::class, [
+                'attr' => ['class' => 'save'],
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $sa = $form->getData();
+            $sa->setEtat("Non installé");
+            $service = new ReleveService();
+            if(!$service->verifierNomBaseDeDonnees($sa->getBaseDonnees()))
+            {
+                $errorsString = "Base de données non valide.";
+                return $this->render('plan/technicien/ajouter_sa.html.twig', [
+                    'form' => $form,
+                    'errorBaseDonnees' => $errorsString,
+                ]);
+            }
+            else
+            {
+
+                $entityManager = $doctrine->getManager();
+                $entityManager->persist($sa);
+                $entityManager->flush();
+
+                return $this->redirectToRoute('technicien_liste_sa',[]);
+            }
+        }
+
+        return $this->render('plan/technicien/ajouter_sa.html.twig', [
+            'form' => $form,
+            'errorBaseDonnees' => null,
+        ]);
     }
 
     #[Route('/plan/retirer_sa/<id>', name: 'technicien_retirer_sa')]
@@ -272,6 +313,7 @@ class PlanExpController extends AbstractController
         throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
     }
 
+    #[IsGranted("ROLE_TECHNICIEN")]
     #[Route('/plan/lister_sa', name: 'technicien_liste_sa')]
     public function technicien_liste_sa(ManagerRegistry $doctrine, releveService $service, Request $request): Response
     {
