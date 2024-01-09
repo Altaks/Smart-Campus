@@ -8,7 +8,7 @@
 
     {# Partie chargé de mission #}
     {% if is_granted('ROLE_CHARGE_DE_MISSION') %}
-        <h1 class="w-full text-center text-2xl py-20">Bienvenue Chargé de mission</h1>
+        <h1 class="w-full text-center text-4xl py-20">Bienvenue Chargé de mission</h1>
 
         <div class="mx-auto w-3/4 min-h-64 flex flex-row justify-evenly">
             <a href="/releves" id="releves">
@@ -27,7 +27,7 @@
 
     {# Partie technicien #}
     {% elseif is_granted('ROLE_TECHNICIEN') %}
-        <h1 class="text-5xl font-extrabold dark:text-white mx-auto w-max my-6">Bienvenue Technicien</h1>
+        <h1 class="w-full text-center text-4xl py-20">Bienvenue Technicien</h1>
 
         <div class="flex flex-row w-full  m-t-5">
 
@@ -61,7 +61,7 @@
 
     {# Partie Usager #}
     {% else %}
-        <h1 class="w-full text-center text-2xl py-20">Bienvenu sur le site Smart Campus</h1>
+        <h1 class="w-full text-center text-4xl py-20">Bienvenu sur le site Smart Campus</h1>
 
         <div class="mx-auto w-3/4 min-h-64 flex flex-row justify-evenly">
             <a href="/releves" id="releves">

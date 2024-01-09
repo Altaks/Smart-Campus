@@ -234,11 +234,9 @@ class PlanExpController extends AbstractController
         $saRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
 
         $listeChoix = ["Tous les SA" , "En cours d'installation", "Non installés", "Opérationnels"];
-        $test = "dzef";
         $choixParDefault = 0;
         if($request->getMethod() == "POST")
         {
-            $test = "post";
             $choixParDefault = $_POST["form"]["choix"];
         }
 
@@ -249,7 +247,6 @@ class PlanExpController extends AbstractController
                 "Non installés" => 2,
                 "Opérationnels" => 3),
             'required' => true,
-            'data' => $choixParDefault,
         ])->getForm();
 
 
