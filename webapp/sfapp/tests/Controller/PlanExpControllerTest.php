@@ -186,21 +186,9 @@ class PlanExpControllerTest extends WebTestCase
             else {
                 $this->assertEquals($nbSystemesAcquisitionNonInstalle + 2, $option->count());
             }
-
-
+            
         }
-    }
 
-    public function test_tech_declarer_operationnel_route():void
-    {
-        $client = static::createClient();
-        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
-        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
-
-        // simulate $testUser being logged in
-        $client->loginUser($testUser);
-
-        $travauxRepository = static::getContainer()->get(DemandeTravauxRepository::class);
         $travaux = $travauxRepository->findBy([
             "type" => "Installation",
             "terminee" => false
@@ -214,5 +202,38 @@ class PlanExpControllerTest extends WebTestCase
             }
 
         }
+    }
+
+    public function test_tech_declarer_operationnel_route():void
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+        $client->request('GET', '/plan/lister_sa/');
+        $this->assertResponseIsSuccessful();
+
+    }
+
+    public function test_lister_SA_route_connexion_invalide_usager(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/plan/lister_sa/');
+        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
+    }
+
+    public function test_lister_SA_route_connexion_invalide_charge_de_mission(): void
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'yghamri']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/lister_sa/');
+        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
     }
 }

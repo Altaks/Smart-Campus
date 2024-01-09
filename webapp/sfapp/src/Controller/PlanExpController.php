@@ -17,6 +17,16 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class PlanExpController extends AbstractController
 {
 
+    private static function comparaison_etat_sa($sa1,$sa2){
+        $mapEtatValue = ["Réparation"=>0, "Installation"=>1, "Non installé"=>2, "Opérationnel"=>3];
+        $value1 = $mapEtatValue[$sa1->getEtat()];
+        $value2 = $mapEtatValue[$sa2->getEtat()];
+        if ($value1 == $value2) {
+            return 0;
+        }
+        return ($value1 < $value2) ? -1 : 1;
+    }
+
     // Routes du chargé de mission
 
     /*
@@ -263,10 +273,65 @@ class PlanExpController extends AbstractController
     }
 
     #[Route('/plan/lister_sa', name: 'technicien_liste_sa')]
-    public function technicien_liste_sa(ManagerRegistry $doctrine, releveService $service): Response
+    public function technicien_liste_sa(ManagerRegistry $doctrine, releveService $service, Request $request): Response
     {
-        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
-        return $this->render('plan/technicien/liste_sa.html.twig', []);
+        $entityManager = $doctrine->getManager();
+        $saRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
+
+        $listeChoix = ["Tous les SA" , "En cours d'installation", "Non installés", "Opérationnels", "Réparations"];
+
+        $formEtats = $this->createFormBuilder()->add('choix', ChoiceType::class, [
+            'choices' => array(
+                "Tous les SA" => 0,
+                "En cours d'installation" => 1,
+                "Non installés" => 2,
+                "Opérationnels" => 3,
+                "Réparations" => 4),
+            'required' => true,
+        ])->getForm();
+
+
+        $formEtats->handleRequest($request);
+        $listeSa = [];
+        $choix = "Tous les SA";
+        $choixParDefault = 0;
+
+        if($formEtats->isSubmitted() && $formEtats->isValid())
+        {
+            $choixParDefault = $formEtats->getData()['choix'];
+            $choix = $listeChoix[$choixParDefault];
+            switch($choix)
+            {
+                case "Tous les SA":
+                    $listeSa = $saRepository->findAll();
+                    break;
+                case "En cours d'installation":
+                    $listeSa = $saRepository->findBy(['etat' => "Installation"]);
+                    break;
+                case "Non installés":
+                    $listeSa = $saRepository->findBy(['etat' => "Non installé"]);
+                    break;
+                case "Opérationnels":
+                    $listeSa = $saRepository->findBy(['etat' => "Opérationnel"]);
+                    break;
+                case "Réparations":
+                    $listeSa = $saRepository->findBy(['etat' => "Réparation"]);
+                    break;
+            }
+        }
+        else
+        {
+            $listeSa = $saRepository->findAll();
+        }
+
+        usort($listeSa, "self::comparaison_etat_sa");
+
+        return $this->render('plan/technicien/liste_sa.html.twig', [
+            'listeSa' => $listeSa,
+            'form' => $formEtats,
+            'choix' => $choix,
+            'defaut' => $choixParDefault,
+        ]);
     }
 
     #[Route('/plan/{id}/declarer-operationnel', name: 'technicien_declarer_operationnel')]
