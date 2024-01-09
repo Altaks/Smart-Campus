@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Salle;
+use App\Service\EnvironnementExterieurAPIService;
 use App\Service\ReleveService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -61,7 +62,7 @@ class PublicController extends AbstractController
     }
 
     #[Route('/releves', name: 'app_releves')]
-    public function releves(ManagerRegistry $managerRegistry, ReleveService $releveService, Request $request)
+    public function releves(ManagerRegistry $managerRegistry, ReleveService $releveService, EnvironnementExterieurAPIService $envService, Request $request)
     {
 
         $sallesRepository = $managerRegistry->getRepository('App\Entity\Salle');
@@ -94,9 +95,14 @@ class PublicController extends AbstractController
             $salle = $form->get('salle')->getData();
             $sa = $salle->getSystemeAcquisition();
 
-            $releves30Jours = $releveService->getEntre($sa, new \DateTime('-1 days'), new \DateTime());
-
+            $releves30Jours = $releveService->getEntre($sa, new \DateTime('-1 days'), new \DateTime("+1 days"));
             ksort($releves30Jours);
+
+            foreach ($releves30Jours as $date => $vals){
+                $comparable_date = new \DateTime($date);
+                if(date_diff($comparable_date, new \DateTime())->d > 0) unset($releves30Jours[$date]);
+                if($comparable_date > new \DateTime()) unset($releves30Jours[$date]);
+            }
 
             $datesTemp = [];
             $relevesTemp = [];
@@ -122,15 +128,23 @@ class PublicController extends AbstractController
                 }
             }
 
+            $envAPIData = $envService->queryDailyTempsAndHumidity();
+
+            $last_temps_diff = $relevesTemp[count($relevesTemp) - 1] - $relevesTemp[count($relevesTemp) - 2];
+            $last_humidity_diff = $relevesHum[count($relevesHum) - 1] - $relevesHum[count($relevesHum) - 2];
+
             return $this->render('public/releves.html.twig', [
                 // data
                 'form' => $form->createView(),
                 'temp_dates' => $datesTemp,
                 'temp_releves' => $relevesTemp,
+                'temp_diff' => $last_temps_diff,
                 'hum_dates' => $datesHum,
                 'hum_releves' => $relevesHum,
+                'hum_diff' => $last_humidity_diff,
                 'co2_dates' => $datesCo2,
                 'co2_releves' => $relevesCo2,
+                'env_data' => $envAPIData,
             ]);
         }
 
