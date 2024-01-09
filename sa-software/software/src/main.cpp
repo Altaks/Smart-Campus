@@ -14,9 +14,9 @@ unsigned short* co2;
 PAGE page;
 Donnees* donnees;
 const String* nomReseau    = new String("eduroam");
-const char* password       = "txg;3afks64@KmMy";
-const char* identifiant    = "ksimon";
-const char* nomUtilisateur = "ksimon";
+const char* password       = "";
+const char* identifiant    = "";
+const char* nomUtilisateur = "";
 
 void setup() {
     tempEtHum = new TempEtHum();
