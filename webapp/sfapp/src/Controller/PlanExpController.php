@@ -16,6 +16,16 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class PlanExpController extends AbstractController
 {
 
+    private static function comparaison_etat_sa($sa1,$sa2){
+        $mapEtatValue = ["Réparation"=>0, "Installation"=>1, "Non installé"=>2, "Opérationnel"=>3];
+        $value1 = $mapEtatValue[$sa1->getEtat()];
+        $value2 = $mapEtatValue[$sa2->getEtat()];
+        if ($value1 == $value2) {
+            return 0;
+        }
+        return ($value1 < $value2) ? -1 : 1;
+    }
+
     // Routes du chargé de mission
 
     /*
@@ -279,44 +289,7 @@ class PlanExpController extends AbstractController
             $listeSa = $saRepository->findAll();
         }
 
-        usort($listeSa, function ($sa1,$sa2){
-            $value1 = 0;
-            $value2 = 0;
-            switch($sa1->getEtat())
-            {
-                case "Réparation":
-                    $value1 = 0;
-                    break;
-                case "Installation":
-                    $value1 = 1;
-                    break;
-                case "Non installé":
-                    $value1 = 2;
-                    break;
-                case "Opérationnel":
-                    $value1 = 3;
-                    break;
-            }
-            switch($sa2->getEtat())
-            {
-                case "Réparation":
-                    $value2 = 0;
-                    break;
-                case "Installation":
-                    $value2 = 1;
-                    break;
-                case "Non installé":
-                    $value2 = 2;
-                    break;
-                case "Opérationnel":
-                    $value2 = 3;
-                    break;
-            }
-            if ($value1 == $value2) {
-                return 0;
-            }
-            return ($value1 < $value2) ? -1 : 1;
-        } );
+        usort($listeSa, "self::comparaison_etat_sa");
 
         return $this->render('plan/technicien/liste_sa.html.twig', [
             'listeSa' => $listeSa,
