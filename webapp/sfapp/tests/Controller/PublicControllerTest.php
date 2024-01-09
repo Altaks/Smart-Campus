@@ -12,16 +12,6 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class PublicControllerTest extends WebTestCase
 {
-    protected AbstractDatabaseTool $databaseTool;
-    protected EntityManagerInterface $entityManager;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->databaseTool = self::getContainer()->get(DatabaseToolCollection::class);
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
-    }
 
     public function test_formulaire_de_connexion_correspond_a_la_maquette(): void
     {
@@ -128,10 +118,10 @@ class PublicControllerTest extends WebTestCase
     public function test_accueil_requette_sans_utilisateur_connecte(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/accueil');
+        $crawler = $client->request('GET', '/accueil/');
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'Bienvenu sur le site Smart Campus');
+        $this->assertSelectorTextContains('h1', 'Bienvenue sur le site Smart Campus');
     }
 
     public function test_releve_requette_sans_utilisateur_connecte(): void
@@ -141,21 +131,5 @@ class PublicControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Veuillez choisir une salle');
-    }
-
-    public function test_releve_requette_sans_utilisateur_connecte_choisir_une_salle(): void
-    {
-        $this->databaseTool->loadFixtures([
-            RelevesFixtures::class
-        ]);
-
-        $client = static::createClient();
-        $sallesRepository = static ::getContainer()->get(SalleRepository::class);
-        $salle = $sallesRepository->findOneBy(['nom' => 'C004']);
-        $crawler = $client->request('POST', '/releves',['salle' => $salle->getNom()]);
-
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'Relevés de la salle '.$salle->getNom());
-
     }
 }

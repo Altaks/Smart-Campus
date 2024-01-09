@@ -27,6 +27,7 @@
         </nav>
     </div>
     <div class="w-2/3 mx-auto">
+        <h1>Veuillez choisir une salle</h1>
         {{ form_start(form) }}
             <select name="{{ field_name(form.salle) }}" class="form-control bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange="this.form.submit()">
                 <option value="" disabled>Choisir une salle</option>
@@ -61,13 +62,6 @@
                     {% endif %}
                 </div>
                 <div id="data-labels-chart"></div>
-                <div class="grid grid-cols-1 items-center border-gray-200 border-t dark:border-gray-700 justify-between mt-5">
-                    <div class="flex justify-between items-center pt-5">
-                        <a href="https://open-meteo.com/en/docs#latitude=46.1631&longitude=-1.1522&hourly=temperature_2m,relative_humidity_2m&past_days=1&forecast_days=1" class="text-sm font-semibold inline-flex items-center rounded-lg text-blue-600 hover:text-blue-700 dark:hover:text-blue-500  hover:bg-gray-100 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 px-3 py-2">
-                            Origine des données
-                        </a>
-                    </div>
-                </div>
             </div>
 
             <script>
@@ -92,12 +86,7 @@
                                 name: "Températures locales",
                                 data: [{% for val in temp_releves %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}],
                                 color: "#1A56DB",
-                            },
-                            {
-                                name: "Températures extérieures",
-                                data: [{% for val in env_data["temps"] %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}],
-                                color: "#7F8C8D",
-                            },
+                            }
                         ],
                         chart: {
                             height: "100%",
@@ -162,6 +151,10 @@
                     }
                 });
             </script>
+        {% elseif app.request.method == "POST" %}
+            <div class="bg-red-300 rounded-lg text-red-950 text-xl w-full text-center my-12 p-6">
+                Une erreur est survenue lors de la récupération des données concernant les températures, veuillez signaler l'erreur
+            </div>
         {% endif %}
         {% if hum_dates is defined and hum_dates is not null and hum_releves is defined and hum_releves is not null %}
             <div class="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 my-6">
@@ -170,12 +163,21 @@
                         <h5 class="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">Humidité</h5>
                         <p class="text-base font-normal text-gray-500 dark:text-gray-400">en %</p>
                     </div>
-                    <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-gray-900 dark:text-gray-400 text-center">
-                        N/A %
-                        <svg class="w-3 h-3 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13V1m0 0L1 5m4-4 4 4"/>
-                        </svg>
-                    </div>
+                    {% if hum_diff > 0 %}
+                        <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-red-500 dark:text-red-400 text-center">
+                            + {{ hum_diff }} %
+                            <box-icon name='up-arrow-alt' color="#ef4444"></box-icon>
+                        </div>
+                    {% elseif hum_diff < 0 %}
+                        <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-400 text-center">
+                            {{ hum_diff }} %
+                            <box-icon name='down-arrow-alt' color="#16a34a"></box-icon>
+                        </div>
+                    {% else %}
+                        <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-gray-900 dark:text-gray-400 text-center">
+                            =
+                        </div>
+                    {% endif %}
                 </div>
                 <div id="hum-chart"></div>
             </div>
@@ -257,6 +259,10 @@
                     }
                 });
             </script>
+        {% elseif app.request.method == "POST" %}
+            <div class="bg-red-300 rounded-lg text-red-950 text-xl w-full text-center my-12 p-6">
+                Une erreur est survenue lors de la récupération des données concernant l'humidité, veuillez signaler l'erreur
+            </div>
         {% endif %}
         {% if co2_dates is defined and co2_dates is not null and co2_releves is defined and co2_releves is not null %}
             <div class="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 my-6">
@@ -265,12 +271,21 @@
                         <h5 class="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">Qualité de l'air</h5>
                         <p class="text-base font-normal text-gray-500 dark:text-gray-400">en ppm</p>
                     </div>
-                    <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-gray-900 dark:text-gray-400 text-center">
-                        N/A %
-                        <svg class="w-3 h-3 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13V1m0 0L1 5m4-4 4 4"/>
-                        </svg>
-                    </div>
+                    {% if co2_diff > 0 %}
+                        <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-red-500 dark:text-red-400 text-center">
+                            + {{ co2_diff }} ppm
+                            <box-icon name='up-arrow-alt' color="#ef4444"></box-icon>
+                        </div>
+                    {% elseif co2_diff < 0 %}
+                        <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-400 text-center">
+                            {{ co2_diff }} ppm
+                            <box-icon name='down-arrow-alt' color="#16a34a"></box-icon>
+                        </div>
+                    {% else %}
+                        <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-gray-900 dark:text-gray-400 text-center">
+                            =
+                        </div>
+                    {% endif %}
                 </div>
                 <div id="co2-chart"></div>
             </div>
@@ -352,6 +367,10 @@
                     }
                 });
             </script>
+        {% elseif app.request.method == "POST" %}
+            <div class="bg-red-300 rounded-lg text-red-950 text-xl w-full text-center my-12 p-6">
+                Une erreur est survenue lors de la récupération des données concernant la qualité de l'air, veuillez signaler l'erreur
+            </div>
         {% endif %}
     </div>
 
