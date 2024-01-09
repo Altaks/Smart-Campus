@@ -43,7 +43,7 @@ class PlanExpControllerTest extends WebTestCase
         if ($systemeAcquisition == null) {
             $systemeAcquisition = new SystemeAcquisition();
             $systemeAcquisition->setNom("ESP-123");
-            $systemeAcquisition->setBaseDonnees("sae34bdm2eq3");
+            $systemeAcquisition->setBaseDonnees("sae34bdm2eq1");
             $systemeAcquisition->setEtat("Opérationnel");
 
             $entityManager->persist($systemeAcquisition);
@@ -208,8 +208,8 @@ class PlanExpControllerTest extends WebTestCase
     public function test_lister_SA_route_connexion_invalide_usager(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/plan/lister_sa/');
-        $this->assertResponseStatusCodeSame(301, $client->getResponse()->getStatusCode());
+        $client->request('GET', '/plan/lister_sa');
+        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
     }
 
     public function test_lister_SA_route_connexion_invalide_charge_de_mission(): void
@@ -221,8 +221,8 @@ class PlanExpControllerTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $client->request('GET', '/plan/lister_sa/');
-        $this->assertResponseStatusCodeSame(301, $client->getResponse()->getStatusCode());
+        $client->request('GET', '/plan/lister_sa');
+        $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
     }
 
     public function test_ajouter_sa_technicien_connexion_valide_technicien()
@@ -234,55 +234,54 @@ class PlanExpControllerTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $client->request('GET', '/plan/ajouter_sa/');
+        $client->request('GET', '/plan/ajouter_sa');
         $this->assertResponseIsSuccessful();
     }
 
     public function test_ajouter_sa_technicien_connexion_invalide_charge_de_mission()
     {
         $client = static::createClient();
-        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
-        $testUser = $userRepository->findOneBy(['identifiant' => 'yghamri']);
+
+        $utilisateur = $client->getContainer()->get('doctrine')->getRepository('App\Entity\Utilisateur')->findOneBy(['identifiant' => 'yghamri']);
+        $this->assertNotNull($utilisateur);
 
         // simulate $testUser being logged in
-        $client->loginUser($testUser);
+        $client->loginUser($utilisateur);
 
-        $client->request('GET', '/plan/ajouter_sa/');
-        $this->assertResponseStatusCodeSame(301, $client->getResponse()->getStatusCode());
+        $client->request('GET', '/plan/ajouter_sa');
+        $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
 
     }
 
     public function test_ajouter_sa_technicien_connexion_invalide_usager()
     {
         $client = static::createClient();
-        $client->request('GET', '/plan/ajouter_sa/');
-        $this->assertResponseStatusCodeSame(301, $client->getResponse()->getStatusCode());
+        $client->request('GET', '/plan/ajouter_sa');
+        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
     }
 
     public function test_ajouter_sa_technicien_verifiacation_formulaire()
     {
         $client = static::createClient();
-        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
-        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+        $utilisateur = $client->getContainer()->get('doctrine')->getRepository('App\Entity\Utilisateur')->findOneBy(['identifiant' => 'jmalki']);
+        $this->assertNotNull($utilisateur);
 
         // simulate $testUser being logged in
-        $client->loginUser($testUser);
+        $client->loginUser($utilisateur);
 
-        $client->request('GET', '/plan/ajouter_sa/');
+        $client->request('GET', '/plan/ajouter_sa');
+        $this->assertResponseIsSuccessful();
 
         $crawler = $client->submitForm('submit', [
-            'nom_sa' => 'ESP-999',
-            'nom_db' => 'sae34bdm2eq3'
+            'form[nom]' => 'ESP-999',
+            'form[baseDonnees]' => 'sae34bdl1eq1'
         ]);
-        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
-        $this->assertMatchesRegularExpression('/\/ajouter_sa$/', $client->getResponse()->headers->get('location'));
-        $client->followRedirect();
 
         $saRepository = static::getContainer()->get(SystemeAcquisitionRepository::class);
         $sa = $saRepository->findOneBy(['nom' => 'ESP-999']);
         $this->assertNotEmpty($sa);
 
-        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager = $client->getContainer()->get('doctrine')->getManager();
         $entityManager->remove($sa);
         $entityManager->flush();
     }
