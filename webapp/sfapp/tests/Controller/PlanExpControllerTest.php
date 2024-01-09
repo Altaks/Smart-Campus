@@ -214,7 +214,10 @@ class PlanExpControllerTest extends WebTestCase
             if ($button->count()) {
                 $this->assertEquals('Déclarer opérationnel', $button->eq(0)->text());
             }
-
+            else {
+                $p = $crawler->filter('p');
+                $this->assertEquals('Pas de relevé',$p->eq(0)->text());
+            }
         }
     }
 
@@ -226,17 +229,16 @@ class PlanExpControllerTest extends WebTestCase
 
         // simulate $testUser being logged in
         $client->loginUser($testUser);
-        $crawler = $client->request('GET', '/plan/ajouter-salle/');
-        $nbLabel = count($crawler->filter('label'));
-        $this->assertEquals(6,$nbLabel);
+
+        $client->request('GET', '/plan/ajouter-salle');
 
         $client->submitForm('submit', [
-            'salle' => 'E789',
-            'batiment' => 'Bâtiment P',
-            'orientation' => 'No',
-            'fenetre' => 2,
-            'porte' => 2,
-            'ordinateur' => false
+            'form[nom]' => 'E789',
+            'form[batiment]' => 'Bâtiment P',
+            'form[orientation]' => 'No',
+            'form[nombreFenetre]' => 2,
+            'form[nombrePorte]' => 2,
+            'form[contientPc]' => 1
         ]);
         $entityManager = $client->getContainer()->get('doctrine')->getManager();
 
@@ -248,16 +250,45 @@ class PlanExpControllerTest extends WebTestCase
             $entityManager->flush();
         }
 
+        $nbSalleInit = count($salleRepository->findAll());
+
+        $client->request('GET', '/plan/ajouter-salle');
+
         $client->submitForm('submit', [
-            'salle' => 'D302',
-            'batiment' => 'Bâtiment D',
-            'orientation' => 'Su',
-            'fenetre' => 6,
-            'porte' => 2,
-            'ordinateur' => true
+            'form[nom]' => 'D302',
+            'form[batiment]' => 'Bâtiment D',
+            'form[orientation]' => 'Su',
+            'form[nombreFenetre]' => 6,
+            'form[nombrePorte]' => 2,
+            'form[contientPc]' => 1
         ]);
 
-        $nbSalleD302 = count($salleRepository->findBy(['nom' => 'D302']));
-        $this->assertEquals(1,$nbSalleD302);
+        $this->assertCount($nbSalleInit, $salleRepository->findAll());
+
+        $client->request('GET', '/plan/ajouter-salle');
+
+        $client->submitForm('submit', [
+            'form[nom]' => '',
+            'form[batiment]' => 'Bâtiment U',
+            'form[orientation]' => 'NO',
+            'form[nombreFenetre]' => 6,
+            'form[nombrePorte]' => 2,
+            'form[contientPc]' => 1
+        ]);
+
+        $this->assertCount($nbSalleInit, $salleRepository->findAll());
+
+        $client->request('GET', '/plan/ajouter-salle');
+
+        $client->submitForm('submit', [
+            'form[nom]' => 'M542',
+            'form[batiment]' => '',
+            'form[orientation]' => 'NO',
+            'form[nombreFenetre]' => 6,
+            'form[nombrePorte]' => 2,
+            'form[contientPc]' => 1
+        ]);
+
+        $this->assertCount($nbSalleInit, $salleRepository->findAll());
     }
 }

@@ -4,15 +4,21 @@ namespace App\Controller;
 
 
 use App\Entity\DemandeTravaux;
+use App\Entity\Salle;
 use App\Entity\SystemeAcquisition;
 use App\Service\ReleveService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class PlanExpController extends AbstractController
 {
@@ -96,11 +102,70 @@ class PlanExpController extends AbstractController
         return $this->redirectToRoute("cdm_plan");
     }
 
-    #[Route('/plan/ajouter_salle', name: 'cdm_ajouter_salle')]
-    public function cdm_ajouter_salle(): Response
+    #[Route('/plan/ajouter-salle', name: 'cdm_ajouter_salle')]
+    public function cdm_ajouter_salle(ManagerRegistry $doctrine, Request $request): Response
     {
-        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
-        return $this->render('plan/charge_de_mission/ajouter_salle.html.twig', []);
+        $salle = new Salle();
+
+        $entityManager = $doctrine->getManager();
+        $salleRepository = $entityManager->getRepository('App\Entity\Salle');
+
+
+        $listeOrientation = [
+            'Nord' => 'No',
+            'Sud' => 'Su',
+            'Est' => 'Es',
+            'Ouest' => 'Ou',
+            'Nord-Est' => 'NE',
+            'Nord-Ouest' => 'NO',
+            'Sud-Est' => 'SE',
+            'Sud-Ouest' => 'SO'
+        ];
+
+        $formSalle = $this->createFormBuilder($salle)
+            ->add('nom',TextType::class, [
+                'label' => 'Nom de la salle'
+            ])
+            ->add('batiment',TextType::class, [
+                'label' => 'Nom du bâtiment'
+            ])
+            ->add('orientation', ChoiceType::class, [
+                'choices' => $listeOrientation,
+                'label' => 'Orientation'
+            ])
+            ->add('nombreFenetre', IntegerType::class, [
+                'label' => 'Nombre de fenêtre'
+            ])
+            ->add('nombrePorte', IntegerType::class, [
+                'label' => 'Nombre de porte'
+            ])
+            ->add('contientPc', ChoiceType::class, [
+                'choices' => [
+                    'Oui' => true,
+                    'Non' => false
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'label' => 'Contient des PCs',
+                'required' => true
+            ])
+            ->add('ajouter', SubmitType::class,[
+                'label' => 'Ajouter salle'
+            ])
+            ->getForm();
+
+        $formSalle->handleRequest($request);
+
+        if($formSalle->isSubmitted() && $formSalle->isValid()) {
+            $salle = $formSalle->getData();
+            $entityManager->persist($salle);
+            $entityManager->flush();
+            return $this->redirectToRoute('cdm_lister_salles');
+        }
+
+        return $this->render('plan/charge_de_mission/ajouter_salle.html.twig', [
+            'formSalle' => $formSalle
+        ]);
     }
 
     #[Route('/plan/retirer_salle/{id}', name: 'cdm_retirer_salle')]

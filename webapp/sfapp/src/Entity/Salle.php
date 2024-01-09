@@ -6,8 +6,12 @@ use App\Repository\SalleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: SalleRepository::class)]
+#[UniqueEntity('nom', message: 'Une salle avec le même nom existe déjà')]
 class Salle
 {
     #[ORM\Id]
@@ -15,7 +19,8 @@ class Salle
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
+    #[Assert\NotBlank(message: 'Une salle doit avoir un nom')]
     private ?string $nom = null;
 
     #[ORM\Column(length: 2)]
@@ -28,9 +33,11 @@ class Salle
     private ?int $nombrePorte = null;
 
     #[ORM\Column]
+    #[Assert\NotNull(message: 'La valeur doit être \'Oui\' ou \'Non\'')]
     private ?bool $contientPc = null;
 
     #[ORM\Column(length: 30, nullable: true)]
+    #[Assert\NotBlank(message: 'Une salle doit avoir un bâtiment')]
     private ?string $batiment = null;
 
     #[ORM\OneToOne(inversedBy: 'salle', cascade: ['persist', 'remove'])]
