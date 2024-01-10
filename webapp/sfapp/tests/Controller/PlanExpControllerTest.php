@@ -4,9 +4,11 @@ namespace App\tests\Controller;
 
 use App\Entity\SystemeAcquisition;
 use App\Entity\Salle;
+use App\Service\SeuilService;
 use App\Repository\DemandeTravauxRepository;
 use App\Repository\SalleRepository;
 use App\Repository\SystemeAcquisitionRepository;
+use App\Repository\SeuilRepository;
 use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -358,5 +360,136 @@ class PlanExpControllerTest extends WebTestCase
         ]);
 
         $this->assertCount($nbSalleInit, $salleRepository->findAll());
+    }
+
+    public function test_seuils_modification_connexion_valide_charge_de_mission()
+    {
+        $client = static::createClient();
+
+        $utilisateur = $client->getContainer()->get('doctrine')->getRepository('App\Entity\Utilisateur')->findOneBy(['identifiant' => 'yghamri']);
+        $this->assertNotNull($utilisateur);
+
+        // simulate $testUser being logged in
+        $client->loginUser($utilisateur);
+
+        $client->request('GET', '/plan/seuils_alertes');
+        $this->assertResponseIsSuccessful();
+    }
+    public function test_seuils_modification_connexion_invalide_technicien()
+    {
+        $client = static::createClient();
+
+        $utilisateur = $client->getContainer()->get('doctrine')->getRepository('App\Entity\Utilisateur')->findOneBy(['identifiant' => 'jmalki']);
+        $this->assertNotNull($utilisateur);
+
+        // simulate $testUser being logged in
+        $client->loginUser($utilisateur);
+
+        $client->request('GET', '/plan/seuils_alertes');
+        $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
+    }
+    public function test_seuils_modification_connexion_invalide_usager()
+    {
+        $client = static::createClient();
+        $client->request('GET', '/plan/seuils_alertes');
+        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
+    }
+
+    public function test_seuils_modification_verifiacation_formulaire()
+    {
+        $client = static::createClient();
+        $utilisateur = $client->getContainer()->get('doctrine')->getRepository('App\Entity\Utilisateur')->findOneBy(['identifiant' => 'yghamri']);
+        $this->assertNotNull($utilisateur);
+
+        // simulate $testUser being logged in
+        $client->loginUser($utilisateur);
+
+        $client->request('GET', '/plan/seuils_alertes');
+        $this->assertResponseIsSuccessful();
+
+        $seuilService = new SeuilService();
+
+        $seuils = $seuilService->getSeuils();
+
+        $temp_min_valeur_actuelle = $seuils['temp_min'];
+        $temp_max_valeur_actuelle = $seuils['temp_max'];
+        $humidite_max_valeur_actuelle = $seuils['humidite_max'];
+        $co2_premier_palier_valeur_actuelle = $seuils['co2_premier_palier'];
+        $co2_second_palier_valeur_actuelle = $seuils['co2_second_palier'];
+
+        $rand_number = random_int(2,3);
+
+        $crawler = $client->submitForm('submit', [
+            'form[temp_min]' => $temp_min_valeur_actuelle + $rand_number,
+            'form[temp_max]' => $temp_max_valeur_actuelle + $rand_number,
+            'form[humidite_max]' => $humidite_max_valeur_actuelle + $rand_number,
+            'form[co2_premier_palier]' => $co2_premier_palier_valeur_actuelle + $rand_number,
+            'form[co2_second_palier]' => $co2_second_palier_valeur_actuelle + $rand_number,
+        ]);
+
+        $entityManager = $client->getContainer()->get('doctrine')->getManager();
+
+        $seuilRepository = static::getContainer()->get(SeuilRepository::class);
+
+        $seuils_temp_min = $seuilRepository->findOneBy['nom' => 'temp_min'];
+        $this->assertEquals($temp_min_valeur_actuelle + $rand_number,$seuils_temp_min->getValeur());
+        $seuils_temp_min->setValeur($temp_min_valeur_actuelle);
+
+        $seuils_temp_max = $seuilRepository->findOneBy['nom' => 'temp_max'];
+        $this->assertEquals($temp_max_valeur_actuelle + $rand_number,$seuils_temp_max->getValeur());
+        $seuils_temp_max->setValeur($temp_max_valeur_actuelle);
+
+        $seuils_humidite_max = $seuilRepository->findOneBy['nom' => 'humidite_max'];
+        $this->assertEquals($humidite_max_valeur_actuelle + $rand_number,$seuils_humidite_max->getValeur());
+        $seuils_humidite_max->setValeur($humidite_max_valeur_actuelle);
+
+        $seuils_co2_premier_palier = $seuilRepository->findOneBy['nom' => 'co2_premier_palier'];
+        $this->assertEquals($co2_premier_palier_valeur_actuelle + $rand_number,$seuils_co2_premier_palier->getValeur());
+        $seuils_co2_premier_palier->setValeur($co2_premier_palier_valeur_actuelle);
+
+        $seuils_co2_second_palier = $seuilRepository->findOneBy['nom' => 'co2_second_palier'];
+        $this->assertEquals($co2_second_palier_valeur_actuelle + $rand_number,$seuils_co2_second_palier->getValeur());
+        $seuils_co2_second_palier->setValeur($co2_second_palier_valeur_actuelle);
+
+        $entityManager->flush();
+
+        $crawler = $client->submitForm('submit', [
+            'form[temp_min]' => 28,
+            'form[temp_max]' => 19,
+            'form[humidite_max]' => $humidite_max_valeur_actuelle + $rand_number,
+            'form[co2_premier_palier]' => $co2_premier_palier_valeur_actuelle + $rand_number,
+            'form[co2_second_palier]' => $co2_second_palier_valeur_actuelle + $rand_number,
+        ]);
+        $this->assertEquals($temp_min_valeur_actuelle,$seuils_temp_min->getValeur());
+        $this->assertEquals($temp_max_valeur_actuelle,$seuils_temp_max->getValeur());
+        $this->assertEquals($humidite_max_valeur_actuelle,$seuils_humidite_max->getValeur());
+        $this->assertEquals($co2_premier_palier_valeur_actuelle,$seuils_co2_premier_palier->getValeur());
+        $this->assertEquals($co2_second_palier_valeur_actuelle,$seuils_co2_second_palier->getValeur());
+
+        $crawler = $client->submitForm('submit', [
+            'form[temp_min]' => $temp_min_valeur_actuelle + $rand_number,
+            'form[temp_max]' => $temp_max_valeur_actuelle + $rand_number,
+            'form[humidite_max]' => $humidite_max_valeur_actuelle + $rand_number,
+            'form[co2_premier_palier]' => 1500,
+            'form[co2_second_palier]' => 1000,
+        ]);
+        $this->assertEquals($temp_min_valeur_actuelle,$seuils_temp_min->getValeur());
+        $this->assertEquals($temp_max_valeur_actuelle,$seuils_temp_max->getValeur());
+        $this->assertEquals($humidite_max_valeur_actuelle,$seuils_humidite_max->getValeur());
+        $this->assertEquals($co2_premier_palier_valeur_actuelle,$seuils_co2_premier_palier->getValeur());
+        $this->assertEquals($co2_second_palier_valeur_actuelle,$seuils_co2_second_palier->getValeur());
+
+        $crawler = $client->submitForm('submit', [
+            'form[temp_min]' => 28,
+            'form[temp_max]' => 19,
+            'form[humidite_max]' => $humidite_max_valeur_actuelle + $rand_number,
+            'form[co2_premier_palier]' => 1500,
+            'form[co2_second_palier]' => 1000,
+        ]);
+        $this->assertEquals($temp_min_valeur_actuelle,$seuils_temp_min->getValeur());
+        $this->assertEquals($temp_max_valeur_actuelle,$seuils_temp_max->getValeur());
+        $this->assertEquals($humidite_max_valeur_actuelle,$seuils_humidite_max->getValeur());
+        $this->assertEquals($co2_premier_palier_valeur_actuelle,$seuils_co2_premier_palier->getValeur());
+        $this->assertEquals($co2_second_palier_valeur_actuelle,$seuils_co2_second_palier->getValeur());
     }
 }
