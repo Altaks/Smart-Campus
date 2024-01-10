@@ -174,7 +174,7 @@ class PlanExpController extends AbstractController
         ]);
     }
 
-    #[Route('/plan/retirer_salle/{id}', name: 'cdm_retirer_salle')]
+    #[Route('/plan/retirer-salle/{id}', name: 'cdm_retirer_salle')]
     public function cdm_retirer_salle(): Response
     {
         // full redirect
@@ -224,14 +224,14 @@ class PlanExpController extends AbstractController
         ]);
     }
 
-    #[Route('/plan/lister_salles', name: 'cdm_lister_salles')]
+    #[Route('/plan/lister-salles', name: 'cdm_lister_salles')]
     public function cdm_lister_salles(ManagerRegistry $doctrine): Response
     {
         throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
         return $this->render('plan/charge_de_mission/lister_salles.html.twig', []);
     }
 
-    #[Route('/plan/seuils_alertes', name: 'cdm_seuils_alertes')]
+    #[Route('/plan/seuils-alertes', name: 'cdm_seuils_alertes')]
     public function cdm_seuils_alertes(ManagerRegistry $doctrine): Response
     {
         throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
@@ -356,7 +356,7 @@ class PlanExpController extends AbstractController
     }
 
     #[IsGranted("ROLE_TECHNICIEN")]
-    #[Route('/plan/ajouter_sa', name: 'technicien_ajouter_sa')]
+    #[Route('/plan/ajouter-sa', name: 'technicien_ajouter_sa')]
     public function technicien_ajouter_sa(ManagerRegistry $doctrine, Request $request): Response
     {
         $sa = new SystemeAcquisition();
@@ -400,7 +400,7 @@ class PlanExpController extends AbstractController
         ]);
     }
 
-    #[Route('/plan/retirer_sa/<id>', name: 'technicien_retirer_sa')]
+    #[Route('/plan/retirer-sa/{id}', name: 'technicien_retirer_sa')]
     public function technicien_retirer_sa(ManagerRegistry $doctrine, Request $request): Response
     {
         // full redirect
@@ -408,7 +408,7 @@ class PlanExpController extends AbstractController
     }
 
     #[IsGranted("ROLE_TECHNICIEN")]
-    #[Route('/plan/lister_sa', name: 'technicien_liste_sa')]
+    #[Route('/plan/lister-sa', name: 'technicien_liste_sa')]
     public function technicien_liste_sa(ManagerRegistry $doctrine, releveService $service, Request $request): Response
     {
         $entityManager = $doctrine->getManager();
