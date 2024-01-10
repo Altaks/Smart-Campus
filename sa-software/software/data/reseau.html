@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.A | Acceuil</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <header>
+        <h1>SMART CAMPUS</h1>
+        <hr>
+    </header>
+    
+    <div class="container">
+        <form action="" method="post">
+            <h3>Configuration du réseau externe</h3>
+            <br>
+            <label for="">Choisir un résesau</label>
+            <select name="network" id="network">
+                <option value="wifi">Wifi</option>
+                <option value="ethernet">Ethernet</option>
+            </select>
+            <br>
+            <label for="">Nom d'utilisateur</label>
+            <input type="text" name="system_room" id="system_room">
+            <br>
+            <label for="">Mot de passe</label>
+            <input type="password" name="password" id="password">
+            <br>
+            <input type="submit" value="Valider la configuration">
+        </form>
+        <br>
+
+        <form action="" method="post">
+            <h3>Reconfiguration réseau de l'ESP</h3>
+            <br>
+            <label for="">Nouveau nom de réseau</label>
+            <input type="text" name="system_room" id="system_room">
+            <br>
+            <label for="">Nouveau le nouveau mot de passe</label>
+            <input type="password" name="password" id="password">
+            <br>
+            <label for="">Confirmez le nouveau mot de passe</label>
+            <input type="password" name="password_confirm" id="password_confirm">
+            <br>
+            <input type="submit" value="Valider la reconfiguration">
+        </form>
+    </div>
+</body>
+</html>
