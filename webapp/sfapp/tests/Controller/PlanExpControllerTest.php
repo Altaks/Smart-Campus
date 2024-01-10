@@ -428,26 +428,25 @@ class PlanExpControllerTest extends WebTestCase
         ]);
 
         $entityManager = $client->getContainer()->get('doctrine')->getManager();
-
         $seuilRepository = static::getContainer()->get(SeuilRepository::class);
 
-        $seuils_temp_min = $seuilRepository->findOneBy['nom' => 'temp_min'];
+        $seuils_temp_min = $seuilRepository->findOneBy(['nom' => 'temp_min']);
         $this->assertEquals($temp_min_valeur_actuelle + $rand_number,$seuils_temp_min->getValeur());
         $seuils_temp_min->setValeur($temp_min_valeur_actuelle);
 
-        $seuils_temp_max = $seuilRepository->findOneBy['nom' => 'temp_max'];
+        $seuils_temp_max = $seuilRepository->findOneBy(['nom' => 'temp_max']);
         $this->assertEquals($temp_max_valeur_actuelle + $rand_number,$seuils_temp_max->getValeur());
         $seuils_temp_max->setValeur($temp_max_valeur_actuelle);
 
-        $seuils_humidite_max = $seuilRepository->findOneBy['nom' => 'humidite_max'];
+        $seuils_humidite_max = $seuilRepository->findOneBy(['nom' => 'humidite_max']);
         $this->assertEquals($humidite_max_valeur_actuelle + $rand_number,$seuils_humidite_max->getValeur());
         $seuils_humidite_max->setValeur($humidite_max_valeur_actuelle);
 
-        $seuils_co2_premier_palier = $seuilRepository->findOneBy['nom' => 'co2_premier_palier'];
+        $seuils_co2_premier_palier = $seuilRepository->findOneBy(['nom' => 'co2_premier_palier']);
         $this->assertEquals($co2_premier_palier_valeur_actuelle + $rand_number,$seuils_co2_premier_palier->getValeur());
         $seuils_co2_premier_palier->setValeur($co2_premier_palier_valeur_actuelle);
 
-        $seuils_co2_second_palier = $seuilRepository->findOneBy['nom' => 'co2_second_palier'];
+        $seuils_co2_second_palier = $seuilRepository->findOneBy(['nom' => 'co2_second_palier']);
         $this->assertEquals($co2_second_palier_valeur_actuelle + $rand_number,$seuils_co2_second_palier->getValeur());
         $seuils_co2_second_palier->setValeur($co2_second_palier_valeur_actuelle);
 
