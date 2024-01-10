@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\DemandeTravaux;
 use App\Entity\Salle;
+use App\Entity\Seuil;
 use App\Entity\SystemeAcquisition;
 use App\Entity\Utilisateur;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -106,7 +107,7 @@ class AppFixtures extends Fixture
             ->setEtat("Installation");
 
         $salle4 = new Salle();
-        $salle4->setNom("D204")
+        $salle4->setNom("D206")
             ->setOrientation("Su")
             ->setNombreFenetre(6)
             ->setNombrePorte(2)
@@ -142,6 +143,37 @@ class AppFixtures extends Fixture
 
         $manager->persist($sa5);
         $manager->persist($salle5);
+
+
+        $seuil_temp_min = new Seuil();
+        $seuil_temp_min->setNom("temp_min")
+            ->setValeur("19");
+
+        $manager->persist($seuil_temp_min);
+
+        $seuil_temp_max = new Seuil();
+        $seuil_temp_max->setNom("temp_max")
+            ->setValeur("28");
+
+        $manager->persist($seuil_temp_max);
+
+        $seuil_humidite_max = new Seuil();
+        $seuil_humidite_max->setNom("humidite_max")
+            ->setValeur("70");
+
+        $manager->persist($seuil_humidite_max);
+
+        $seuil_co2_premier_palier = new Seuil();
+        $seuil_co2_premier_palier->setNom("co2_premier_palier")
+            ->setValeur("1000");
+
+        $manager->persist($seuil_co2_premier_palier);
+
+        $seuil_co2_second_palier = new Seuil();
+        $seuil_co2_second_palier->setNom("co2_second_palier")
+            ->setValeur("1500");
+
+        $manager->persist($seuil_co2_second_palier);
 
         $manager->flush();
     }
