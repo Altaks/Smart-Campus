@@ -1,10 +1,9 @@
 #include <Arduino.h>
 #include <WiFi.h>
-
-
 #include "Capteurs/tempEtHum.h"
 #include "Heure/heureLocal.h"
 #include "Capteurs/qualAir.h"
+#include "Capteurs/presence.h"
 #include "Affichage/affichage.h"
 #include "Reseaux/pointAcces.h"
 #include "Reseaux/station.h"
@@ -74,6 +73,9 @@ void setup() {
 
     delay(1000);
     initReseauStation();
+
+    delay(1000);
+    initPresence(presence);
 }
 
 void loop() {
