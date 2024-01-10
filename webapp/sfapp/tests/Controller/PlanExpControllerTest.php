@@ -386,35 +386,19 @@ class PlanExpControllerTest extends WebTestCase
         $client->request('GET', '/plan/modifier-salle/'.$salle->getId());
         $client->submitForm('submit', [
             'form[nombreFenetre]' => 4,
-            'form[nombrePorte]' => 2,
-            'form[contientPc]' => 1
-        ]);
-
-        $salle = $salleRepository->findOneBy(['nom' => 'E789']);
-
-        $this->assertEquals(4,$salle->getNombreFenetre());
-
-        $client->request('GET', '/plan/modifier-salle/'.$salle->getId());
-        $client->submitForm('submit', [
-            'form[nombreFenetre]' => 4,
-            'form[nombrePorte]' => 1,
-            'form[contientPc]' => 1
-        ]);
-
-        $salle = $salleRepository->findOneBy(['nom' => 'E789']);
-
-        $this->assertEquals(1,$salle->getNombrePorte());
-
-        $client->request('GET', '/plan/modifier-salle/'.$salle->getId());
-        $client->submitForm('submit', [
-            'form[nombreFenetre]' => 4,
             'form[nombrePorte]' => 1,
             'form[contientPc]' => 0
         ]);
 
+        $salleRepository = static::getContainer()->get(SalleRepository::class);
+
         $salle = $salleRepository->findOneBy(['nom' => 'E789']);
 
-        $this->assertEquals(0,$salle->getContientPc());
+        $this->assertEquals(4,$salle->getNombreFenetre());
+        $this->assertEquals(1,$salle->getNombrePorte());
+        $this->assertFalse($salle->isContientPc());
+
+        $salle = $salleRepository->findOneBy(['nom' => 'E789']);
 
         $entityManager = $client->getContainer()->get('doctrine')->getManager();
         $entityManager->remove($salle);
