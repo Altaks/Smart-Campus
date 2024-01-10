@@ -1,0 +1,117 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier les seuils d'alertes{% endblock %}
+
+
+{% block body %}
+
+
+    <div class="relative overflow-x-auto lg:max-w-7xl mx-auto mt-2 mb-5">
+        <h1 class="lg:text-4xl text-6xl py-12 text-center mb-2">Seuils d'alertes</h1>
+        {{ form_start(form) }}
+
+        <h2 class="lg:text-2xl text-center">Température</h2>
+
+        <div class="m-auto grid grid-cols-2 self-center w-1/2">
+            <div class="flex flex-col items-center w-full">
+                <label for="temp_min" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">{{ field_label(form.temp_min) }}</label>
+                <div class="flex">
+                    <button type="button" id="decrement-button" data-input-counter-decrement="temp_min" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                        </svg>
+                    </button>
+                    <input type="text" id="temp_min" name="{{ field_name(form.temp_min) }}" data-input-counter data-input-counter-min="0" aria-describedby="helper-text-explanation" class="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-14 py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ form.temp_min.vars.data }}" value="{{ form.temp_min.vars.data }}" required>
+                    <button type="button" id="increment-button" data-input-counter-increment="temp_min" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="flex flex-col items-center w-full">
+                <label for="temp_max" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">{{ field_label(form.temp_max) }}</label>
+                <div class="flex">
+                    <button type="button" id="decrement-button" data-input-counter-decrement="temp_max" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                        </svg>
+                    </button>
+                    <input type="text" id="temp_max" name="{{ field_name(form.temp_max) }}" data-input-counter data-input-counter-min="0" aria-describedby="helper-text-explanation" class="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-14  py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ form.temp_max.vars.data }}" value="{{ form.temp_max.vars.data }}" required>
+                    <button type="button" id="increment-button" data-input-counter-increment="temp_max" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="lg:text-2xl text-center mt-10">Humidité</h2>
+
+        <div class="m-auto grid grid-cols-2 self-center w-1/2">
+            <div class="flex flex-col items-center w-full">
+                <label for="humidite_max" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">{{ field_label(form.humidite_max) }}</label>
+                <div class="flex">
+                    <button type="button" id="decrement-button" data-input-counter-decrement="humidite_max" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                        </svg>
+                    </button>
+                    <input type="text" id="humidite_max" name="{{ field_name(form.humidite_max) }}" data-input-counter data-input-counter-min="0" aria-describedby="helper-text-explanation" class="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-14 py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ form.humidite_max.vars.data }}" value="{{ form.humidite_max.vars.data }}" required>
+                    <button type="button" id="increment-button" data-input-counter-increment="humidite_max" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div></div>
+        </div>
+
+        <h2 class="lg:text-2xl text-center mt-10">CO2</h2>
+
+        <div class="m-auto grid grid-cols-2 self-center w-1/2">
+            <div class="flex flex-col items-center w-full">
+                <label for="co2_premier_palier" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">{{ field_label(form.co2_premier_palier) }}</label>
+                <div class="flex">
+                    <button type="button" id="decrement-button" data-input-counter-decrement="co2_premier_palier" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                        </svg>
+                    </button>
+                    <input type="text" id="co2_premier_palier" name="{{ field_name(form.co2_premier_palier) }}" data-input-counter data-input-counter-min="0" aria-describedby="helper-text-explanation" class="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-14  py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ form.co2_premier_palier.vars.data }}" value="{{ form.co2_premier_palier.vars.data }}" required>
+                    <button type="button" id="increment-button" data-input-counter-increment="co2_premier_palier" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="flex flex-col items-center w-full">
+                <label for="co2_second_palier" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">{{ field_label(form.co2_second_palier) }}</label>
+                <div class="flex">
+                    <button type="button" id="decrement-button" data-input-counter-decrement="co2_second_palier" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                        </svg>
+                    </button>
+                    <input type="text" id="co2_second_palier" name="{{ field_name(form.co2_second_palier) }}" data-input-counter data-input-counter-min="0" aria-describedby="helper-text-explanation" class="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-14  py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ form.co2_second_palier.vars.data }}" value="{{ form.co2_second_palier.vars.data }}" required>
+                    <button type="button" id="increment-button" data-input-counter-increment="co2_second_palier" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-cols-subgrid gap-4 col-span-3 mt-5">
+            <div class="mx-auto col-start-1">
+                <button id="submit" type="submit" name="{{ field_name(form.ajouter) }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                    {{ field_label(form.ajouter) }}</button>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}

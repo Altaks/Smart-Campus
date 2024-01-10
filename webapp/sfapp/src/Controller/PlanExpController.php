@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Entity\DemandeTravaux;
 use App\Entity\Salle;
+use App\Entity\Seuil;
 use App\Entity\SystemeAcquisition;
 use App\Service\ReleveService;
 use Doctrine\Persistence\ManagerRegistry;
@@ -195,11 +196,77 @@ class PlanExpController extends AbstractController
         return $this->render('plan/charge_de_mission/lister_salles.html.twig', []);
     }
 
-    #[Route('/plan/seuils_alertes', name: 'cdm_seuils_alertes')]
-    public function cdm_seuils_alertes(ManagerRegistry $doctrine): Response
+    #[IsGranted("ROLE_CHARGE_DE_MISSION")]
+    #[Route('/plan/seuils-alertes', name: 'cdm_seuils_alertes')]
+    public function cdm_seuils_alertes(ManagerRegistry $doctrine, Request $request): Response
     {
-        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
-        return $this->render('plan/charge_de_mission/seuils_alertes.html.twig', []);
+
+        $entityManager = $doctrine->getManager();
+        $seuilRepository = $entityManager->getRepository(Seuil::class);
+        $seuil_temp_min = $seuilRepository->findOneBy(['nom' => 'temp_min']);
+        $seuil_temp_max = $seuilRepository->findOneBy(['nom' => 'temp_max']);
+        $seuil_humidite_max = $seuilRepository->findOneBy(['nom' => 'humidite_max']);
+        $seuil_co2_premier_palier = $seuilRepository->findOneBy(['nom' => 'co2_premier_palier']);
+        $seuil_co2_second_palier = $seuilRepository->findOneBy(['nom' => 'co2_second_palier']);
+
+        $form = $this->createFormBuilder()
+            ->add('temp_min',IntegerType::class, [
+                'label' => 'Seuil bas',
+                'data' => $seuil_temp_min->getValeur()
+            ])
+            ->add('temp_max',IntegerType::class, [
+                'label' => 'Seuil haut',
+                'data' => $seuil_temp_max->getValeur()
+            ])
+            ->add('humidite_max',IntegerType::class, [
+                'label' => 'Seuil haut',
+                'data' => $seuil_humidite_max->getValeur()
+            ])
+            ->add('co2_premier_palier',IntegerType::class, [
+                'label' => 'Seuil moyen',
+                'data' => $seuil_co2_premier_palier->getValeur()
+            ])
+            ->add('co2_second_palier',IntegerType::class, [
+                'label' => 'Seuil haut',
+                'data' => $seuil_co2_second_palier->getValeur()
+            ])
+            ->add('ajouter', SubmitType::class,[
+                'label' => 'Valider les modifications'
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+        $erreurs = [];
+        if($form->isSubmitted()) {
+            $seuil_temp_min_val = $form->getData()['temp_min'];
+            $seuil_temp_max_val = $form->getData()['temp_max'];
+            $seuil_humidite_max_val = $form->getData()['humidite_max'];
+            $seuil_co2_premier_palier_val = $form->getData()['co2_premier_palier'];
+            $seuil_co2_second_palier_val = $form->getData()['co2_second_palier'];
+            if($seuil_temp_min_val < $seuil_temp_max_val && $seuil_co2_premier_palier_val < $seuil_co2_second_palier_val)
+            {
+                $seuil_temp_min->setValeur($seuil_temp_min_val);
+                $seuil_temp_max->setValeur($seuil_temp_max_val);
+                $seuil_humidite_max->setValeur($seuil_humidite_max_val);
+                $seuil_co2_premier_palier->setValeur($seuil_co2_premier_palier_val);
+                $seuil_co2_second_palier->setValeur($seuil_co2_second_palier_val);
+                $entityManager->flush();
+                return $this->redirectToRoute('accueil');
+            }
+
+            if($seuil_temp_min_val > $seuil_temp_max_val)
+            {
+                $erreurs['temp'] = "Le seuil bas ne peut pas être plus grand que le seuil haut";
+            }
+            if($seuil_co2_premier_palier_val > $seuil_co2_second_palier_val)
+            {
+                $erreurs['co2'] = "Le seuil moyen ne peut pas être plus grand que le seuil haut";
+            }
+        }
+        return $this->render('plan/charge_de_mission/seuils_alertes.html.twig', [
+            'erreurs' => $erreurs,
+            'form' => $form
+        ]);
     }
 
     #[Route('/plan/{id_salle}/demander-reparation', name: 'cdm_demander_reparation')]
