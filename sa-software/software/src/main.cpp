@@ -27,11 +27,6 @@ const char* password       = "txg;3afks64@KmMy";
 const char* identifiant    = "ksimon";
 const char* nomUtilisateur = "ksimon";
 
-
-bool envoi = true;
-
-bool test = true;
-
 void setup() {
     tempEtHum = new TempEtHum();
     co2 = new (unsigned short);
@@ -76,7 +71,10 @@ void setup() {
     initPresence(presence);
 
     delay(1000);
-    initAffichage(donnees);   
+    bool affiche = initAffichage(donnees); //Initialise l'affichage
+
+    delay(1000);
+    bool envoie = initEnvois(donnees); //Initialise l'envoi des données
 }
 
 void loop() {
@@ -144,17 +142,4 @@ void loop() {
         }
     }
     delay(1000);
-
-    if (estConnecte() && test){
-        if (getDate() != "Date Error"){
-            Serial.println("Test de l'envoi");
-            if (envoyer(donnees) == 0){
-                Serial.println("Envoi réussi");
-                test = false;
-            }
-            else{
-                Serial.println("Envoi échoué");
-            };
-        }
-    }
 }
