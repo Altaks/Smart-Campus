@@ -279,7 +279,7 @@ class PlanExpControllerTest extends WebTestCase
 
         $crawler = $client->submitForm('submit', [
             'form[nom]' => 'ESP-999',
-            'form[baseDonnees]' => 'sae34bdl1eq1'
+            'form[baseDonnees]' => 'sae34bdl1eq2'
         ]);
 
         $saRepository = static::getContainer()->get(SystemeAcquisitionRepository::class);
@@ -372,7 +372,7 @@ class PlanExpControllerTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($utilisateur);
 
-        $client->request('GET', '/plan/seuils_alertes');
+        $client->request('GET', '/plan/seuils-alertes');
         $this->assertResponseIsSuccessful();
     }
     public function test_seuils_modification_connexion_invalide_technicien()
@@ -385,13 +385,13 @@ class PlanExpControllerTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($utilisateur);
 
-        $client->request('GET', '/plan/seuils_alertes');
+        $client->request('GET', '/plan/seuils-alertes');
         $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
     }
     public function test_seuils_modification_connexion_invalide_usager()
     {
         $client = static::createClient();
-        $client->request('GET', '/plan/seuils_alertes');
+        $client->request('GET', '/plan/seuils-alertes');
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
     }
 
@@ -404,12 +404,12 @@ class PlanExpControllerTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($utilisateur);
 
-        $client->request('GET', '/plan/seuils_alertes');
+        $client->request('GET', '/plan/seuils-alertes');
         $this->assertResponseIsSuccessful();
 
         $seuilService = new SeuilService();
 
-        $seuils = $seuilService->getSeuils();
+        $seuils = $seuilService->getSeuils($client->getContainer()->get('doctrine'));
 
         $temp_min_valeur_actuelle = $seuils['temp_min'];
         $temp_max_valeur_actuelle = $seuils['temp_max'];
@@ -451,6 +451,7 @@ class PlanExpControllerTest extends WebTestCase
         $seuils_co2_second_palier->setValeur($co2_second_palier_valeur_actuelle);
 
         $entityManager->flush();
+        $client->request('GET', '/plan/seuils-alertes');
 
         $crawler = $client->submitForm('submit', [
             'form[temp_min]' => 28,
