@@ -13,10 +13,10 @@ int envoyer(struct Donnees* donnees){
 
     Serial.println("Serialisation des données");
 
-    sprintf(s_donnees[0], ".2%f", donnees->tempEtHum->temperature);
-    sprintf(s_donnees[1], ".2%f", donnees->tempEtHum->humidite);
-    sprintf(s_donnees[2], "%d", donnees->co2);
-    sprintf(s_donnees[3], "%d", donnees->lum);
+    sprintf(s_donnees[0], "%.2f", donnees->tempEtHum->temperature);
+    sprintf(s_donnees[1], "%2.f", donnees->tempEtHum->humidite);
+    sprintf(s_donnees[2], "%hu", *donnees->co2);
+    sprintf(s_donnees[3], "%hu", *donnees->lum);
 
     Serial.println("Obtention de la présence");
 
@@ -54,31 +54,26 @@ int envoyer(struct Donnees* donnees){
 }'
     */    
 
-    Serial.println("Creation du header de la requette");
+    Serial.println(donnees->nomBD);
+    Serial.println(donnees->nomUtilisateurBD);
+    Serial.println(donnees->pwd);
 
-    http.addHeader("accept", "application/ld+json");
-    http.addHeader("Content-Type", "application/json");
-    http.addHeader("dbname", donnees->nomBD);
-    http.addHeader("username", donnees->nomUtilisateur);
-    http.addHeader("userpass", donnees->pwd);
+    Serial.println("Creation du header de la requete");
 
+    // set timeout at 7 seconds
+    http.setTimeout(7000);
 
     Serial.println("Connexion au serveur d'api");
 
-    http.begin(client, "https://sae34.k8s.iut-larochelle.fr/api/captures");
+    http.begin("https://sae34.k8s.iut-larochelle.fr/api/captures");
 
-    Serial.println("Verification de la connexion");
-    
-    if (http.connected()){
-        Serial.println("Connexion réussie");
-    }
-    else{
-        Serial.println("Connexion échouée");
-        return 1;
-    }
+    http.addHeader("accept", "application/ld+json");
+    http.addHeader("dbname", donnees->nomBD);
+    http.addHeader("username", donnees->nomUtilisateurBD);
+    http.addHeader("userpass", donnees->pwd);
+    http.addHeader("Content-Type", "application/json");
+    // http.addHeader("User-agent", "ESP32");
 
-    
-    
 
     Serial.println("Envoie de chaque donnees");
 
@@ -87,20 +82,11 @@ int envoyer(struct Donnees* donnees){
 
         Serial.println("Creation des donnees de "+ nomsValeurs[i]);
 
-        n = sprintf((char *) donneesAEnvoyer,
-            "{\"nom\": \"%s\", \"valeur\": \"%s\", \"dateCapture\": \"%s\", \"localisation\": \"%s\", \"description\": \"%s\", \"nomsa\": \"%s\"}%c",
-            nomsValeurs[i],
-            s_donnees[i],
-            date,
-            donnees->salle,
-            "",
-            donnees->nomSa,
-            EOF
-            );
+        String donneesAEnvoyerStr = "{\"nom\":\""+ nomsValeurs[i] +"\",\"valeur\":\""+ s_donnees[i] +"\",\"dateCapture\":\""+ date +"\",\"localisation\":\""+ donnees->salle +"\",\"description\":\"\",\"nomsa\":\""+ donnees->nomSa +"\"}";
 
         Serial.println("Envoie des donnees");
 
-        int codeReponse = http.POST(donneesAEnvoyer, strlen((char *) donneesAEnvoyer));
+        int codeReponse = http.POST(donneesAEnvoyerStr);
 
         Serial.println("Code de réponse :");
         Serial.println(codeReponse);

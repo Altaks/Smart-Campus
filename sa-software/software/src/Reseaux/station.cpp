@@ -68,6 +68,8 @@ bool connexionWifi(const String& ssid, wpa2_auth_method_t methodeAutentification
             WiFi.begin(ssid, password);
             break;
     }
+
+    Serial.println("Connexion au réseau "+ssid);
     
     
     for(int counter = 0 ; counter <= 60 && WiFi.status() != WL_CONNECTED ; counter++)

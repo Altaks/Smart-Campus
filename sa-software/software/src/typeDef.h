@@ -25,7 +25,7 @@ struct Donnees{
     bool * presence;
     char * nomSa;
     char * salle;
-    char * nomUtilisateur;
+    char * nomUtilisateurBD;
     char * pwd;
     char * nomBD;
     PAGE page;

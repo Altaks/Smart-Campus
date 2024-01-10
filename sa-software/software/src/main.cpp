@@ -16,16 +16,16 @@ PAGE page;
 Donnees* donnees;
 char * nomSa;
 char * salle;
-char * nomUtilistaeur = "m2eq3";
+char * nomUtilistaeurBD = "m2eq3";
 char * pwd = "howjoc-dyjhId-hiwre0";
 char * nomBD = "sae34bdm2eq3";
 bool * presence;
 unsigned short * lum;
 
 const String* nomReseau    = new String("eduroam");
-const char* password       = "";
-const char* identifiant    = "";
-const char* nomUtilisateur = "";
+const char* password       = "txg;3afks64@KmMy";
+const char* identifiant    = "ksimon";
+const char* nomUtilisateur = "ksimon";
 
 
 bool envoi = true;
@@ -36,10 +36,12 @@ void setup() {
     tempEtHum = new TempEtHum();
     co2 = new (unsigned short);
     page = TEMPERATURE;
-    salle = "C004";
+    salle = "C005";
     nomSa = "ESP-018";
     lum = new (unsigned short);
     presence = new (bool);
+
+    *lum = 0;
 
     donnees = new Donnees();
     donnees->tempEtHum = tempEtHum;
@@ -47,16 +49,18 @@ void setup() {
     donnees->page;
     donnees->nomSa = nomSa;
     donnees->salle = salle;
-    donnees->nomUtilisateur;
+    donnees->lum = lum;
+    donnees->nomUtilisateurBD = nomUtilistaeurBD;
     donnees->pwd = pwd;
     donnees->nomBD = nomBD;
     donnees->presence = presence;
 
-    *presence = true;
-
 
     Serial.begin(9600);
     while(!Serial);
+
+    delay(1000);
+    initReseauStation();
 
     delay(1000);
 
@@ -69,13 +73,10 @@ void setup() {
     initQualAir(co2);
 
     delay(1000);
-    initAffichage(donnees);
-
-    delay(1000);
-    initReseauStation();
-
-    delay(1000);
     initPresence(presence);
+
+    delay(1000);
+    initAffichage(donnees);   
 }
 
 void loop() {
@@ -121,12 +122,12 @@ void loop() {
         //vérifie si le reseaux auquel on souhaite se connecter est disponnible
         int cnt = 0;
         while(*nomReseau != listeReseaux[cnt] && cnt < nbReseaux) cnt++;
-        Serial.println("Recherche dans de "+*nomReseau+" dans la liste des reseaux");
+        Serial.println("Recherche de "+*nomReseau+" dans la liste des reseaux");
 
         
         if(cnt < nbReseaux) //si le reseau est trouvé 
         {
-            if(connexionWifi(*nomReseau,WPA2_AUTH_PEAP, password ,identifiant, nomUtilisateur))
+            if(connexionWifi(*nomReseau, WPA2_AUTH_TTLS, password ,identifiant, nomUtilisateur))
             {
                 Serial.println("Connexion a "+*nomReseau+" Reussie");
                 initHeure();
@@ -145,19 +146,15 @@ void loop() {
     delay(1000);
 
     if (estConnecte() && test){
-        Serial.println("Test de l'envoi");
-        if (envoyer(donnees) == 0){
-            Serial.println("Envoi réussi");
-            test = false;
-        }
-        else{
-            Serial.println("Envoi échoué");
-        };
-    }
-    if (estConnecte() && envoi){
         if (getDate() != "Date Error"){
-            Serial.println("Début de l'envoi des données");
-            testGetHttp();
+            Serial.println("Test de l'envoi");
+            if (envoyer(donnees) == 0){
+                Serial.println("Envoi réussi");
+                test = false;
+            }
+            else{
+                Serial.println("Envoi échoué");
+            };
         }
     }
 }

@@ -15,11 +15,13 @@ bool * presence_ptr = nullptr;
  * @param pvParameters paramètre de la tâche, non utilisés ici
 */
 void taskPresence(void *pvParameters){
-    if(presence_ptr != nullptr) {
-        *presence_ptr = (bool)(digitalRead(PIN_PRESENCE));
-        Serial.println(*presence_ptr ? "Présence détectée" : "Pas de présence");
+    while(1){
+        if(presence_ptr != nullptr) {
+            *presence_ptr = (bool)(digitalRead(PIN_PRESENCE));
+            Serial.println(*presence_ptr ? "Présence détectée" : "Pas de présence");
+        }
+        delay(3000);
     }
-    delay(3000);
 }
 
 void initPresence(bool * presence){
