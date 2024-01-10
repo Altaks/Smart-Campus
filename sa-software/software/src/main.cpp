@@ -9,6 +9,8 @@
 #include "Reseaux/station.h"
 #include "typeDef.h"
 #include "envois/envois.h"
+#include "Serveur/serveurWeb.h"
+#include "Fichiers/fichierSPIFFS.h"
 
 TempEtHum* tempEtHum;
 unsigned short* co2;
@@ -54,8 +56,19 @@ void setup() {
     Serial.begin(9600);
     while(!Serial);
 
+
+
+    //initialisation reseau
     delay(1000);
     initReseauStation();
+
+    //initilaisation système de fichier
+    initSystemeFichier();
+
+    //Initialise le serveur web et le serveur DNS
+    setupServeurWeb();
+    ajouterCaptiveRequest();
+    setupServeurDNS();
 
     delay(1000);
 
