@@ -4,8 +4,6 @@
 #include <HTTPClient.h>
 #include <WiFi.h>
 #include "Reseaux/station.h"
-
-
 #include "typeDef.h"
 #include "Heure/heureLocal.h"
 

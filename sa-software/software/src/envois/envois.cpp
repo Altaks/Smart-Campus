@@ -19,8 +19,8 @@ void taskEnvois(void *pvParameters){
             Serial.println("Code d'erreur : " + String(codeRetour) + " : " + errreurToString(codeRetour));
         }
         Serial.println("______________________________________");
-        vTaskDelay(pdMS_TO_TICKS(4 * 60 * 1000 + 58 * 1000));
-        //delay(4 * 60 * 1000 + 58 * 1000);
+        // 5 minutes - 2 secondes pour laisser le temps à la tâche de récupérer la date (d'après mes tests, la récupération de la date prend 2 secondes de plus que le délai de 5 minutes)
+        vTaskDelay(pdMS_TO_TICKS(5 * 60 * 1000 - 2 * 1000)); 
     }
 }
 
@@ -46,7 +46,6 @@ bool initEnvois(struct Donnees* donnees){
     return true;
 }
 
-
 int envoyer(struct Donnees* donnees){
     
     Serial.println("Vériication de la connexion au réseau");
@@ -63,8 +62,6 @@ int envoyer(struct Donnees* donnees){
         return -1;
     }
 
-    
-    
     char s_donnees[5][6];
 
     Serial.println("Serialisation des données récupérées");
