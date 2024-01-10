@@ -53,6 +53,8 @@
                 <th scope="col" class="px-6 py-3">
                     État du système d'acquisition
                 </th>
+                <th scope="col" class="px-6 py-3">
+                </th>
             </tr>
             </thead>
 
@@ -96,6 +98,11 @@
                                 <box-icon name='right-arrow-alt' color='#ffffff' ></box-icon>
                             </a>
                         {% endif %}
+                    </td>
+                    <td>
+                        <a href="/plan/modifier-salle/{{ salle.id }}">
+                            <box-icon name='edit' color='#000000'></box-icon>
+                        </a>
                     </td>
                 </tr>
                 </tbody>
