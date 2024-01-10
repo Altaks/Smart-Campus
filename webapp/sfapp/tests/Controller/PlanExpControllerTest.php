@@ -359,4 +359,65 @@ class PlanExpControllerTest extends WebTestCase
 
         $this->assertCount($nbSalleInit, $salleRepository->findAll());
     }
+
+    public function test_modifier_salle_cdm_contenu_form():void
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'yghamri']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/ajouter-salle');
+
+        $client->submitForm('submit', [
+            'form[nom]' => 'E789',
+            'form[batiment]' => 'Bâtiment P',
+            'form[orientation]' => 'No',
+            'form[nombreFenetre]' => 2,
+            'form[nombrePorte]' => 2,
+            'form[contientPc]' => 1
+        ]);
+
+        $salleRepository = static::getContainer()->get(SalleRepository::class);
+        $salle = $salleRepository->findOneBy(['nom' => 'E789']);
+
+        $client->request('GET', '/plan/modifier-salle/'.$salle->getId());
+        $client->submitForm('submit', [
+            'form[nombreFenetre]' => 4,
+            'form[nombrePorte]' => 2,
+            'form[contientPc]' => 1
+        ]);
+
+        $salle = $salleRepository->findOneBy(['nom' => 'E789']);
+
+        $this->assertEquals(4,$salle->getNombreFenetre());
+
+        $client->request('GET', '/plan/modifier-salle/'.$salle->getId());
+        $client->submitForm('submit', [
+            'form[nombreFenetre]' => 4,
+            'form[nombrePorte]' => 1,
+            'form[contientPc]' => 1
+        ]);
+
+        $salle = $salleRepository->findOneBy(['nom' => 'E789']);
+
+        $this->assertEquals(1,$salle->getNombrePorte());
+
+        $client->request('GET', '/plan/modifier-salle/'.$salle->getId());
+        $client->submitForm('submit', [
+            'form[nombreFenetre]' => 4,
+            'form[nombrePorte]' => 1,
+            'form[contientPc]' => 0
+        ]);
+
+        $salle = $salleRepository->findOneBy(['nom' => 'E789']);
+
+        $this->assertEquals(0,$salle->getContientPc());
+
+        $entityManager = $client->getContainer()->get('doctrine')->getManager();
+        $entityManager->remove($salle);
+        $entityManager->flush();
+    }
 }
