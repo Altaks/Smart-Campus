@@ -181,11 +181,47 @@ class PlanExpController extends AbstractController
         throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
     }
 
-    #[Route('/plan/modifier_salle/{id}', name: 'cdm_modifier_salle')]
-    public function cdm_modifier_salle(): Response
+    #[Route('/plan/modifier-salle/{id}', name: 'cdm_modifier_salle')]
+    public function cdm_modifier_salle(int $id, ManagerRegistry $doctrine, Request $request): Response
     {
-        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
-        return $this->render('plan/charge_de_mission/modifier_salle.html.twig', []);
+        $entityManager = $doctrine->getManager();
+        $salleRepository = $entityManager->getRepository('App\Entity\Salle');
+        $salle = $salleRepository->findOneBy(['id' => $id]);
+
+        $formSalle = $this->createFormBuilder($salle)
+            ->add('nombreFenetre', IntegerType::class, [
+                'label' => 'Nombre de fenêtre'
+            ])
+            ->add('nombrePorte', IntegerType::class, [
+                'label' => 'Nombre de porte'
+            ])
+            ->add('contientPc', ChoiceType::class, [
+                'choices' => [
+                    'Oui' => true,
+                    'Non' => false
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'label' => 'Contient des PCs',
+                'required' => true
+            ])
+            ->add('modifier', SubmitType::class,[
+                'label' => 'Modifier salle'
+            ])
+            ->getForm();
+
+        $formSalle->handleRequest($request);
+
+        if($formSalle->isSubmitted() && $formSalle->isValid()) {
+            $salle = $formSalle->getData();
+            $entityManager->flush();
+            return $this->redirectToRoute('cdm_plan');
+        }
+
+        return $this->render('plan/charge_de_mission/modifier_salle.html.twig', [
+            'formSalle' => $formSalle,
+            'salle' => $salle
+        ]);
     }
 
     #[Route('/plan/lister_salles', name: 'cdm_lister_salles')]
