@@ -213,7 +213,7 @@ class PlanExpControllerTest extends WebTestCase
     public function test_lister_SA_route_connexion_invalide_usager(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/plan/lister_sa');
+        $client->request('GET', '/plan/lister-sa');
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
     }
 
@@ -226,7 +226,7 @@ class PlanExpControllerTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $client->request('GET', '/plan/lister_sa');
+        $client->request('GET', '/plan/lister-sa');
         $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
     }
 
@@ -239,7 +239,7 @@ class PlanExpControllerTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $client->request('GET', '/plan/ajouter_sa');
+        $client->request('GET', '/plan/ajouter-sa');
         $this->assertResponseIsSuccessful();
     }
 
@@ -253,7 +253,7 @@ class PlanExpControllerTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($utilisateur);
 
-        $client->request('GET', '/plan/ajouter_sa');
+        $client->request('GET', '/plan/ajouter-sa');
         $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
 
     }
@@ -261,7 +261,7 @@ class PlanExpControllerTest extends WebTestCase
     public function test_ajouter_sa_technicien_connexion_invalide_usager()
     {
         $client = static::createClient();
-        $client->request('GET', '/plan/ajouter_sa');
+        $client->request('GET', '/plan/ajouter-sa');
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
     }
 
@@ -537,4 +537,103 @@ class PlanExpControllerTest extends WebTestCase
         $entityManager->remove($salle);
         $entityManager->flush();
     }
+
+    public function test_lister_sa_technicien_lister_tout_sa_montre_etat_capteurs()
+    {
+        $client = static::createClient();
+        $systemeAcquisitionRepository = static::getContainer()->get(SystemeAcquisitionRepository::class);
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/lister-sa');
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        $listeEtatSA = $crawler->filter('#etat-capteur');
+        $listeSA = $systemeAcquisitionRepository->findAll();
+        $this->assertSameSize($listeEtatSA, $listeSA);
+    }
+
+    public function test_lister_sa_technicien_lister_sa_non_installe_ne_montre_pas_etat_capteurs()
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $client->loginUser($testUser);
+
+        $client->request('POST', '/plan/lister-sa', [
+            'choix' => '2' // Non installé => 2
+        ]);
+
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        $listeEtatSA = $crawler->filter('#etat-capteur');
+        $this->assertEmpty($listeEtatSA);
+    }
+    public function test_lister_sa_technicien_lister_sa_en_installation_ne_montre_pas_etat_capteurs()
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $client->loginUser($testUser);
+
+        $client->request('POST', '/plan/lister-sa', [
+            'choix' => '1' // En installation => 1
+        ]);
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        $listeEtatSA = $crawler->filter('#etat-capteur');
+        $this->assertEmpty($listeEtatSA);
+    }
+
+    public function test_lister_sa_technicien_lister_sa_en_reparation_ne_montre_pas_etat_capteurs()
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $client->loginUser($testUser);
+
+        $client->request('POST', '/plan/lister-sa', [
+            'choix' => '3' // En réparation => 3
+        ]);
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        $listeEtatSA = $crawler->filter('#etat-capteur');
+        $this->assertEmpty($listeEtatSA);
+    }
+
+    public function test_lister_sa_technicien_lister_sa_opérationnel_montre_etat_capteurs()
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $systemeAcquisitionRepository = static::getContainer()->get(SystemeAcquisitionRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $client->loginUser($testUser);
+
+        $client->request('POST', '/plan/lister-sa', [
+            'choix' => '4' // Opérationnel => 4
+        ]);
+
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        $listeEtatSA = $crawler->filter('#etat-capteur');
+        $listeSAOpertationnel = $systemeAcquisitionRepository->findBy(['etat' => 'Opérationnel']);
+        $this->assertSameSize($listeEtatSA, $listeSAOpertationnel);
+    }
+
 }
