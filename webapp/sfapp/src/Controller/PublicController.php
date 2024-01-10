@@ -128,22 +128,59 @@ class PublicController extends AbstractController
                 }
             }
 
-            $last_temps_diff = $relevesTemp[count($relevesTemp) - 1] - $relevesTemp[count($relevesTemp) - 2];
-            $last_humidity_diff = $relevesHum[count($relevesHum) - 1] - $relevesHum[count($relevesHum) - 2];
-            $last_co2_diff = $relevesCo2[count($relevesCo2) - 1] - $relevesCo2[count($relevesCo2) - 2];
+            // Vérifier l'état des données et créer des messages d'erreurs si nécessaire
+            $last_temps_diff = 0;
+            $temp_err = "";
 
+            if(count($relevesTemp) <= 0){
+                $temp_err = "Aucune donnée récupérée pour la température";
+                $datesTemp = null;
+                $relevesTemp = null;
+            } else if(count($relevesTemp) > 1){
+                $last_temps_diff = $relevesTemp[count($relevesTemp) - 1] - $relevesTemp[count($relevesTemp) - 2];
+            }
+
+            $last_humidity_diff = 0;
+            $hum_err = "";
+            if(count($relevesHum) <= 0){
+                $hum_err = "Aucune donnée récupérée pour l'humidité";
+                $datesHum = null;
+                $relevesHum = null;
+            } else if(count($relevesHum) > 1){
+                $last_humidity_diff = $relevesHum[count($relevesHum) - 1] - $relevesHum[count($relevesHum) - 2];
+            }
+
+            $last_co2_diff = 0;
+            $co2_err = "";
+            if(count($relevesCo2) <= 0){
+                $co2_err = "Aucune donnée récupérée pour le CO2";
+                $datesCo2 = null;
+                $relevesCo2 = null;
+            } else if(count($relevesCo2) > 1){
+                $last_co2_diff = $relevesCo2[count($relevesCo2) - 1] - $relevesCo2[count($relevesCo2) - 2];
+            }
+
+
+            // Renvoyer la vue
             return $this->render('public/releves.html.twig', [
                 // data
                 'form' => $form->createView(),
+                'form_selected' => $salle,
+
                 'temp_dates' => $datesTemp,
                 'temp_releves' => $relevesTemp,
                 'temp_diff' => $last_temps_diff,
+                'temp_error' => $temp_err,
+
                 'hum_dates' => $datesHum,
                 'hum_releves' => $relevesHum,
                 'hum_diff' => $last_humidity_diff,
+                'hum_error' => $hum_err,
+
                 'co2_dates' => $datesCo2,
                 'co2_releves' => $relevesCo2,
                 'co2_diff' => $last_co2_diff,
+                'co2_error' => $co2_err,
             ]);
         }
 

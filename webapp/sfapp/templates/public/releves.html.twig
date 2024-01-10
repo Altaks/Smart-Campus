@@ -32,7 +32,11 @@
             <select name="{{ field_name(form.salle) }}" class="form-control bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange="this.form.submit()">
                 <option value="" disabled>Choisir une salle</option>
                 {% for label, value in field_choices(form.salle) %}
-                    <option value="{{ value }}">{{ label }}</option>
+                    {% if form_selected is defined and label == form_selected.nom %}
+                        <option value="{{ value }}" selected>{{ label }}</option>
+                    {% else %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endif %}
                 {% endfor %}
             </select>
         {{ form_end(form) }}
@@ -151,9 +155,9 @@
                     }
                 });
             </script>
-        {% elseif app.request.method == "POST" %}
+        {% elseif temp_error is defined %}
             <div class="bg-red-300 rounded-lg text-red-950 text-xl w-full text-center my-12 p-6">
-                Une erreur est survenue lors de la récupération des données concernant les températures, veuillez signaler l'erreur
+                {{ temp_error }}
             </div>
         {% endif %}
         {% if hum_dates is defined and hum_dates is not null and hum_releves is defined and hum_releves is not null %}
@@ -259,9 +263,9 @@
                     }
                 });
             </script>
-        {% elseif app.request.method == "POST" %}
+        {% elseif app.request.method == "POST" or hum_error is defined %}
             <div class="bg-red-300 rounded-lg text-red-950 text-xl w-full text-center my-12 p-6">
-                Une erreur est survenue lors de la récupération des données concernant l'humidité, veuillez signaler l'erreur
+                {{ hum_error }}
             </div>
         {% endif %}
         {% if co2_dates is defined and co2_dates is not null and co2_releves is defined and co2_releves is not null %}
@@ -367,9 +371,9 @@
                     }
                 });
             </script>
-        {% elseif app.request.method == "POST" %}
+        {% elseif app.request.method == "POST" or co2_error is defined %}
             <div class="bg-red-300 rounded-lg text-red-950 text-xl w-full text-center my-12 p-6">
-                Une erreur est survenue lors de la récupération des données concernant la qualité de l'air, veuillez signaler l'erreur
+                {{ co2_error }}
             </div>
         {% endif %}
     </div>
