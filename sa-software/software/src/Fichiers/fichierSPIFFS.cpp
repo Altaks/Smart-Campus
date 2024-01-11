@@ -31,12 +31,12 @@ void afficherContenuFichier(String nomFichier)
         return;
     }
 
-    Serial.println("Contenu du fichier: ");
+    Serial.println("Contenu du fichier "+nomFichier+" : ");
     while(file.available())
     {
         Serial.write(file.read());
     }
-    Serial.println();
+    Serial.println("\n");
     file.close();
 }
 
@@ -77,4 +77,77 @@ void modifierFichier(String nomFichier, String baliseDebut, String baliseFin, St
     
         file.print(nouveauContenuFichier);
         file.close();
+}
+
+String recupererValeur(String nomFichier, String nomValeur)
+{
+    File file = SPIFFS.open(nomFichier);
+
+    if(!file)
+    {
+        Serial.println("Erreur lors de l'ouverture du fichier");
+        return "";
+    }
+
+    String valeur = "";
+    String debutLigne = "";
+    char lastChar = '0'; 
+    while(file.available() && nomValeur != debutLigne)
+    {
+        lastChar = file.read();
+        if(lastChar != ':')
+        {
+            debutLigne += lastChar;
+        }
+        if(lastChar == '\n')
+        {
+            debutLigne = "";
+        }
+    }
+    
+    file.read();
+
+    while(file.available())
+    {
+        lastChar = file.read();
+        if(lastChar =='\n') break;
+        valeur += lastChar;
+    }
+    file.close();
+    return valeur;
+}
+
+bool estDansFichier(String nomFichier, String texte)
+{
+    File file = SPIFFS.open(nomFichier);
+
+    if(!file)
+    {
+        Serial.println("Erreur lors de l'ouverture du fichier");
+        return false;
+    }
+
+    String contenuFichier = "";
+    while(file.available())
+    {
+        contenuFichier += (char)file.read();
+    }
+    file.close();
+
+    return contenuFichier.indexOf(texte) >= 0;    
+}
+
+void ecrireFichier(String nomFichier, String contenu)
+{
+    if(SPIFFS.exists(nomFichier)) SPIFFS.remove(nomFichier);
+    File file = SPIFFS.open(nomFichier,FILE_WRITE,true);
+
+    if(!file)
+    {
+        Serial.println("Erreur lors de l'ouverture du fichier");
+        return ;
+    }
+    
+    file.print(contenu);
+    file.close();
 }
