@@ -123,14 +123,6 @@ class PublicController extends AbstractController
 
             $seuils = $seuilService->getSeuils($managerRegistry);
 
-            $entityManager = $managerRegistry->getManager();
-            $seuilRepository = $entityManager->getRepository(Seuil::class);
-            $seuil_temp_min = $seuilRepository->findOneBy(['nom' => 'temp_min']);
-            $seuil_temp_max = $seuilRepository->findOneBy(['nom' => 'temp_max']);
-            $seuil_humidite_max = $seuilRepository->findOneBy(['nom' => 'humidite_max']);
-            $seuil_co2_premier_palier = $seuilRepository->findOneBy(['nom' => 'co2_premier_palier']);
-            $seuil_co2_second_palier = $seuilRepository->findOneBy(['nom' => 'co2_second_palier']);
-
             foreach ($releves30Jours as $date => $releves){
                 if($releves['temp'] != null){
                     $datesTemp[] = $date;
