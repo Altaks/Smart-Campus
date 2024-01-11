@@ -29,7 +29,7 @@
             </button>
             </div>
         </div>
-        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 rounded-t-2xl">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
                 <th scope="col" class="px-6 py-3">
@@ -54,6 +54,7 @@
                     État du système d'acquisition
                 </th>
                 <th scope="col" class="px-6 py-3">
+                    Actions
                 </th>
             </tr>
             </thead>
@@ -85,23 +86,28 @@
                     </td>
                     <td class="px-6 py-4">
                         {% if etat[salle.id] == 'Installation demandée' %}
-                            <div class="p-1 bg-amber-500 text-white rounded-lg flex flex-row justify-evenly items-center">
-                                <span>Installation demandée</span>
+                            <div class="p-1 bg-amber-500 text-white rounded-lg flex flex-row justify-between items-center">
+                                <box-icon name='time-five' color='rgba(255,255,255,0.85)' class="mx-4"></box-icon>
+                                <span class="text-center w-full">Installation demandée</span>
                             </div>
                         {% elseif etat[salle.id] == 'Opérationnel' %}
-                            <div class="p-1 bg-emerald-500 text-white rounded-lg flex flex-row justify-evenly items-center">
-                                <span>Opérationnel</span>
+                            <div class="p-1 bg-emerald-500 text-white rounded-lg flex flex-row justify-start items-center">
+                                <box-icon name='check-double' color='rgba(255,255,255,0.85)' class="mx-4"></box-icon>
+                                <span class="text-center w-full">Opérationnel</span>
                             </div>
                         {% elseif etat[salle.id] == 'Non installé' %}
-                            <a href="/plan/{{ salle.id }}/demander-installation" class="p-1 bg-blue-500 hover:bg-blue-700 duration-300 text-white rounded-lg flex flex-row justify-evenly items-center">
-                                <span>Demander une installation</span>
-                                <box-icon name='right-arrow-alt' color='#ffffff' ></box-icon>
+                            <a href="/plan/{{ salle.id }}/demander-installation" class="p-1 bg-blue-500 hover:bg-blue-700 duration-300 text-white rounded-lg flex flex-row justify-start items-center">
+                                <box-icon name='right-arrow-alt' color='#ffffff' class="mx-4"></box-icon>
+                                <span class="text-center w-full">Demander une installation</span>
                             </a>
                         {% endif %}
                     </td>
                     <td>
-                        <a href="/plan/modifier-salle/{{ salle.id }}">
+                        <a href="/plan/modifier-salle/{{ salle.id }}" class="mx-2">
                             <box-icon name='edit' color='#000000'></box-icon>
+                        </a>
+                        <a href="/plan/retirer-salle/{{ salle.id }}" class="mx-2">
+                            <box-icon name='trash' type='solid' color='rgba(255,0,0,0.85)' ></box-icon>
                         </a>
                     </td>
                 </tr>

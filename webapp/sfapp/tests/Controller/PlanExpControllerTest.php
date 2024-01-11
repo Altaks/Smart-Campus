@@ -537,4 +537,54 @@ class PlanExpControllerTest extends WebTestCase
         $entityManager->remove($salle);
         $entityManager->flush();
     }
+
+    public function test_retirer_salle_cdm_salle_existente() : void
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'yghamri']);
+
+        $salle = new Salle();
+        $salle->setNom("X002");
+        $salle->setBatiment("Bâtiment X");
+        $salle->setOrientation("No");
+        $salle->setNombrePorte(1);
+        $salle->setNombreFenetre(6);
+        $salle->setContientPc(false);
+
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+
+        $entityManager->persist($salle);
+        $entityManager->flush();
+
+        $salle = $entityManager->getRepository(Salle::class)->findOneBy(['nom' => 'X002']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/retirer-salle/' . $salle->getId());
+
+        // Assertion de rediction vers la page d'accueil
+        $this->assertResponseRedirects('/plan', 302);
+
+        $salle = $entityManager->getRepository(Salle::class)->findOneBy(['nom' => 'X002']);
+        $this->assertNull($salle);
+
+        $entityManager->flush();
+    }
+
+    public function test_retirer_salle_inexistente() : void
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'yghamri']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/retirer-salle/-1');
+
+        // Assertion de rediction vers la page d'accueil
+        $this->assertResponseRedirects('/plan', 302);
+    }
 }
