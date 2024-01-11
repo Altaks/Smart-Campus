@@ -548,6 +548,16 @@ class PlanExpControllerTest extends WebTestCase
         $client->loginUser($testUser);
 
         $client->request('GET', '/plan/lister-sa');
+
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        $form = $crawler->filter('form[name="form"]')->form();
+        $form['form[choix]'] = '0';
+
+        $client->submit($form);
+
         $this->assertResponseIsSuccessful();
 
         $crawler = $client->getCrawler();
@@ -565,9 +575,16 @@ class PlanExpControllerTest extends WebTestCase
 
         $client->loginUser($testUser);
 
-        $client->request('POST', '/plan/lister-sa', [
-            'choix' => '2' // Non installé => 2
-        ]);
+        $client->request('GET', '/plan/lister-sa');
+
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        $form = $crawler->filter('form[name="form"]')->form();
+        $form['form[choix]'] = '2';
+
+        $client->submit($form);
 
         $this->assertResponseIsSuccessful();
 
@@ -584,9 +601,18 @@ class PlanExpControllerTest extends WebTestCase
 
         $client->loginUser($testUser);
 
-        $client->request('POST', '/plan/lister-sa', [
-            'choix' => '1' // En installation => 1
-        ]);
+        $client->request('GET', '/plan/lister-sa');
+
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        // select the form of a select element
+        $form = $crawler->filter('form[name="form"]')->form();
+        $form['form[choix]'] = '1';
+
+        $client->submit($form);
+
         $this->assertResponseIsSuccessful();
 
         $crawler = $client->getCrawler();
@@ -603,9 +629,18 @@ class PlanExpControllerTest extends WebTestCase
 
         $client->loginUser($testUser);
 
-        $client->request('POST', '/plan/lister-sa', [
-            'choix' => '3' // En réparation => 3
-        ]);
+        $client->request('GET', '/plan/lister-sa');
+
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        // select the form of a select element
+        $form = $crawler->filter('form[name="form"]')->form();
+        $form['form[choix]'] = '4';
+
+        $client->submit($form);
+
         $this->assertResponseIsSuccessful();
 
         $crawler = $client->getCrawler();
@@ -623,9 +658,17 @@ class PlanExpControllerTest extends WebTestCase
 
         $client->loginUser($testUser);
 
-        $client->request('POST', '/plan/lister-sa', [
-            'choix' => '4' // Opérationnel => 4
-        ]);
+        $client->request('GET', '/plan/lister-sa');
+
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        // select the form of a select element
+        $form = $crawler->filter('form[name="form"]')->form();
+        $form['form[choix]'] = '3';
+
+        $client->submit($form);
 
         $this->assertResponseIsSuccessful();
 
@@ -633,7 +676,7 @@ class PlanExpControllerTest extends WebTestCase
 
         $listeEtatSA = $crawler->filter('#etat-capteur');
         $listeSAOpertationnel = $systemeAcquisitionRepository->findBy(['etat' => 'Opérationnel']);
-        $this->assertSameSize($listeEtatSA, $listeSAOpertationnel);
+        $this->assertSameSize($listeSAOpertationnel, $listeEtatSA);
     }
 
     public function test_retirer_salle_cdm_salle_existente() : void
