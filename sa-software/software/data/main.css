@@ -35,9 +35,20 @@ a:hover .box {
     box-shadow: 0 0 10px #333;
 }
 
+.message {
+    color: red;
+}
+
 .container {
     width: 60vw;
     margin: 25px auto;
+}
+
+.wrap {
+    width: 15rem;
+    display: flex;
+    flex-direction: line;
+    justify-content: space-between;
 }
 
 .box {
@@ -76,7 +87,16 @@ form {
     align-items: center;
 }
 
-form > input, form > select {
+form > div > div 
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 25px auto;
+}
+
+form > input, form > div > div > select {
     margin: 10px;
     padding: 5px;
     border-radius: 5px;
