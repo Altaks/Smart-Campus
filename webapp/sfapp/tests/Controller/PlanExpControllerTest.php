@@ -45,7 +45,7 @@ class PlanExpControllerTest extends WebTestCase
         if ($systemeAcquisition == null) {
             $systemeAcquisition = new SystemeAcquisition();
             $systemeAcquisition->setNom("ESP-123");
-            $systemeAcquisition->setBaseDonnees("sae34bdm2eq1");
+            $systemeAcquisition->setBaseDonnees("sae34bdk1eq1");
             $systemeAcquisition->setEtat("Opérationnel");
 
             $entityManager->persist($systemeAcquisition);
@@ -75,6 +75,10 @@ class PlanExpControllerTest extends WebTestCase
         // La salle d'id -1 n'existe pas, le serveur doit renvoyer une erreur 404
         $client->request('GET', '/plan/' . $salle->getId() . '/demander-installation');
         $this->assertResponseStatusCodeSame(404);
+
+        $entityManager->remove($salle);
+        $entityManager->remove($sa);
+        $entityManager->flush();
     }
 
     public function test_cdm_plan_route_connexion_valide(): void
@@ -176,20 +180,23 @@ class PlanExpControllerTest extends WebTestCase
         $nbSystemesAcquisitionNonInstalle = count($systemesAcquisitionRepository->findBy(['etat' => 'Non installé']));
 
         $travauxRepository = static::getContainer()->get(DemandeTravauxRepository::class);
-        $travaux = $travauxRepository->findAll();
+        $travaux = $travauxRepository->findBy([
+            'terminee' => false
+        ]);
 
         for ($i = 0; $i < count($travaux); $i++) {
             $crawler = $client->request('GET', '/plan/demande-travaux/' . $travaux[$i]->getId());
 
-            $option = $crawler->filter("#option")->filter('option');
+            $select = $crawler->filter('#selectSa');
+            $options = $select->children();
+            $nbOptions = count($options);
 
             if ($travaux[$i]->getSystemeAcquisition() == null) {
-                $this->assertEquals($nbSystemesAcquisitionNonInstalle + 1, $option->count());
+                $this->assertEquals($nbSystemesAcquisitionNonInstalle + 1, $nbOptions);
             }
             else {
-                $this->assertEquals($nbSystemesAcquisitionNonInstalle + 2, $option->count());
+                $this->assertEquals($nbSystemesAcquisitionNonInstalle + 2, $nbOptions);
             }
-            
         }
 
         $travaux = $travauxRepository->findBy([
@@ -279,7 +286,7 @@ class PlanExpControllerTest extends WebTestCase
 
         $crawler = $client->submitForm('submit', [
             'form[nom]' => 'ESP-999',
-            'form[baseDonnees]' => 'sae34bdl1eq2'
+            'form[baseDonnees]' => 'sae34bdk1eq2'
         ]);
 
         $saRepository = static::getContainer()->get(SystemeAcquisitionRepository::class);
@@ -325,7 +332,7 @@ class PlanExpControllerTest extends WebTestCase
         $client->request('GET', '/plan/ajouter-salle');
 
         $client->submitForm('submit', [
-            'form[nom]' => 'D302',
+            'form[nom]' => 'D303',
             'form[batiment]' => 'Bâtiment D',
             'form[orientation]' => 'Su',
             'form[nombreFenetre]' => 6,
