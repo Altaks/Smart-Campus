@@ -177,10 +177,22 @@ class PlanExpController extends AbstractController
     }
 
     #[Route('/plan/retirer-salle/{id}', name: 'cdm_retirer_salle')]
-    public function cdm_retirer_salle(): Response
+    public function cdm_retirer_salle(int $id, ManagerRegistry $doctrine): Response
     {
-        // full redirect
-        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
+        $entityManager = $doctrine->getManager();
+        $salleRepository = $entityManager->getRepository('App\Entity\Salle');
+        $salle = $salleRepository->findOneBy(['id' => $id]);
+
+        if($salle != null){
+            $demandesSalle = $salle->getDemandesTravaux();
+            foreach ($demandesSalle as $demande){
+                $entityManager->remove($demande);
+            }
+
+            $entityManager->remove($salle);
+            $entityManager->flush();
+        }
+        return $this->redirect("/plan");
     }
 
     #[Route('/plan/modifier-salle/{id}', name: 'cdm_modifier_salle')]

@@ -48,6 +48,28 @@
                     <div>
                         <h5 class="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">Températures</h5>
                         <p class="text-base font-normal text-gray-500 dark:text-gray-400">en °C</p>
+                        <div class="text-red-500">
+                            {% if temp_dernier > seuils.temp_max %}
+                                <p id="alerteTemp">
+                                    La température de la salle est trop élevé
+                                </p>
+                            {% elseif temp_dernier < seuils.temp_min %}
+                                <p id="alerteTemp">
+                                    La température de la salle est trop basse
+                                </p>
+                            {% endif %}
+                        </div>
+                        <div class="text-green-500">
+                            {% if temp_dernier > seuils.temp_max %}
+                                <p id="conseilTemp">
+                                    Il est conseillé de baisser le chauffage et d'ouvrir les fenêtres
+                                </p>
+                            {% elseif temp_dernier < seuils.temp_min %}
+                                <p id="conseilTemp">
+                                    Il est conseillé de monter le chauffage et de fermer les fenêtres
+                                </p>
+                            {% endif %}
+                        </div>
                     </div>
                     {% if temp_diff > 0 %}
                         <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-400 text-center">
@@ -166,6 +188,20 @@
                     <div>
                         <h5 class="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">Humidité</h5>
                         <p class="text-base font-normal text-gray-500 dark:text-gray-400">en %</p>
+                        <div class="text-red-500">
+                            {% if hum_dernier > seuils.humidite_max %}
+                                <p id="alerteHum">
+                                    Le niveau d'humidité de la salle et trop élevé
+                                </p>
+                            {% endif %}
+                        </div>
+                        <div class="text-green-500">
+                            {% if hum_dernier > seuils.humidite_max %}
+                                <p id="conseilHum">
+                                    Il est conseillé de fermer les fenêtres
+                                </p>
+                            {% endif %}
+                        </div>
                     </div>
                     {% if hum_diff > 0 %}
                         <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-red-500 dark:text-red-400 text-center">
@@ -263,7 +299,7 @@
                     }
                 });
             </script>
-        {% elseif app.request.method == "POST" or hum_error is defined %}
+        {% elseif hum_error is defined %}
             <div class="bg-red-300 rounded-lg text-red-950 text-xl w-full text-center my-12 p-6">
                 {{ hum_error }}
             </div>
@@ -274,6 +310,26 @@
                     <div>
                         <h5 class="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">Qualité de l'air</h5>
                         <p class="text-base font-normal text-gray-500 dark:text-gray-400">en ppm</p>
+                        <div class="text-red-500">
+                            {% if co2_dernier > seuils.co2_premier_palier %}
+                                {% if co2_dernier > seuils.co2_second_palier %}
+                                    <p id="alerteQual">
+                                        La qualité de l'air est très mauvaise
+                                    </p>
+                                {% else %}
+                                    <p id="alerteQual">
+                                        La qualité de l'air est mauvaise
+                                    </p>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                        <div class="text-green-500">
+                            {% if co2_dernier > seuils.co2_premier_palier %}
+                                <p id="conseilQual">
+                                    Il est conseillé d\'aérer la salle
+                                </p>
+                            {% endif %}
+                        </div>
                     </div>
                     {% if co2_diff > 0 %}
                         <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-red-500 dark:text-red-400 text-center">
@@ -371,7 +427,7 @@
                     }
                 });
             </script>
-        {% elseif app.request.method == "POST" or co2_error is defined %}
+        {% elseif co2_error is defined %}
             <div class="bg-red-300 rounded-lg text-red-950 text-xl w-full text-center my-12 p-6">
                 {{ co2_error }}
             </div>
