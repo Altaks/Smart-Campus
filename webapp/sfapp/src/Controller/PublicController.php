@@ -100,6 +100,8 @@ class PublicController extends AbstractController
             $releves30Jours = $releveService->getEntre($sa, new \DateTime('-1 days'), new \DateTime("+1 days"));
             ksort($releves30Jours);
 
+            date_default_timezone_set("Europe/Paris");
+
             foreach ($releves30Jours as $date => $vals){
                 $comparable_date = new \DateTime($date);
                 if(date_diff($comparable_date, new \DateTime())->d > 0) unset($releves30Jours[$date]);
