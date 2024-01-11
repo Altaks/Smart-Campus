@@ -14,6 +14,22 @@
 void initReseauStation();
 
 /**
+ * appelle la fonction enregistrerListeReseaux toute les 10 secondes
+*/
+void activerEnregistrementPeriodiqueReseaux();
+
+/**
+ *  Permet d'enregistrer la liste des reseaux dans le fichier listereseaux.txt 
+ *  la première ligne correspond au nombre de reseaux
+ *  les autres lignes contiennent les réseaux
+ *  exemple du fichier listereseaux.txt :
+ *  nb_reseaux:2
+ *  1:reseau1
+ *  2:reseau2
+*/
+void enregistrerListeReseaux();
+
+/**
  * retourne la liste des reseaux disponibles séparer par le séparateur "\n"
 */
 void getListeReseau(String * listeReseauxDisponibles);

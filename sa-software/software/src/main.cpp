@@ -24,11 +24,6 @@ char * nomBD = "sae34bdm2eq3";
 bool * presence;
 unsigned short * lum;
 
-const String* nomReseau    = new String("eduroam");
-const char* password       = "txg;3afks64@KmMy";
-const char* identifiant    = "ksimon";
-const char* nomUtilisateur = "ksimon";
-
 void setup() {
     tempEtHum = new TempEtHum();
     co2 = new (unsigned short);
@@ -56,20 +51,32 @@ void setup() {
     Serial.begin(9600);
     while(!Serial);
 
-
-
-    //initialisation reseau
     delay(1000);
-    initReseauStation();
 
     //initilaisation système de fichier
     initSystemeFichier();
+    delay(100);
+    
+    String nomAP = recupererValeur("/infoap.txt","nom_ap");
+    String motDePasseAP = recupererValeur("/infoap.txt","mot_de_passe");
+    delay(100);
+
+    //initialisation reseau
+    initReseauStationEtPointAcces();
+    delay(100);
+    creerPointAcces(nomAP,motDePasseAP);
+    delay(100);
 
     //Initialise le serveur web et le serveur DNS
     setupServeurWeb();
-    ajouterCaptiveRequest();
     setupServeurDNS();
 
+    delay(100);
+
+    activerServeurDNS();
+    
+    activerEnregistrementPeriodiqueReseaux();
+    
     delay(1000);
 
     //Initialise la tâche température et humidité 
@@ -90,69 +97,11 @@ void setup() {
     bool envoie = initEnvois(donnees); //Initialise l'envoi des données
 }
 
-void loop() {
-
-    if(estConnecte())
-    {
-        Serial.println("L'ESP est connecté !");
-        Serial.println(getDate());
-    }
-    else
-    {
-        String *listeReseauxDisponibles = new String("");
-        getListeReseau(listeReseauxDisponibles);
-        String reseaux = *listeReseauxDisponibles;
-        delete listeReseauxDisponibles;
-        Serial.println("Liste reseaux recupere");
-        
-
-        // Split les réseaux dans un tableau
-        int nbReseaux = 0;
-        for(int i = 0 ; i < reseaux.length() ; i++)
-        {
-            if(reseaux[i] == '\n') nbReseaux++;
-        }
-        String listeReseaux[nbReseaux];
-        String reseau = "";
-        int numReseau = 0;
-        for(int i = 0 ; i < reseaux.length() ; i++)
-        {
-            if(reseaux[i] == '\n')
-            {
-                listeReseaux[numReseau] = reseau;
-                reseau = "";
-                numReseau++;
-            }
-            else
-            {
-                reseau+= reseaux[i];
-            }
-        }
-        Serial.println("Liste reseaux découpée");
-
-        //vérifie si le reseaux auquel on souhaite se connecter est disponnible
-        int cnt = 0;
-        while(*nomReseau != listeReseaux[cnt] && cnt < nbReseaux) cnt++;
-        Serial.println("Recherche de "+*nomReseau+" dans la liste des reseaux");
-
-        
-        if(cnt < nbReseaux) //si le reseau est trouvé 
-        {
-            if(connexionWifi(*nomReseau, WPA2_AUTH_TTLS, password ,identifiant, nomUtilisateur))
-            {
-                Serial.println("Connexion a "+*nomReseau+" Reussie");
-                initHeure();
-            }
-            else
-            {
-                Serial.println("Echec de la onnexion a "+*nomReseau);
-
-            }
-        }
-        else
-        {
-            Serial.println("Echec de la onnexion a "+*nomReseau);
-        }
-    }
-    delay(1000);
+void loop() 
+{    
+    afficherContenuFichier("/inforeseau.txt");
+    afficherContenuFichier("/listereseaux.txt");
+    afficherContenuFichier("/infoap.txt");
+    afficherContenuFichier("/infobd.txt");
+    delay(10000);
 }
