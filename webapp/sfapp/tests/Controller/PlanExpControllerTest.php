@@ -213,7 +213,7 @@ class PlanExpControllerTest extends WebTestCase
     public function test_lister_SA_route_connexion_invalide_usager(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/plan/lister_sa');
+        $client->request('GET', '/plan/lister-sa');
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
     }
 
@@ -226,7 +226,7 @@ class PlanExpControllerTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $client->request('GET', '/plan/lister_sa');
+        $client->request('GET', '/plan/lister-sa');
         $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
     }
 
@@ -239,7 +239,7 @@ class PlanExpControllerTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($testUser);
 
-        $client->request('GET', '/plan/ajouter_sa');
+        $client->request('GET', '/plan/ajouter-sa');
         $this->assertResponseIsSuccessful();
     }
 
@@ -253,7 +253,7 @@ class PlanExpControllerTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($utilisateur);
 
-        $client->request('GET', '/plan/ajouter_sa');
+        $client->request('GET', '/plan/ajouter-sa');
         $this->assertResponseStatusCodeSame(403, $client->getResponse()->getStatusCode());
 
     }
@@ -261,7 +261,7 @@ class PlanExpControllerTest extends WebTestCase
     public function test_ajouter_sa_technicien_connexion_invalide_usager()
     {
         $client = static::createClient();
-        $client->request('GET', '/plan/ajouter_sa');
+        $client->request('GET', '/plan/ajouter-sa');
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
     }
 
@@ -274,7 +274,7 @@ class PlanExpControllerTest extends WebTestCase
         // simulate $testUser being logged in
         $client->loginUser($utilisateur);
 
-        $client->request('GET', '/plan/ajouter_sa');
+        $client->request('GET', '/plan/ajouter-sa');
         $this->assertResponseIsSuccessful();
 
         $crawler = $client->submitForm('submit', [

@@ -64,7 +64,7 @@ class ReleveService {
      * @param SystemeAcquisition $sa Le systeme d'acquisition dont on veut récupérer le dernier relevé
      * @return array Une array contenant le dernier relevé du système d'acquisition, converti
      */
-    public function getDernier(SystemeAcquisition $sa) : array {
+    public function getDernier(SystemeAcquisition $sa, string $type) : array {
 
         // Création d'un client HTTP avec les informations de connexion
         $client = HttpClient::create([
@@ -78,11 +78,19 @@ class ReleveService {
 
         // Envoi de la requête HTTP
         $response = $client->request('GET', 'https://sae34.k8s.iut-larochelle.fr/api/captures/last' , [
-            'query' => ['page' => 1]
+            'query' => [
+                'nom' => $type,
+                'page' => 1
+            ],
         ]);
 
         // Conversion de la réponse
-        return static::conversionVersRelevesGroupes($response->toArray());
+        $data = $response->toArray();
+        $data = $data[0];
+        return [
+            "date" => $data["dateCapture"],
+            "valeur" => $data["valeur"]
+        ];
     }
 
     /**
