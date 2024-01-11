@@ -8,6 +8,7 @@ use App\Entity\Salle;
 use App\Entity\Seuil;
 use App\Entity\SystemeAcquisition;
 use App\Service\ReleveService;
+use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -474,12 +475,42 @@ class PlanExpController extends AbstractController
         throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
     }
 
+    private function recupererEtatsCapteurs(array $listeSa, ReleveService $service) : array
+    {
+        $dateMoisDeCinqMinutes = time() - 5 * 60;
+        $listeEtatsCapteurs = [];
+        foreach ($listeSa as $sa)
+        {
+            if ($sa->getEtat() == "Opérationnel")
+            {
+                $listeEtatsCapteurs[$sa->getId()] = [];
+                $temp = $service->getDernier($sa, "temp");
+                $hum = $service->getDernier($sa, "hum");
+                $co2 = $service->getDernier($sa, "co2");
+
+                $dateTemp = date_timestamp_get(new DateTime($temp["date"]));
+                $dateHum = date_timestamp_get(new DateTime($hum["date"]));
+                $dateCo2 = date_timestamp_get(new DateTime($co2["date"]));
+
+                $listeEtatsCapteurs[$sa->getId()]["temp"] = ($temp["valeur"] != "" && $dateTemp>= $dateMoisDeCinqMinutes);
+                $listeEtatsCapteurs[$sa->getId()]["hum"] = ($hum["valeur"] != "" && $dateHum>= $dateMoisDeCinqMinutes);
+                $listeEtatsCapteurs[$sa->getId()]["co2"] = ($co2["valeur"] != "" && $dateCo2>= $dateMoisDeCinqMinutes);
+            }
+            else
+            {
+                $listeEtatsCapteurs[$sa->getId()] = null;
+            }
+        }
+        return $listeEtatsCapteurs;
+    }
+
     #[IsGranted("ROLE_TECHNICIEN")]
     #[Route('/plan/lister-sa', name: 'technicien_liste_sa')]
     public function technicien_liste_sa(ManagerRegistry $doctrine, releveService $service, Request $request): Response
     {
         $entityManager = $doctrine->getManager();
         $saRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
+        $demandeTravauxRepository = $entityManager->getRepository('App\Entity\DemandeTravaux');
 
         $listeChoix = ["Tous les SA" , "En cours d'installation", "Non installés", "Opérationnels", "Réparations"];
 
@@ -496,6 +527,8 @@ class PlanExpController extends AbstractController
 
         $formEtats->handleRequest($request);
         $listeSa = [];
+        $listeSalleSaIntall = [];
+        $listeEtatsCapteurs = [];
         $choix = "Tous les SA";
         $choixParDefault = 0;
 
@@ -507,6 +540,7 @@ class PlanExpController extends AbstractController
             {
                 case "Tous les SA":
                     $listeSa = $saRepository->findAll();
+                    $listeEtatsCapteurs = $this->recupererEtatsCapteurs($listeSa, $service);
                     break;
                 case "En cours d'installation":
                     $listeSa = $saRepository->findBy(['etat' => "Installation"]);
@@ -516,6 +550,7 @@ class PlanExpController extends AbstractController
                     break;
                 case "Opérationnels":
                     $listeSa = $saRepository->findBy(['etat' => "Opérationnel"]);
+                    $listeEtatsCapteurs = $this->recupererEtatsCapteurs($listeSa, $service);
                     break;
                 case "Réparations":
                     $listeSa = $saRepository->findBy(['etat' => "Réparation"]);
@@ -525,15 +560,27 @@ class PlanExpController extends AbstractController
         else
         {
             $listeSa = $saRepository->findAll();
+            $listeEtatsCapteurs = $this->recupererEtatsCapteurs($listeSa, $service);
+        }
+
+        foreach ($listeSa as $sa)
+        {
+            if ($sa->getEtat() == "Installation"){
+                $demandeInstallation = $demandeTravauxRepository->findOneBy(['systemeAcquisition' => $sa->getId(), 'type' => "Installation", 'terminee' => false]);
+                $listeSalleSaIntall[$sa->getId()] = $demandeInstallation->getSalle();
+            }
         }
 
         usort($listeSa, "self::comparaison_etat_sa");
+
 
         return $this->render('plan/technicien/liste_sa.html.twig', [
             'listeSa' => $listeSa,
             'form' => $formEtats,
             'choix' => $choix,
             'defaut' => $choixParDefault,
+            'listeEtatCapteurs' => $listeEtatsCapteurs,
+            'listeSalleSaIntall' => $listeSalleSaIntall
         ]);
     }
 
