@@ -299,7 +299,7 @@
                     }
                 });
             </script>
-        {% elseif app.request.method == "POST" or hum_error is defined %}
+        {% elseif hum_error is defined %}
             <div class="bg-red-300 rounded-lg text-red-950 text-xl w-full text-center my-12 p-6">
                 {{ hum_error }}
             </div>
@@ -427,7 +427,7 @@
                     }
                 });
             </script>
-        {% elseif app.request.method == "POST" or co2_error is defined %}
+        {% elseif co2_error is defined %}
             <div class="bg-red-300 rounded-lg text-red-950 text-xl w-full text-center my-12 p-6">
                 {{ co2_error }}
             </div>

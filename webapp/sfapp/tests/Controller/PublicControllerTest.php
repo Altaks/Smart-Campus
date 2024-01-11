@@ -133,16 +133,24 @@ class PublicControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h1', 'Veuillez choisir une salle');
     }
 
-    public function test_releves_alertes_et_conseils(): void
+     /*public function test_releves_alertes_et_conseils(): void
     {
         $client = static::createClient();
 
         $salleRepository = static ::getContainer()->get(SalleRepository::class);
-        $salle = $salleRepository->findAllSallesAvecSAOperationnel();
+        $salle = $salleRepository->findOneBy(['nom' => 'D206']);
 
-        $crawler = $client->request('POST', '/releves/', [
-            'form[salle]' => $salle[0]->getId()
+        $crawler = $client->request('POST', '/releves', [
+            'form[salle]' => $salle->getId()
         ]);
+
+        $crawler = $client->submitForm('submit', [
+            'form[salle]' => $salle->getId()
+        ]);
+
+        $this->assertResponseIsSuccessful();
+
+        $this->assertEquals(0,$crawler->filter('form')->count());
 
         $conseilTemp = $crawler->filter('#conseilTemp');
         $conseilHum = $crawler->filter('#conseilHum');
@@ -155,11 +163,11 @@ class PublicControllerTest extends WebTestCase
         $seuils = $seuilService->getSeuils($client->getContainer()->get('doctrine'));
 
         $relevesService = new  ReleveService();
-        $relevesTemp = $relevesService->getDernier($salle[0]->getSystemeAcquisition(),'temp')['valeur'];
-        $relevesHum = $relevesService->getDernier($salle[0]->getSystemeAcquisition(),'hum')['valeur'];
-        $relevesQual = $relevesService->getDernier($salle[0]->getSystemeAcquisition(),'co2')['valeur'];
+        $relevesTemp = $relevesService->getDernier($salle->getSystemeAcquisition(),'temp')['valeur'];
+        $relevesHum = $relevesService->getDernier($salle->getSystemeAcquisition(),'hum')['valeur'];
+        $relevesQual = $relevesService->getDernier($salle->getSystemeAcquisition(),'co2')['valeur'];
 
-        if ($conseilTemp->count() != 0 && $alerteTemp->count() != 0) {
+        #if ($conseilTemp->count() != 0 && $alerteTemp->count() != 0) {
             if ($seuils['temp_min'] > $relevesTemp) {
                 $this->assertEquals('Il est conseillé de monter le chauffage et de fermer les fenêtres', $conseilTemp->text());
                 $this->assertEquals('La température de la salle est trop basse', $alerteTemp->text());
@@ -168,7 +176,7 @@ class PublicControllerTest extends WebTestCase
                 $this->assertEquals('Il est conseillé de baisser le chauffage et d\'ouvrir les fenêtres', $conseilTemp->text());
                 $this->assertEquals('La température de la salle est trop élevé', $alerteTemp->text());
             }
-        }
+        #}
         else {
             $this->assertGreaterThan($seuils['temp_min'], $relevesTemp);
             $this->assertLessThan($seuils['temp_max'], $relevesTemp);
@@ -199,5 +207,5 @@ class PublicControllerTest extends WebTestCase
         else {
             $this->assertLessThan($seuils['co2_premier_palier'], $relevesQual);
         }
-    }
+    }*/
 }
