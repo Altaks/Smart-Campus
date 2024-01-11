@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Salle;
+use App\Entity\Seuil;
 use App\Service\EnvironnementExterieurAPIService;
 use App\Service\ReleveService;
+use App\Service\SeuilService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -62,7 +64,7 @@ class PublicController extends AbstractController
     }
 
     #[Route('/releves', name: 'app_releves')]
-    public function releves(ManagerRegistry $managerRegistry, ReleveService $releveService, Request $request)
+    public function releves(ManagerRegistry $managerRegistry, ReleveService $releveService, SeuilService $seuilService, Request $request)
     {
 
         $sallesRepository = $managerRegistry->getRepository('App\Entity\Salle');
@@ -112,6 +114,20 @@ class PublicController extends AbstractController
 
             $datesCo2 = [];
             $relevesCo2 = [];
+
+            $dernierTemp = $releveService->getDernier($sa,'temp')['valeur'];
+            $dernierHum = $releveService->getDernier($sa,'hum')['valeur'];
+            $dernierCo2 = $releveService->getDernier($sa,'co2')['valeur'];
+
+            $seuils = $seuilService->getSeuils($managerRegistry);
+
+            $entityManager = $managerRegistry->getManager();
+            $seuilRepository = $entityManager->getRepository(Seuil::class);
+            $seuil_temp_min = $seuilRepository->findOneBy(['nom' => 'temp_min']);
+            $seuil_temp_max = $seuilRepository->findOneBy(['nom' => 'temp_max']);
+            $seuil_humidite_max = $seuilRepository->findOneBy(['nom' => 'humidite_max']);
+            $seuil_co2_premier_palier = $seuilRepository->findOneBy(['nom' => 'co2_premier_palier']);
+            $seuil_co2_second_palier = $seuilRepository->findOneBy(['nom' => 'co2_second_palier']);
 
             foreach ($releves30Jours as $date => $releves){
                 if($releves['temp'] != null){
@@ -171,16 +187,21 @@ class PublicController extends AbstractController
                 'temp_releves' => $relevesTemp,
                 'temp_diff' => $last_temps_diff,
                 'temp_error' => $temp_err,
+                'temp_dernier' => $dernierTemp,
 
                 'hum_dates' => $datesHum,
                 'hum_releves' => $relevesHum,
                 'hum_diff' => $last_humidity_diff,
                 'hum_error' => $hum_err,
+                'hum_dernier' => $dernierHum,
 
                 'co2_dates' => $datesCo2,
                 'co2_releves' => $relevesCo2,
                 'co2_diff' => $last_co2_diff,
                 'co2_error' => $co2_err,
+                'co2_dernier' => $dernierCo2,
+
+                'seuils' => $seuils,
             ]);
         }
 
