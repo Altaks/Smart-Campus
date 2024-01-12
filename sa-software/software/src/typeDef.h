@@ -21,13 +21,7 @@ enum PAGE {
 struct Donnees{
     TempEtHum* tempEtHum;
     unsigned short * co2;
-    unsigned short * lum;
     bool * presence;
-    char * nomSa;
-    char * salle;
-    char * nomUtilisateurBD;
-    char * pwd;
-    char * nomBD;
     PAGE page;
 };
 

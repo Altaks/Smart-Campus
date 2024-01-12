@@ -16,35 +16,21 @@ TempEtHum* tempEtHum;
 unsigned short* co2;
 PAGE page;
 Donnees* donnees;
-char * nomSa;
-char * salle;
-char * nomUtilistaeurBD = "m2eq3";
-char * pwd = "howjoc-dyjhId-hiwre0";
-char * nomBD = "sae34bdm2eq3";
 bool * presence;
-unsigned short * lum;
 
 void setup() {
     tempEtHum = new TempEtHum();
     co2 = new (unsigned short);
     page = TEMPERATURE;
-    salle = "C005";
-    nomSa = "ESP-018";
-    lum = new (unsigned short);
     presence = new (bool);
-
-    *lum = 0;
+    tempEtHum->humidite = 60;
+    tempEtHum->temperature = 21;
+    *presence = false;
 
     donnees = new Donnees();
     donnees->tempEtHum = tempEtHum;
     donnees->co2 = co2;
     donnees->page;
-    donnees->nomSa = nomSa;
-    donnees->salle = salle;
-    donnees->lum = lum;
-    donnees->nomUtilisateurBD = nomUtilistaeurBD;
-    donnees->pwd = pwd;
-    donnees->nomBD = nomBD;
     donnees->presence = presence;
 
 
@@ -76,8 +62,8 @@ void setup() {
     activerServeurDNS();
 
     delay(100);
-    bool affiche = initAffichage(donnees); //Initialise l'affichage
-    displayText("Veuillez connecter\nle systeme a un\nréseau");
+    //bool affiche = initAffichage(donnees); //Initialise l'affichage
+    //displayText("Veuillez connecter\nle systeme a un\nréseau");
 
     delay(100);
 
@@ -107,7 +93,6 @@ void setup() {
             {
                 Serial.println("Connexion a "+nomReseau+" Reussie");
                 //initialise l'heure s'il arrive a se connecter
-                initHeure();
             }
             else
             {
@@ -116,59 +101,40 @@ void setup() {
         }
     }
     while(!estConnecte(nomReseau));
-
+    
+    initHeure();
+    
     activerEnregistrerListeReseau();
 
     delay(1000);
 
     //Initialise la tâche température et humidité 
-    initTempEtHum(tempEtHum);
+    //initTempEtHum(tempEtHum);
 
     delay(1000);
 
     //Initialise la tâche de CO2
-    initQualAir(co2);
+    //initQualAir(co2);
 
     delay(1000);
-    initPresence(presence);
+    //initPresence(presence);
 
     delay(1000);
-    initTacheAffichage(donnees);
+    // initTacheAffichage(donnees);
 
     delay(1000);
     bool envoie = initEnvois(donnees); //Initialise l'envoi des données
-    
+
+    afficherContenuFichier("/infoap.txt");
+    afficherContenuFichier("/infobd.txt");
+    afficherContenuFichier("/inforeseau.txt");
+    afficherContenuFichier("/listereseau.txt");
 }
 
 void loop() 
 {    
-    afficherFichiers();
-
-    afficherContenuFichier("/index.html");
-
-    delay(10000);
-
-    afficherContenuFichier("/reseau.html");
-
-    delay(10000);
-
-    afficherContenuFichier("/configbd.html");
-
-    delay(10000);
-
-    afficherContenuFichier("/listereseaux.txt");
-
-    delay(10000);
-
-    afficherContenuFichier("/inforeseau.txt");
-
-    delay(10000);
-
-    afficherContenuFichier("/infoap.txt");
-
-    delay(10000);
-
-    afficherContenuFichier("/infobd.txt");
-
+    Serial.println();
+    Serial.println("Memoire RAM restante : " + String(ESP.getFreeHeap()) + "o");
+    Serial.println();
     delay(10000);
 }

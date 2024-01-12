@@ -1,6 +1,8 @@
+#include "envois.h"
+
 #include "WiFi.h"
 
-#include "envois.h"
+#include "Fichiers/fichierSPIFFS.h"
 
 // Décommenter/Commenter les Serial.println pour voir/ne pas voir les informations de debug en usb
 
@@ -21,7 +23,7 @@ void taskEnvois(void *pvParameters){
         }
         Serial.println("______________________________________");
         // 5 minutes - 2 secondes pour laisser le temps à la tâche de récupérer la date (d'après mes tests, la récupération de la date prend 2 secondes de plus que le délai de 5 minutes)
-        vTaskDelay(pdMS_TO_TICKS(5 * 60 * 1000 - 2 * 1000)); 
+        vTaskDelay(pdMS_TO_TICKS(30 * 1000));//5 * 60 * 1000 - 2 * 1000)); 
     }
 }
 
@@ -51,7 +53,8 @@ int envoyer(struct Donnees* donnees){
     
     Serial.println("Vériication de la connexion au réseau");
     // verification de la connexion au réseau
-    if (!estConnecte(String(WiFi.SSID()))){
+    if (!WiFi.status() == WL_CONNECTED){
+        abort();
         return -2;
     }
 
@@ -63,7 +66,7 @@ int envoyer(struct Donnees* donnees){
         return -1;
     }
 
-    char s_donnees[5][6];
+    char s_donnees[4][6];
 
     Serial.println("Serialisation des données récupérées");
     
@@ -71,14 +74,13 @@ int envoyer(struct Donnees* donnees){
     sprintf(s_donnees[0], "%.2f", donnees->tempEtHum->temperature); // %2.f pour  2 chiffres après la virgule
     sprintf(s_donnees[1], "%2.f", donnees->tempEtHum->humidite); // %2.f pour avoir 2 chiffres après la virgule
     sprintf(s_donnees[2], "%hu", *donnees->co2); // %hu pour avoir un unsigned short
-    sprintf(s_donnees[3], "%hu", *donnees->lum); // %hu pour avoir un unsigned short
 
     // presence est un booléen, on le converti en string
     if (*donnees->presence == 1){
-        sprintf(s_donnees[4],  "true");
+        sprintf(s_donnees[3],  "true");
     }
     else{
-        sprintf(s_donnees[4], "false");
+        sprintf(s_donnees[3], "false");
     }
 
 
@@ -125,24 +127,32 @@ int envoyer(struct Donnees* donnees){
 
     // configure le header de la requete
     http.addHeader("accept", "application/ld+json");
-    http.addHeader("dbname", donnees->nomBD);
-    http.addHeader("username", donnees->nomUtilisateurBD);
-    http.addHeader("userpass", donnees->pwd);
+    http.addHeader("dbname", recupererValeur("/infobd.txt","nom_bd").c_str());
+    http.addHeader("username", recupererValeur("/infobd.txt","nom_utilisateur").c_str());
+    http.addHeader("userpass", recupererValeur("/infobd.txt","mot_de_passe").c_str());
     http.addHeader("Content-Type", "application/json");
 
+    Serial.println("nombre de propriété dans le header : "+int(http.headers()));
+    for(int i = 0 ; i < http.headers() ; i++)
+        Serial.println(http.headerName(i) + " : " + http.header(i));
 
     Serial.println("Envoie de chaque donnees");
 
-    for(unsigned short i = 0; i < 5; i++){
+    for(unsigned short i = 0; i < 4; i++){
         size_t n;
 
         Serial.println("Sérialisation des donnees de "+ nomsValeurs[i]);
 
         // Création de la chaine de caractère à envoyer
-        String donneesAEnvoyerStr = "{\"nom\":\""+ nomsValeurs[i] +"\",\"valeur\":\""+ s_donnees[i] +"\",\"dateCapture\":\""+ date +"\",\"localisation\":\""+ donnees->salle +"\",\"description\":\"\",\"nomsa\":\""+ donnees->nomSa +"\"}";
+        String donneesAEnvoyerStr = "{\"nom\":\""+ nomsValeurs[i] +
+                                    "\",\"valeur\":\""+ s_donnees[i] +
+                                    "\",\"dateCapture\":\""+ date +
+                                    "\",\"localisation\":\""+ recupererValeur("/infobd.txt", "localisation").c_str() +
+                                    "\",\"description\":\"\",\"nomsa\":\""+ recupererValeur("/infobd.txt", "nom_sa").c_str() +
+                                    "\"}";
 
         Serial.println("Envoie des donnees");
-
+        
         // Envoie des données
         int codeReponse = http.POST(donneesAEnvoyerStr);
 

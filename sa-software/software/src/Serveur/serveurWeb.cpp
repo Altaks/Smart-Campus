@@ -195,7 +195,7 @@ void loopServeurDNS()
 void taskServeurDNS(void * parameter){
     while(true){
         loopServeurDNS();
-        vTaskDelay(100);
+        vTaskDelay(1000);
     }
 }
 

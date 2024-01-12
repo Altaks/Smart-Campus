@@ -85,7 +85,7 @@ void modifierFichier(String nomFichier, String baliseDebut, String baliseFin, St
 String recupererValeur(String nomFichier, String nomValeur)
 {
     File file = SPIFFS.open(nomFichier);
-
+    nomValeur+=':';
     if(!file)
     {
         Serial.println("Erreur lors de l'ouverture du fichier");
@@ -98,17 +98,12 @@ String recupererValeur(String nomFichier, String nomValeur)
     while(file.available() && nomValeur != debutLigne)
     {
         lastChar = file.read();
-        if(lastChar != ':')
-        {
-            debutLigne += lastChar;
-        }
+        debutLigne += lastChar;
         if(lastChar == '\n')
         {
             debutLigne = "";
         }
     }
-    
-    file.read();
 
     while(file.available())
     {
