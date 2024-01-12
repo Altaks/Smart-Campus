@@ -90,6 +90,11 @@
                                 <box-icon name='time-five' color='rgba(255,255,255,0.85)' class="mx-4"></box-icon>
                                 <span class="text-center w-full">Installation demandée</span>
                             </div>
+                        {% elseif etat[salle.id] == 'Réparation demandée' %}
+                            <div class="p-1 bg-red-600 text-white rounded-lg flex flex-row justify-between items-center">
+                                <box-icon name='wrench' color='rgba(255,255,255,0.85)' class="mx-4"></box-icon>
+                                <span class="text-center w-full">Réparation demandée</span>
+                            </div>
                         {% elseif etat[salle.id] == 'Opérationnel' %}
                             <div class="p-1 bg-emerald-500 text-white rounded-lg flex flex-row justify-start items-center">
                                 <box-icon name='check-double' color='rgba(255,255,255,0.85)' class="mx-4"></box-icon>

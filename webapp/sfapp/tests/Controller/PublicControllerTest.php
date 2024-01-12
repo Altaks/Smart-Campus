@@ -114,7 +114,7 @@ class PublicControllerTest extends WebTestCase
         $li = $crawler->filter("#demandeInstallation");
         $this->assertEquals($nbDemandesInst, $li->count());
 
-        $nbDemandesRepar = count($demandesRepository->findBy(["type"=>"Reparation", "terminee"=>false]));
+        $nbDemandesRepar = count($demandesRepository->findBy(["type"=>"Réparation", "terminee"=>false]));
 
         $li = $crawler->filter("#demandeReparation");
         $this->assertEquals($nbDemandesRepar, $li->count());

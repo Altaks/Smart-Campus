@@ -52,8 +52,12 @@ class PlanExpController extends AbstractController
             $etat = "Non installé";
             for($j = 0; $j < count($listeSalles[$i]->getDemandesTravaux()); $j++) {
                 if(!$listeSalles[$i]->getDemandesTravaux()[$j]->isTerminee()) {
-                    $etat = "Installation demandée";
-                    break;
+                    if($listeSalles[$i]->getDemandesTravaux()[$j]->getType() == 'Installation') {
+                        $etat = "Installation demandée";
+                    }
+                    elseif($listeSalles[$i]->getDemandesTravaux()[$j]->getType() == 'Réparation') {
+                        $etat = "Réparation demandée";
+                    }
                 }
             }
             if($etat == "Non installé") {
