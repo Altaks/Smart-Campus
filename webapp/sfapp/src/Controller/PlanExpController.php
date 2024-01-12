@@ -33,6 +33,16 @@ class PlanExpController extends AbstractController
         return ($value1 < $value2) ? -1 : 1;
     }
 
+    private static function comparaison_etat_salle($salle1,$salle2){
+        $mapEtatValue = ["Réparation"=>0, "Installation"=>1, "Non installé"=>2, "Opérationnel"=>3];
+        $value1 = $mapEtatValue[($salle1->getSystemeAcquisition() == null) ? 'Non installé' : $salle1->getSystemeAcquisition()->getEtat()];
+        $value2 = $mapEtatValue[($salle2->getSystemeAcquisition() == null) ? 'Non installé' : $salle2->getSystemeAcquisition()->getEtat()];
+        if ($value1 == $value2) {
+            return 0;
+        }
+        return ($value1 < $value2) ? -1 : 1;
+    }
+
     // Routes du chargé de mission
 
     /*
@@ -72,6 +82,8 @@ class PlanExpController extends AbstractController
             $etatArr[$listeSalles[$i]->getId()] = $etat;
 
         }
+
+        usort($salleArr, "self::comparaison_etat_salle");
 
         return $this->render('plan/charge_de_mission/liste_salles.html.twig', [
             'salle' => $salleArr,
@@ -605,13 +617,6 @@ class PlanExpController extends AbstractController
             $listeEtatsCapteurs = $this->recupererEtatsCapteurs($listeSa, $dateMoins5minet30secondes, $service);
         }
 
-        foreach ($listeSa as $sa)
-        {
-            if ($sa->getEtat() == "Installation"){
-                $demandeInstallation = $demandeTravauxRepository->findOneBy(['systemeAcquisition' => $sa->getId(), 'type' => "Installation", 'terminee' => false]);
-                $listeSalleSaIntall[$sa->getId()] = $demandeInstallation->getSalle();
-            }
-        }
 
         usort($listeSa, "self::comparaison_etat_sa");
 
