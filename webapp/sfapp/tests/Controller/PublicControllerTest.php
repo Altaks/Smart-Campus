@@ -2,8 +2,11 @@
 
 namespace App\tests\Controller;
 use App\DataFixtures\Test\RelevesFixtures;
+use App\Entity\Salle;
+use App\Entity\SystemeAcquisition;
 use App\Repository\DemandeTravauxRepository;
 use App\Repository\SalleRepository;
+use App\Repository\SystemeAcquisitionRepository;
 use App\Repository\UtilisateurRepository;
 use App\Service\ReleveService;
 use App\Service\SeuilService;
@@ -208,4 +211,276 @@ class PublicControllerTest extends WebTestCase
             $this->assertLessThan($seuils['co2_premier_palier'], $relevesQual);
         }
     }*/
+
+    public function test_signaler_erreur_requette_avec_utilisateur_connecte_en_temps_que_technicien(): void
+    {
+        $client = static::createClient();
+
+        // retrieve the test user
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $saRepository = static ::getContainer()->get(SystemeAcquisitionRepository::class);
+        $saTest = new SystemeAcquisition();
+        $saTest->setNom("ESP-000");
+        $saTest->setEtat("Opérationnel");
+        $saTest->setBaseDonnees("sae34bdk1eq1");
+
+
+        $salleTest = new Salle();
+        $salleTest->setNom("X000");
+        $salleTest->setBatiment("X");
+        $salleTest->setOrientation("NE");
+        $salleTest->setNombrePorte(1);
+        $salleTest->setNombreFenetre(1);
+        $salleTest->setContientPc(true);
+        $salleTest->setSystemeAcquisition($saTest);
+
+        $manager = static::getContainer()->get('doctrine')->getManager();
+        $manager->persist($saTest);
+        $manager->persist($salleTest);
+        $manager->flush();
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+
+        $crawler = $client->request('GET', '/signaler-erreur/' . $salleTest->getId());
+
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton('submit')->form();
+        $form['form[description]'] = 'Erreur de test';
+        $form['form[email]'] = 'jmalki@exemple.com';
+
+        $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
+        $this->assertMatchesRegularExpression("/\/releves$/", $client->getResponse()->headers->get('location'));
+
+        $sa = $saRepository->findOneBy(['nom' => 'ESP-000']);
+        $this->assertEquals("Reparation", $sa->getEtat());
+
+        $demandeTrauxRepository = static ::getContainer()->get(DemandeTravauxRepository::class);
+        $demande = $demandeTrauxRepository->findOneBy(['type' => 'Reparation', 'salle' => $salleTest->getId()]);
+        $this->assertNotNull($demande);
+        $this->assertEquals("Reparation", $demande->getType());
+        $this->assertEquals("Erreur de test", $demande->getDescription());
+        $this->assertEquals("ESP-000", $demande->getSystemeAcquisition()->getNom());
+        $this->assertFalse($demande->isTerminee());
+
+        $manager->remove($demande);
+        $manager->remove($salleTest);
+        $manager->remove($saTest);
+        $manager->flush();
+    }
+
+    public function test_signaler_erreur_requette_avec_utilisateur_connecte_en_temps_que_technicien_email_non_valide(): void
+    {
+        $client = static::createClient();
+
+        // retrieve the test user
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $client->loginUser($testUser);
+
+        $saTest = new SystemeAcquisition();
+        $saTest->setNom("ESP-000");
+        $saTest->setEtat("Opérationnel");
+        $saTest->setBaseDonnees("sae34bdk1eq1");
+
+
+        $salleTest = new Salle();
+        $salleTest->setNom("X000");
+        $salleTest->setBatiment("X");
+        $salleTest->setNombrePorte(1);
+        $salleTest->setOrientation("NE");
+        $salleTest->setNombreFenetre(1);
+        $salleTest->setContientPc(true);
+        $salleTest->setSystemeAcquisition($saTest);
+
+        $manager = static::getContainer()->get('doctrine')->getManager();
+        $manager->persist($saTest);
+        $manager->persist($salleTest);
+        $manager->flush();
+
+        $crawler = $client->request('GET', '/signaler-erreur/' . $salleTest->getId());
+
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton('submit')->form();
+        $form['form[description]'] = 'Erreur de test';
+
+        $client->submit($form);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertMatchesRegularExpression("/\/signaler-erreur\/".$salleTest->getId()."$/", $client->getResponse()->headers->get('location'));
+
+        $form['form[email]'] = 'brhjuvboizubvdn';
+        $client->submit($form);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertMatchesRegularExpression("/\/signaler-erreur\/".$salleTest->getId()."$/", $client->getResponse()->headers->get('location'));
+
+        $manager->remove($salleTest);
+        $manager->remove($saTest);
+        $manager->flush();
+    }
+
+    public function test_signaler_erreur_requette_avec_utilisateur_connecte_en_temps_que_technicien_description_vide(): void
+    {
+        $client = static::createClient();
+
+        // retrieve the test user
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $client->loginUser($testUser);
+
+        $saTest = new SystemeAcquisition();
+        $saTest->setNom("ESP-000");
+        $saTest->setEtat("Opérationnel");
+        $saTest->setBaseDonnees("sae34bdk1eq1");
+
+        $salleTest = new Salle();
+        $salleTest->setNom("X000");
+        $salleTest->setBatiment("X");
+        $salleTest->setOrientation("NE");
+        $salleTest->setNombrePorte(1);
+        $salleTest->setNombreFenetre(1);
+        $salleTest->setContientPc(true);
+        $salleTest->setSystemeAcquisition($saTest);
+
+        $manager = static::getContainer()->get('doctrine')->getManager();
+        $manager->persist($saTest);
+        $manager->persist($salleTest);
+        $manager->flush();
+
+        $crawler = $client->request('GET', '/signaler-erreur/' . $salleTest->getId());
+
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton('submit')->form();
+        $form['form[email]'] = 'jmalki@exemple.com';
+
+        $client->submit($form);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertMatchesRegularExpression("/\/signaler-erreur/".$salleTest->getId()."$/", $client->getResponse()->headers->get('location'));
+
+        $form['form[description]'] = '';
+        $client->submit($form);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertMatchesRegularExpression("/\/signeler-erreur\/".$salleTest->getId()."$/", $client->getResponse()->headers->get('location'));
+
+        $manager->remove($salleTest);
+        $manager->remove($saTest);
+        $manager->flush();
+
+    }
+
+    public function test_signaler_erreur_requette_avec_utilisateur_connecte_en_temps_que_technicien_salle_invalide(): void
+    {
+        $client = static::createClient();
+
+        // retrieve the test user
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/salle/0/signaler-erreur');
+
+        $this->assertResponseStatusCodeSame(404, $client->getResponse()->getStatusCode());
+
+        $client->request('GET', '/signaler-erreur/99999');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertMatchesRegularExpression("/\/accueil$/", $client->getResponse()->headers->get('location'));
+    }
+
+    public function test_signaler_erreur_requette_avec_utilisateur_connecte_en_temps_que_technicien_salle_sans_sa():void
+    {
+        $client = static::createClient();
+
+        // retrieve the test user
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $client->loginUser($testUser);
+
+        $salleTest = new Salle();
+        $salleTest->setNom("X000");
+        $salleTest->setBatiment("X");
+        $salleTest->setOrientation("NE");
+        $salleTest->setNombrePorte(1);
+        $salleTest->setNombreFenetre(1);
+        $salleTest->setContientPc(true);
+
+        $manager = static::getContainer()->get('doctrine')->getManager();
+        $manager->persist($salleTest);
+        $manager->flush();
+
+        $client->request('GET', '/signaler-erreur/' . $salleTest->getId());
+
+        $this->assertResponseIsSuccessful();
+        $this->assertMatchesRegularExpression("/\/accueil$/", $client->getResponse()->headers->get('location'));
+
+        $manager->remove($salleTest);
+        $manager->flush();
+    }
+
+    public function test_signaler_erreur_requette_avec_utilisateur_connecte_en_temps_que_technicien_salle_avec_non_operationnel():void
+    {
+        $client = static::createClient();
+
+        // retrieve the test user
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $client->loginUser($testUser);
+
+        $saTest = new SystemeAcquisition();
+        $saTest->setNom("ESP-000");
+        $saTest->setEtat("Non installé");
+        $saTest->setBaseDonnees("sae34bdk1eq1");
+
+        $salleTest = new Salle();
+        $salleTest->setNom("X000");
+        $salleTest->setBatiment("X");
+        $salleTest->setOrientation("NE");
+        $salleTest->setNombrePorte(1);
+        $salleTest->setNombreFenetre(1);
+        $salleTest->setContientPc(true);
+        $salleTest->setSystemeAcquisition($saTest);
+
+        $manager = static::getContainer()->get('doctrine')->getManager();
+        $manager->persist($saTest);
+        $manager->persist($salleTest);
+        $manager->flush();
+
+        $etats = ["Non installé", "Installation", "Réparation"];
+
+        foreach ($etats as $etat) {
+            $saTest->setEtat($etat);
+            $manager->persist($saTest);
+            $manager->flush();
+
+            $client->request('GET', '/signaler-erreur/' . $salleTest->getId());
+
+            $this->assertResponseIsSuccessful();
+            $this->assertMatchesRegularExpression("/\/accueil$/", $client->getResponse()->headers->get('location'));
+        }
+
+        $manager->remove($salleTest);
+        $manager->remove($saTest);
+        $manager->flush();
+    }
+
+
+
+
 }
+

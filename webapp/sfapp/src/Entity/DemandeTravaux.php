@@ -30,6 +30,12 @@ class DemandeTravaux
     #[ORM\ManyToOne(inversedBy: 'demandesTravaux')]
     private ?SystemeAcquisition $systemeAcquisition = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $emailDemandeur = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $commentaire = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -91,6 +97,30 @@ class DemandeTravaux
     public function setSystemeAcquisition(?SystemeAcquisition $systemeAcquisition): static
     {
         $this->systemeAcquisition = $systemeAcquisition;
+
+        return $this;
+    }
+
+    public function getEmailDemandeur(): ?string
+    {
+        return $this->emailDemandeur;
+    }
+
+    public function setEmailDemandeur(?string $emailDemandeur): static
+    {
+        $this->emailDemandeur = $emailDemandeur;
+
+        return $this;
+    }
+
+    public function getCommentaire(): ?string
+    {
+        return $this->commentaire;
+    }
+
+    public function setCommentaire(?string $commentaire): static
+    {
+        $this->commentaire = $commentaire;
 
         return $this;
     }
