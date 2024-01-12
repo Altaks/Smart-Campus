@@ -594,4 +594,91 @@ class PlanExpControllerTest extends WebTestCase
         // Assertion de rediction vers la page d'accueil
         $this->assertResponseRedirects('/plan', 302);
     }
+
+    public function test_retirer_sa_existant() : void
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $sa = new SystemeAcquisition();
+        $sa->setNom("ESP-999");
+        $sa->setBaseDonnees("sae34bdk1eq1");
+        $sa->setEtat("Opérationnel");
+
+        $salle = new Salle();
+        $salle->setNom("X002");
+        $salle->setBatiment("Bâtiment X");
+        $salle->setOrientation("No");
+        $salle->setNombrePorte(1);
+        $salle->setNombreFenetre(6);
+        $salle->setContientPc(false);
+        $salle->setSystemeAcquisition($sa);
+
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+
+        $entityManager->persist($salle);
+        $entityManager->persist($sa);
+
+        $entityManager->flush();
+
+        $sa = $entityManager->getRepository(SystemeAcquisition::class)->findOneBy(['nom' => 'ESP-999']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/retirer-sa/' . $sa->getId());
+
+        // Assertion de rediction vers la page d'accueil
+        $this->assertResponseRedirects('/plan', 302);
+
+        $sa = $entityManager->getRepository(SystemeAcquisition::class)->findOneBy(['nom' => 'ESP-999']);
+        $this->assertNull($sa);
+
+        $entityManager->remove($salle);
+        $entityManager->remove($sa);
+        $entityManager->flush();
+    }
+
+    public function test_retirer_sa_inexistant() : void
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/retirer-sa/-1');
+
+        // Assertion de rediction vers la page d'accueil
+        $this->assertResponseRedirects('/plan', 302);
+    }
+
+
+    public function test_retirer_sa_en_etant_cdm_redirige()
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'yghamri']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/retirer-sa/-1');
+
+        // Assertion de rediction vers la page d'accueil
+        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
+    }
+
+
+    public function test_retirer_sa_en_etant_usager_redirige()
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/plan/retirer-sa/-1');
+
+        // Assertion de rediction vers la page d'accueil
+        $this->assertResponseRedirects("/connexion", 302);
+    }
 }
