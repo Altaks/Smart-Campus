@@ -8,6 +8,7 @@ use App\Entity\Salle;
 use App\Entity\Seuil;
 use App\Entity\SystemeAcquisition;
 use App\Service\ReleveService;
+use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -483,11 +484,62 @@ class PlanExpController extends AbstractController
         ]);
     }
 
+    #[IsGranted("ROLE_TECHNICIEN")]
     #[Route('/plan/retirer-sa/{id}', name: 'technicien_retirer_sa')]
-    public function technicien_retirer_sa(ManagerRegistry $doctrine, Request $request): Response
+    public function technicien_retirer_sa(int $id, ManagerRegistry $doctrine): Response
     {
-        // full redirect
-        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
+        $entityManager = $doctrine->getManager();
+        $saRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
+        $sa = $saRepository->findOneBy(['id' => $id]);
+
+        if($sa != null){
+            $salle = $sa->getSalle();
+
+            // Si le SA était associé à une salle, on le retire de la salle
+            if($salle != null){
+                $salle->setSystemeAcquisition(null);
+            }
+
+            // Si le SA était associé à une demande de travaux, on le retire de la demande de travaux
+            $demandesTravaux = $sa->getDemandesTravaux();
+            foreach ($demandesTravaux as $demande){
+                $demande->setSystemeAcquisition(null);
+            }
+
+            // On supprime le S.A
+            $entityManager->remove($sa);
+            $entityManager->flush();
+        }
+        return $this->redirect("/plan/lister-sa");
+    }
+
+    private function recupererEtatsCapteurs(array $listeSa, $dateMoins5minet3secondes, ReleveService $service) : array
+    {
+        $listeEtatsCapteurs = [];
+        foreach ($listeSa as $sa)
+        {
+            if ($sa->getEtat() == "Opérationnel")
+            {
+                $listeEtatsCapteurs[$sa->getId()] = [];
+
+                $temp = $service->getDernier($sa, "temp");
+                $hum = $service->getDernier($sa, "hum");
+                $co2 = $service->getDernier($sa, "co2");
+
+                $dateTemp = date_timestamp_get(new DateTime($temp["date"]));
+                $dateHum = date_timestamp_get(new DateTime($hum["date"]));
+                $dateCo2 = date_timestamp_get(new DateTime($co2["date"]));
+
+                $listeEtatsCapteurs[$sa->getId()]["temp"] = ($temp["valeur"] != "" && $dateTemp>= $dateMoins5minet3secondes);
+                $listeEtatsCapteurs[$sa->getId()]["hum"] = ($hum["valeur"] != "" && $dateHum>= $dateMoins5minet3secondes);
+                $listeEtatsCapteurs[$sa->getId()]["co2"] = ($co2["valeur"] != "" && $dateCo2>= $dateMoins5minet3secondes);
+            }
+            else
+            {
+                $listeEtatsCapteurs[$sa->getId()] = null;
+            }
+        }
+        return $listeEtatsCapteurs;
     }
 
     #[IsGranted("ROLE_TECHNICIEN")]
@@ -496,6 +548,7 @@ class PlanExpController extends AbstractController
     {
         $entityManager = $doctrine->getManager();
         $saRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
+        $demandeTravauxRepository = $entityManager->getRepository('App\Entity\DemandeTravaux');
 
         $listeChoix = ["Tous les SA" , "En cours d'installation", "Non installés", "Opérationnels", "Réparations"];
 
@@ -512,8 +565,11 @@ class PlanExpController extends AbstractController
 
         $formEtats->handleRequest($request);
         $listeSa = [];
+        $listeSalleSaIntall = [];
+        $listeEtatsCapteurs = [];
         $choix = "Tous les SA";
         $choixParDefault = 0;
+        date_default_timezone_set("Europe/Paris");
 
         if($formEtats->isSubmitted() && $formEtats->isValid())
         {
@@ -523,6 +579,8 @@ class PlanExpController extends AbstractController
             {
                 case "Tous les SA":
                     $listeSa = $saRepository->findAll();
+                    $dateMoins5minet30secondes = time() - 5*60 - 30;
+                    $listeEtatsCapteurs = $this->recupererEtatsCapteurs($listeSa, $dateMoins5minet30secondes, $service);
                     break;
                 case "En cours d'installation":
                     $listeSa = $saRepository->findBy(['etat' => "Installation"]);
@@ -532,6 +590,8 @@ class PlanExpController extends AbstractController
                     break;
                 case "Opérationnels":
                     $listeSa = $saRepository->findBy(['etat' => "Opérationnel"]);
+                    $dateMoins5minet30secondes = time() - 5*60 - 30;
+                    $listeEtatsCapteurs = $this->recupererEtatsCapteurs($listeSa, $dateMoins5minet30secondes, $service);
                     break;
                 case "Réparations":
                     $listeSa = $saRepository->findBy(['etat' => "Réparation"]);
@@ -541,15 +601,28 @@ class PlanExpController extends AbstractController
         else
         {
             $listeSa = $saRepository->findAll();
+            $dateMoins5minet30secondes = time() - 5*60 - 30;
+            $listeEtatsCapteurs = $this->recupererEtatsCapteurs($listeSa, $dateMoins5minet30secondes, $service);
+        }
+
+        foreach ($listeSa as $sa)
+        {
+            if ($sa->getEtat() == "Installation"){
+                $demandeInstallation = $demandeTravauxRepository->findOneBy(['systemeAcquisition' => $sa->getId(), 'type' => "Installation", 'terminee' => false]);
+                $listeSalleSaIntall[$sa->getId()] = $demandeInstallation->getSalle();
+            }
         }
 
         usort($listeSa, "self::comparaison_etat_sa");
+
 
         return $this->render('plan/technicien/liste_sa.html.twig', [
             'listeSa' => $listeSa,
             'form' => $formEtats,
             'choix' => $choix,
             'defaut' => $choixParDefault,
+            'listeEtatCapteurs' => $listeEtatsCapteurs,
+            'listeSalleSaIntall' => $listeSalleSaIntall
         ]);
     }
 

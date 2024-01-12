@@ -31,24 +31,30 @@
         </div>
     </div>
 
-    <div class="max-w-screen-xl w-5/6 mx-auto mt-10">
+    <div class="max-w-screen-xl mx-auto mt-10">
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
 
                 {% if choix == "Tous les SA" %}
                 <tr >
-                    <th scope="col" class="px-6 py-3">
+                    <th scope="col" class="py-3 px-6">
                         Nom
                     </th>
-                    <th scope="col" class="px-6 py-3">
+                    <th scope="col" class="py-3">
                         Salle
                     </th>
-                    <th scope="col" class="px-6 py-3">
+                    <th scope="col" class="py-3">
                         Bâtiment
                     </th>
-                    <th scope="col" class="px-6 py-3">
+                    <th scope="col" class="py-3">
+                        Etat des capteurs
+                    </th>
+                    <th scope="col" class="py-3 px-6">
                         Etat
+                    </th>
+                    <th scope="col" class="py-3 text-center">
+                        Actions
                     </th>
                 </tr>
                 </thead>
@@ -58,13 +64,51 @@
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ systemeAcquisition.nom }}
                         </th>
-                        <td class="px-6 py-4">
-                            {{ systemeAcquisition.Salle.nom|default('-') }}
+                        <td class="py-4">
+                            {% if systemeAcquisition.etat == 'Installation' %}
+                                {{ attribute(listeSalleSaIntall, systemeAcquisition.id).nom|default('-') }}
+                            {% else %}
+                                {{ systemeAcquisition.Salle.nom|default('-') }}
+                            {% endif %}
                         </td>
-                        <td class="px-6 py-4">
-                            {{ systemeAcquisition.Salle.Batiment|default('-') }}
+                        <td class="py-4">
+                            {% if systemeAcquisition.etat == 'Installation' %}
+                                {{ attribute(listeSalleSaIntall, systemeAcquisition.id).Batiment|default('-') }}
+                            {% else %}
+                                {{ systemeAcquisition.Salle.Batiment|default('-') }}
+                            {% endif %}
                         </td>
-                        <td class="px-6 py-4 max-w-[11rem]">
+                        <td id="etat-capteur" class="py-4 flex flex-row justify-center w-max text-center">
+                            {% if attribute(listeEtatCapteurs, systemeAcquisition.id) is null %}
+                                <p class="my-auto">Non concerné</p>
+                            {% else %}
+                                <div class="flex flex-row">
+                                    <p class="my-auto text-center">Température : </p>
+                                    {% if attribute(attribute(listeEtatCapteurs, systemeAcquisition.id), "temp") == false %}
+                                        <box-icon name='x' color='#ff1d1d' class="my-auto mx-auto"></box-icon>
+                                    {% else %}
+                                        <box-icon name='check' color='#05d409' class="my-auto mx-auto" ></box-icon>
+                                    {% endif %}
+                                </div>
+                                <div class="flex flex-row mx-2">
+                                    <p class="my-auto text-center">Humidité : </p>
+                                    {% if attribute(attribute(listeEtatCapteurs, systemeAcquisition.id), "hum") == false %}
+                                        <box-icon name='x' color='#ff1d1d' class="my-auto mx-auto"></box-icon>
+                                    {% else %}
+                                        <box-icon name='check' color='#05d409' class="my-auto mx-auto" ></box-icon>
+                                    {% endif %}
+                                </div>
+                                <div class="flex flex-row text-center">
+                                    <p class="my-auto">Co2 : </p>
+                                    {% if attribute(attribute(listeEtatCapteurs, systemeAcquisition.id), "co2") == false %}
+                                        <box-icon name='x' color='#ff1d1d' class="my-auto mx-auto"></box-icon>
+                                    {% else %}
+                                        <box-icon name='check' color='#05d409' class="my-auto mx-auto" ></box-icon>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td class="py-4">
                             {% if systemeAcquisition.etat == 'Installation' %}
                                 <div class="p-1 bg-amber-500 text-white rounded-lg flex flex-row justify-evenly items-center">
                                     <box-icon name='time-five' color='rgba(255,255,255,0.85)' class="mx-4"></box-icon>
@@ -87,6 +131,16 @@
                                 </div>
                             {% endif %}
                         </td>
+                        <td class="py-4 flex flex-row justify-center">
+                            <a data-tooltip-target="tooltip-delete-{{systemeAcquisition.id}}" href="/plan/retirer-sa/{{ systemeAcquisition.id }}">
+                                <box-icon name='trash' type='solid' color='rgba(255,0,0,0.85)'></box-icon>
+                            </a>
+
+                            <div id="tooltip-delete-{{systemeAcquisition.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                Supprimer le SA
+                                <div class="tooltip-arrow" data-popper-arrow></div>
+                            </div>
+                        </td>
                     </tr>
                 {% endfor %}
 
@@ -102,6 +156,11 @@
                     <th scope="col" class="px-6 py-3">
                         Bâtiment
                     </th>
+                    {% if choix == "Opérationnels" %}
+                        <th scope="col" class="px-6 py-3">
+                            Etat des capteurs
+                        </th>
+                    {% endif %}
                 </tr>
                 </thead>
                 <thead>
@@ -112,19 +171,51 @@
                         {{ systemeAcquisition.nom }}
                     </th>
                     <td class="px-6 py-4">
-                        {% if systemeAcquisition.salle is not null %}
-                            {{ systemeAcquisition.Salle.nom }}
+                        {% if systemeAcquisition.etat == 'Installation' %}
+                            {{ attribute(listeSalleSaIntall, systemeAcquisition.id).nom|default('-') }}
                         {% else %}
-                            -
+                            {{ systemeAcquisition.Salle.nom|default('-') }}
                         {% endif %}
                     </td>
                     <td class="px-6 py-4">
-                        {% if systemeAcquisition.salle is not null %}
-                            {{ systemeAcquisition.Salle.Batiment }}
+                        {% if systemeAcquisition.etat == 'Installation' %}
+                            {{ attribute(listeSalleSaIntall, systemeAcquisition.id).Batiment|default('-') }}
                         {% else %}
-                            -
+                            {{ systemeAcquisition.Salle.Batiment|default('-') }}
                         {% endif %}
                     </td>
+                    {% if choix == "Opérationnels" %}
+                        <td id="etat-capteur" class="px-6 py-4 flex flex-row w-max">
+                            {% if attribute(listeEtatCapteurs, systemeAcquisition.id) is null %}
+                                <p class="my-auto">Non concerné</p>
+                            {% else %}
+                                <div class="flex flex-row">
+                                    <p class="my-auto">Température : </p>
+                                    {% if attribute(attribute(listeEtatCapteurs, systemeAcquisition.id), "temp") == false %}
+                                        <box-icon name='x' color='#ff1d1d' class="my-auto mx-auto"></box-icon>
+                                    {% else %}
+                                        <box-icon name='check' color='#05d409' class="my-auto mx-auto" ></box-icon>
+                                    {% endif %}
+                                </div>
+                                <div class="flex flex-row mx-2">
+                                    <p class="my-auto">Humidité : </p>
+                                    {% if attribute(attribute(listeEtatCapteurs, systemeAcquisition.id), "hum") == false %}
+                                        <box-icon name='x' color='#ff1d1d' class="my-auto mx-auto"></box-icon>
+                                    {% else %}
+                                        <box-icon name='check' color='#05d409' class="my-auto mx-auto" ></box-icon>
+                                    {% endif %}
+                                </div>
+                                <div class="flex flex-row">
+                                    <p class="my-auto">Co2 : </p>
+                                    {% if attribute(attribute(listeEtatCapteurs, systemeAcquisition.id), "co2") == false %}
+                                        <box-icon name='x' color='#ff1d1d' class="my-auto mx-auto"></box-icon>
+                                    {% else %}
+                                        <box-icon name='check' color='#05d409' class="my-auto mx-auto" ></box-icon>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
 

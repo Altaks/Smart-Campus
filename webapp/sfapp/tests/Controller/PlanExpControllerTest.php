@@ -545,6 +545,147 @@ class PlanExpControllerTest extends WebTestCase
         $entityManager->flush();
     }
 
+    public function test_lister_sa_technicien_lister_tout_sa_montre_etat_capteurs()
+    {
+        $client = static::createClient();
+        $systemeAcquisitionRepository = static::getContainer()->get(SystemeAcquisitionRepository::class);
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/lister-sa');
+
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        $form = $crawler->filter('form[name="form"]')->form();
+        $form['form[choix]'] = '0';
+
+        $client->submit($form);
+
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        $listeEtatSA = $crawler->filter('#etat-capteur');
+        $listeSA = $systemeAcquisitionRepository->findAll();
+        $this->assertSameSize($listeEtatSA, $listeSA);
+    }
+
+    public function test_lister_sa_technicien_lister_sa_non_installe_ne_montre_pas_etat_capteurs()
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/lister-sa');
+
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        $form = $crawler->filter('form[name="form"]')->form();
+        $form['form[choix]'] = '2';
+
+        $client->submit($form);
+
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        $listeEtatSA = $crawler->filter('#etat-capteur');
+        $this->assertEmpty($listeEtatSA);
+    }
+    public function test_lister_sa_technicien_lister_sa_en_installation_ne_montre_pas_etat_capteurs()
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/lister-sa');
+
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        // select the form of a select element
+        $form = $crawler->filter('form[name="form"]')->form();
+        $form['form[choix]'] = '1';
+
+        $client->submit($form);
+
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        $listeEtatSA = $crawler->filter('#etat-capteur');
+        $this->assertEmpty($listeEtatSA);
+    }
+
+    public function test_lister_sa_technicien_lister_sa_en_reparation_ne_montre_pas_etat_capteurs()
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/lister-sa');
+
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        // select the form of a select element
+        $form = $crawler->filter('form[name="form"]')->form();
+        $form['form[choix]'] = '4';
+
+        $client->submit($form);
+
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        $listeEtatSA = $crawler->filter('#etat-capteur');
+        $this->assertEmpty($listeEtatSA);
+    }
+
+    public function test_lister_sa_technicien_lister_sa_opérationnel_montre_etat_capteurs()
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $systemeAcquisitionRepository = static::getContainer()->get(SystemeAcquisitionRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/lister-sa');
+
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        // select the form of a select element
+        $form = $crawler->filter('form[name="form"]')->form();
+        $form['form[choix]'] = '3';
+
+        $client->submit($form);
+
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+
+        $listeEtatSA = $crawler->filter('#etat-capteur');
+        $listeSAOpertationnel = $systemeAcquisitionRepository->findBy(['etat' => 'Opérationnel']);
+        $this->assertSameSize($listeSAOpertationnel, $listeEtatSA);
+    }
+
     public function test_retirer_salle_cdm_salle_existente() : void
     {
         $client = static::createClient();
@@ -593,5 +734,64 @@ class PlanExpControllerTest extends WebTestCase
 
         // Assertion de rediction vers la page d'accueil
         $this->assertResponseRedirects('/plan', 302);
+    }
+
+    public function test_retirer_sa_existant() : void
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $sa = new SystemeAcquisition();
+        $sa->setNom("ESP-999");
+        $sa->setBaseDonnees("sae34bdk1eq1");
+        $sa->setEtat("Opérationnel");
+
+        $salle = new Salle();
+        $salle->setNom("X002");
+        $salle->setBatiment("Bâtiment X");
+        $salle->setOrientation("No");
+        $salle->setNombrePorte(1);
+        $salle->setNombreFenetre(6);
+        $salle->setContientPc(false);
+        $salle->setSystemeAcquisition($sa);
+
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+
+        $entityManager->persist($salle);
+        $entityManager->persist($sa);
+
+        $entityManager->flush();
+
+        $sa = $entityManager->getRepository(SystemeAcquisition::class)->findOneBy(['nom' => 'ESP-999']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/retirer-sa/' . $sa->getId());
+
+        // Assertion de rediction vers la page d'accueil
+        $this->assertResponseRedirects('/plan/lister-sa', 302);
+
+        $sa = $entityManager->getRepository(SystemeAcquisition::class)->findOneBy(['nom' => 'ESP-999']);
+        $this->assertNull($sa);
+
+        $entityManager->remove($salle);
+        $entityManager->flush();
+    }
+
+    public function test_retirer_sa_inexistant() : void
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        // simulate $testUser being logged in
+        $client->loginUser($testUser);
+
+        $client->request('GET', '/plan/retirer-sa/-1');
+
+        // Assertion de rediction vers la page d'accueil
+        $this->assertResponseRedirects('/plan/lister-sa', 302);
     }
 }
