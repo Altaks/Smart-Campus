@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\DemandeTravauxRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: DemandeTravauxRepository::class)]
 class DemandeTravaux
@@ -31,9 +33,14 @@ class DemandeTravaux
     private ?SystemeAcquisition $systemeAcquisition = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Email(message: "Veuillez saisir un email valide")]
+    #[Assert\NotBlank(message: "Veuillez saisir un email")]
     private ?string $emailDemandeur = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank(message: "Veuillez saisir un commentaire")]
+    #[Assert\Length(max: 255, maxMessage: "Le commentaire ne doit pas dépasser {{ limit }} caractères")]
+    #[Assert\Length(min: 10, minMessage: "Le commentaire doit faire au moins {{ limit }} caractères")]
     private ?string $commentaire = null;
 
     public function getId(): ?int

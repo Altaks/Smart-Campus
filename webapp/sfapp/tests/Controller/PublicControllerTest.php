@@ -250,29 +250,36 @@ class PublicControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('submit')->form();
-        $form['form[description]'] = 'Erreur de test';
-        $form['form[email]'] = 'jmalki@exemple.com';
+        $form['form[commentaire]'] = 'Erreur de test';
+        $form['form[emailDemandeur]'] = 'jmalki@exemple.com';
 
         $client->submit($form);
 
         $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
-        $this->assertMatchesRegularExpression("/\/releves$/", $client->getResponse()->headers->get('location'));
+        $this->assertMatchesRegularExpression("/\/accueil\/$/", $client->getResponse()->headers->get('location'));
 
         $sa = $saRepository->findOneBy(['nom' => 'ESP-000']);
-        $this->assertEquals("Reparation", $sa->getEtat());
+        $this->assertEquals("Réparation", $sa->getEtat());
 
         $demandeTrauxRepository = static ::getContainer()->get(DemandeTravauxRepository::class);
         $demande = $demandeTrauxRepository->findOneBy(['type' => 'Reparation', 'salle' => $salleTest->getId()]);
         $this->assertNotNull($demande);
-        $this->assertEquals("Reparation", $demande->getType());
-        $this->assertEquals("Erreur de test", $demande->getDescription());
+        $this->assertEquals("Réparation", $demande->getType());
+        $this->assertEquals("Erreur de test", $demande->getCommentaire());
         $this->assertEquals("ESP-000", $demande->getSystemeAcquisition()->getNom());
         $this->assertFalse($demande->isTerminee());
 
-        $manager->remove($demande);
-        $manager->remove($salleTest);
-        $manager->remove($saTest);
-        $manager->flush();
+        $sql = "DELETE FROM demande_travaux WHERE id = " . $demande->getId();
+        $stmt = $manager->getConnection()->prepare($sql);
+        $stmt->executeQuery();
+
+        $sql = "DELETE FROM salle WHERE id = " . $salleTest->getId();
+        $stmt = $manager->getConnection()->prepare($sql);
+        $stmt->executeQuery();
+
+        $sql = "DELETE FROM systeme_acquisition WHERE id = " . $saTest->getId();
+        $stmt = $manager->getConnection()->prepare($sql);
+        $stmt->executeQuery();
     }
 
     public function test_signaler_erreur_requette_avec_utilisateur_connecte_en_temps_que_technicien_email_non_valide(): void
@@ -310,22 +317,33 @@ class PublicControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('submit')->form();
-        $form['form[description]'] = 'Erreur de test';
+        $form['form[commentaire]'] = 'Erreur de test';
+
+        $client->submit($form);
+        // code de reponse 422
+        $this->assertResponseStatusCodeSame(422, $client->getResponse()->getStatusCode());
+
+        $crawler = $client->request('GET', '/signaler-erreur/' . $salleTest->getId());
+
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton('submit')->form();
+        $form['form[commentaire]'] = 'Erreur de test';
 
         $client->submit($form);
 
-        $this->assertResponseIsSuccessful();
-        $this->assertMatchesRegularExpression("/\/signaler-erreur\/".$salleTest->getId()."$/", $client->getResponse()->headers->get('location'));
-
-        $form['form[email]'] = 'brhjuvboizubvdn';
+        $form['form[emailDemandeur]'] = 'brhjuvboizubvdn';
         $client->submit($form);
 
-        $this->assertResponseIsSuccessful();
-        $this->assertMatchesRegularExpression("/\/signaler-erreur\/".$salleTest->getId()."$/", $client->getResponse()->headers->get('location'));
+        $this->assertResponseStatusCodeSame(422, $client->getResponse()->getStatusCode());
 
-        $manager->remove($salleTest);
-        $manager->remove($saTest);
-        $manager->flush();
+        $sql = "DELETE FROM salle WHERE id = " . $salleTest->getId();
+        $stmt = $manager->getConnection()->prepare($sql);
+        $stmt->executeQuery();
+
+        $sql = "DELETE FROM systeme_acquisition WHERE id = " . $saTest->getId();
+        $stmt = $manager->getConnection()->prepare($sql);
+        $stmt->executeQuery();
     }
 
     public function test_signaler_erreur_requette_avec_utilisateur_connecte_en_temps_que_technicien_description_vide(): void
@@ -362,22 +380,32 @@ class PublicControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('submit')->form();
-        $form['form[email]'] = 'jmalki@exemple.com';
+        $form['form[emailDemandeur]'] = 'jmalki@exemple.com';
 
         $client->submit($form);
 
-        $this->assertResponseIsSuccessful();
-        $this->assertMatchesRegularExpression("/\/signaler-erreur/".$salleTest->getId()."$/", $client->getResponse()->headers->get('location'));
+        $this->assertResponseStatusCodeSame(422, $client->getResponse()->getStatusCode());
 
-        $form['form[description]'] = '';
+        $crawler = $client->request('GET', '/signaler-erreur/' . $salleTest->getId());
+
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton('submit')->form();
+        $form['form[commentaire]'] = 'Erreur de test';
+
+        $client->submit($form);
+        $form['form[commentaire]'] = '';
         $client->submit($form);
 
-        $this->assertResponseIsSuccessful();
-        $this->assertMatchesRegularExpression("/\/signeler-erreur\/".$salleTest->getId()."$/", $client->getResponse()->headers->get('location'));
+        $this->assertResponseStatusCodeSame(422, $client->getResponse()->getStatusCode());
 
-        $manager->remove($salleTest);
-        $manager->remove($saTest);
-        $manager->flush();
+        $sql = "DELETE FROM salle WHERE id = " . $salleTest->getId();
+        $stmt = $manager->getConnection()->prepare($sql);
+        $stmt->executeQuery();
+
+        $sql = "DELETE FROM systeme_acquisition WHERE id = " . $saTest->getId();
+        $stmt = $manager->getConnection()->prepare($sql);
+        $stmt->executeQuery();
 
     }
 
@@ -391,14 +419,12 @@ class PublicControllerTest extends WebTestCase
 
         $client->loginUser($testUser);
 
-        $client->request('GET', '/plan/salle/0/signaler-erreur');
+        $client->request('GET', '/signaler-erreur/9999');
 
-        $this->assertResponseStatusCodeSame(404, $client->getResponse()->getStatusCode());
+        //redirect to accueil
+        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
 
-        $client->request('GET', '/signaler-erreur/99999');
-
-        $this->assertResponseIsSuccessful();
-        $this->assertMatchesRegularExpression("/\/accueil$/", $client->getResponse()->headers->get('location'));
+        $this->assertResponseRedirects('/accueil/', 302);
     }
 
     public function test_signaler_erreur_requette_avec_utilisateur_connecte_en_temps_que_technicien_salle_sans_sa():void
@@ -425,11 +451,11 @@ class PublicControllerTest extends WebTestCase
 
         $client->request('GET', '/signaler-erreur/' . $salleTest->getId());
 
-        $this->assertResponseIsSuccessful();
-        $this->assertMatchesRegularExpression("/\/accueil$/", $client->getResponse()->headers->get('location'));
+        $this->assertResponseRedirects('/accueil/', 302);
 
-        $manager->remove($salleTest);
-        $manager->flush();
+        $sql = "DELETE FROM salle WHERE id = " . $salleTest->getId();
+        $stmt = $manager->getConnection()->prepare($sql);
+        $stmt->executeQuery();
     }
 
     public function test_signaler_erreur_requette_avec_utilisateur_connecte_en_temps_que_technicien_salle_avec_non_operationnel():void
@@ -465,18 +491,20 @@ class PublicControllerTest extends WebTestCase
 
         foreach ($etats as $etat) {
             $saTest->setEtat($etat);
-            $manager->persist($saTest);
             $manager->flush();
 
             $client->request('GET', '/signaler-erreur/' . $salleTest->getId());
 
-            $this->assertResponseIsSuccessful();
-            $this->assertMatchesRegularExpression("/\/accueil$/", $client->getResponse()->headers->get('location'));
+            $this->assertResponseRedirects('/accueil/', 302);
         }
 
-        $manager->remove($salleTest);
-        $manager->remove($saTest);
-        $manager->flush();
+        $sql = "DELETE FROM salle WHERE id = " . $salleTest->getId();
+        $stmt = $manager->getConnection()->prepare($sql);
+        $stmt->executeQuery();
+
+        $sql = "DELETE FROM systeme_acquisition WHERE id = " . $saTest->getId();
+        $stmt = $manager->getConnection()->prepare($sql);
+        $stmt->executeQuery();
     }
 
 

@@ -26,20 +26,26 @@
             </ol>
         </nav>
     </div>
-    <div class="w-2/3 mx-auto">
-        <h1>Veuillez choisir une salle</h1>
-        {{ form_start(form) }}
-            <select name="{{ field_name(form.salle) }}" class="form-control bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange="this.form.submit()">
-                <option value="" disabled>Choisir une salle</option>
-                {% for label, value in field_choices(form.salle) %}
-                    {% if form_selected is defined and label == form_selected.nom %}
-                        <option value="{{ value }}" selected>{{ label }}</option>
-                    {% else %}
-                        <option value="{{ value }}">{{ label }}</option>
-                    {% endif %}
-                {% endfor %}
-            </select>
-        {{ form_end(form) }}
+    <div class="w-2/3 mx-auto flex justify-between">
+        <div>
+            <h1>Veuillez choisir une salle</h1>
+            {{ form_start(form) }}
+                <select name="{{ field_name(form.salle) }}" class="form-control bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange="this.form.submit()">
+                    <option value="" disabled>Choisir une salle</option>
+                    {% for label, value in field_choices(form.salle) %}
+                        {% if form_selected is defined and label == form_selected.nom %}
+                            <option value="{{ value }}" selected>{{ label }}</option>
+                        {% else %}
+                            <option value="{{ value }}">{{ label }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            {{ form_end(form) }}
+        </div>
+        <div>
+            <a href="/signaler-erreur/{{ form_selected.id }}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full">
+                Signaler une erreur</a>
+        </div>
     </div>
     <div class="w-2/3 mx-auto my-12">
         {% if temp_dates is defined and temp_dates is not null and temp_releves is defined and temp_releves is not null %}
