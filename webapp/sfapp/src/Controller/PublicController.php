@@ -53,9 +53,13 @@ class PublicController extends AbstractController
             $demandesInstall = $registry->getRepository('App\Entity\DemandeTravaux')
                 ->findBy(["type"=>"Installation",
                     "terminee"=>false]);
+            $demandesRepar = $registry->getRepository('App\Entity\DemandeTravaux')
+                ->findBy(["type"=>"Reparation",
+                    "terminee"=>false]);
 
             return $this->render('public/accueil.html.twig', [
-                "demandesInstall" => $demandesInstall
+                "demandesInstall" => $demandesInstall,
+                "demandesRepar" => $demandesRepar
             ]);
         }
         return $this->render('public/accueil.html.twig');
