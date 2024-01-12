@@ -6,9 +6,9 @@
     <div class="overflow max-w-7xl mx-auto">
         <h1 class="text-4xl py-12 text-center">Liste des systèmes d'acquisition</h1>
         <div class="flex flex-row justify-between">
-            <div class="lg:w-1/6 lg:mr-auto ml-6">
+            <div class="lg:w-1/6 lg:mr-auto">
                 {{ form_start(form) }}
-                <select id="option" name="{{ field_name(form.choix) }}" class="form-control w-max text-xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange='this.form.submit()'>
+                <select id="option" name="{{ field_name(form.choix) }}" class="form-control w-max bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange='this.form.submit()'>
 
                     {% for label, value in field_choices(form.choix) %}
                         {% if value == defaut %}
@@ -111,19 +111,23 @@
                         <td class="py-4">
                             {% if systemeAcquisition.etat == 'Installation' %}
                                 <div class="p-1 bg-amber-500 text-white rounded-lg flex flex-row justify-evenly items-center">
-                                    <span>Installation</span>
+                                    <box-icon name='time-five' color='rgba(255,255,255,0.85)' class="mx-4"></box-icon>
+                                    <span class="text-center w-full">Installation</span>
                                 </div>
                             {% elseif systemeAcquisition.etat == 'Opérationnel' %}
                                 <div class="p-1 bg-emerald-500 text-white rounded-lg flex flex-row justify-evenly items-center">
-                                    <span>Opérationnel</span>
+                                    <box-icon name='check-double' color='rgba(255,255,255,0.85)' class="mx-4"></box-icon>
+                                    <span class="text-center w-full">Opérationnel</span>
                                 </div>
                             {% elseif systemeAcquisition.etat == 'Non installé' %}
                                 <div class="p-1 bg-slate-400 text-white rounded-lg flex flex-row justify-evenly items-center">
-                                    <span>Non installé</span>
+                                    <box-icon name='right-arrow-alt' color='#ffffff' class="mx-4"></box-icon>
+                                    <span class="text-center w-full">Non installé</span>
                                 </div>
                             {% elseif systemeAcquisition.etat == 'Réparation' %}
                                 <div class="p-1 bg-red-600 text-white rounded-lg flex flex-row justify-evenly items-center">
-                                    <span>Réparation</span>
+                                    <box-icon name='wrench' color='rgba(255,255,255,0.85)' class="mx-4"></box-icon>
+                                    <span class="text-center w-full">Réparation</span>
                                 </div>
                             {% endif %}
                         </td>
