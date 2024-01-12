@@ -108,11 +108,16 @@ class PublicControllerTest extends WebTestCase
 
 
         $demandesRepository = static ::getContainer()->get(DemandeTravauxRepository::class);
-        $nbDemandes = count($demandesRepository->findBy(["type"=>"Installation", "terminee"=>false]));
+        $nbDemandesInst = count($demandesRepository->findBy(["type"=>"Installation", "terminee"=>false]));
 
 
         $li = $crawler->filter("#demandeInstallation");
-        $this->assertEquals($nbDemandes, $li->count());
+        $this->assertEquals($nbDemandesInst, $li->count());
+
+        $nbDemandesRepar = count($demandesRepository->findBy(["type"=>"Reparation", "terminee"=>false]));
+
+        $li = $crawler->filter("#demandeReparation");
+        $this->assertEquals($nbDemandesRepar, $li->count());
     }
 
     public function test_accueil_requette_sans_utilisateur_connecte(): void
