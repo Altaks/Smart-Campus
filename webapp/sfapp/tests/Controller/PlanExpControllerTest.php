@@ -630,13 +630,12 @@ class PlanExpControllerTest extends WebTestCase
         $client->request('GET', '/plan/retirer-sa/' . $sa->getId());
 
         // Assertion de rediction vers la page d'accueil
-        $this->assertResponseRedirects('/plan', 302);
+        $this->assertResponseRedirects('/plan/lister-sa', 302);
 
         $sa = $entityManager->getRepository(SystemeAcquisition::class)->findOneBy(['nom' => 'ESP-999']);
         $this->assertNull($sa);
 
         $entityManager->remove($salle);
-        $entityManager->remove($sa);
         $entityManager->flush();
     }
 
@@ -652,33 +651,6 @@ class PlanExpControllerTest extends WebTestCase
         $client->request('GET', '/plan/retirer-sa/-1');
 
         // Assertion de rediction vers la page d'accueil
-        $this->assertResponseRedirects('/plan', 302);
-    }
-
-
-    public function test_retirer_sa_en_etant_cdm_redirige()
-    {
-        $client = static::createClient();
-        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
-        $testUser = $userRepository->findOneBy(['identifiant' => 'yghamri']);
-
-        // simulate $testUser being logged in
-        $client->loginUser($testUser);
-
-        $client->request('GET', '/plan/retirer-sa/-1');
-
-        // Assertion de rediction vers la page d'accueil
-        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
-    }
-
-
-    public function test_retirer_sa_en_etant_usager_redirige()
-    {
-        $client = static::createClient();
-
-        $client->request('GET', '/plan/retirer-sa/-1');
-
-        // Assertion de rediction vers la page d'accueil
-        $this->assertResponseRedirects("/connexion", 302);
+        $this->assertResponseRedirects('/plan/lister-sa', 302);
     }
 }

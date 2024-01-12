@@ -50,6 +50,9 @@
                     <th scope="col" class="px-6 py-3">
                         Etat
                     </th>
+                    <th scope="col" class="py-3 text-center">
+                        Actions
+                    </th>
                 </tr>
                 </thead>
                 <thead>
@@ -82,6 +85,16 @@
                                     <span>Réparation</span>
                                 </div>
                             {% endif %}
+                        </td>
+                        <td class="py-4 flex flex-row justify-center">
+                            <a data-tooltip-target="tooltip-delete-{{systemeAcquisition.id}}" href="/plan/retirer-sa/{{ systemeAcquisition.id }}">
+                                <box-icon name='trash' type='solid' color='rgba(255,0,0,0.85)'></box-icon>
+                            </a>
+
+                            <div id="tooltip-delete-{{systemeAcquisition.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                Supprimer le SA
+                                <div class="tooltip-arrow" data-popper-arrow></div>
+                            </div>
                         </td>
                     </tr>
                 {% endfor %}

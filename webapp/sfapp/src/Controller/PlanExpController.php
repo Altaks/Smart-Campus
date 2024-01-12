@@ -479,11 +479,33 @@ class PlanExpController extends AbstractController
         ]);
     }
 
+    #[IsGranted("ROLE_TECHNICIEN")]
     #[Route('/plan/retirer-sa/{id}', name: 'technicien_retirer_sa')]
-    public function technicien_retirer_sa(ManagerRegistry $doctrine, Request $request): Response
+    public function technicien_retirer_sa(int $id, ManagerRegistry $doctrine): Response
     {
-        // full redirect
-        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
+        $entityManager = $doctrine->getManager();
+        $saRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
+        $sa = $saRepository->findOneBy(['id' => $id]);
+
+        if($sa != null){
+            $salle = $sa->getSalle();
+
+            // Si le SA était associé à une salle, on le retire de la salle
+            if($salle != null){
+                $salle->setSystemeAcquisition(null);
+            }
+
+            // Si le SA était associé à une demande de travaux, on le retire de la demande de travaux
+            $demandesTravaux = $sa->getDemandesTravaux();
+            foreach ($demandesTravaux as $demande){
+                $demande->setSystemeAcquisition(null);
+            }
+
+            // On supprime le S.A
+            $entityManager->remove($sa);
+            $entityManager->flush();
+        }
+        return $this->redirect("/plan/lister-sa");
     }
 
     #[IsGranted("ROLE_TECHNICIEN")]
