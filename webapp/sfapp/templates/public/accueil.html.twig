@@ -55,10 +55,10 @@
 
                 <p class="text-gray-600 text-lg">Date de demande - salle</p>
 
-                <ul id="listeDemandesInstallation" class="text-xl space-y-1 text-gray-800 list-none list-inside dark:text-gray-400">
+                <ul id="listeDemandesReparation" class="text-xl space-y-1 text-gray-800 list-none list-inside dark:text-gray-400">
 
                     {% for demande in demandesRepar %}
-                        <li class="my-2" id="demandeInstallation"><a href="/plan/demande-travaux/{{ demande.id }}" class="hover:underline">{{ demande.date | date('d M Y')}}  -  {{ demande.salle.nom }}</a></li>
+                        <li class="my-2" id="demandeReparation"><a href="/plan/demande-travaux/{{ demande.id }}" class="hover:underline">{{ demande.date | date('d M Y')}}  -  {{ demande.salle.nom }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
