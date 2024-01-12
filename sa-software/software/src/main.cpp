@@ -74,9 +74,51 @@ void setup() {
     delay(100);
 
     activerServeurDNS();
-    
-    activerEnregistrementPeriodiqueReseaux();
-    
+
+    delay(100);
+    bool affiche = initAffichage(donnees); //Initialise l'affichage
+    displayText("Veuillez connecter\nle systeme a un\nréseau");
+
+    delay(100);
+
+    String nomReseau;
+
+    // tant que le SA n'est pas connecté à internet
+    do
+    {
+        // enregistre la liste des reseaux dans le fichier listereseaux.txt
+        enregistrerListeReseaux();
+
+        nomReseau = recupererValeur("/inforeseau.txt","nom_reseau");
+
+        // si le nom du reseau auquel se connecter est configuré
+        // et que le reseau auquel se connecter est capté par le SA (enregistrer dans le fichier listereseaux.txt)
+        if (!nomReseau.isEmpty() 
+            && estDansFichier("/listereseaux.txt",nomReseau))
+        {
+            // recupère les valeurs dans le fichier inforeseau.txt
+            int type_eap          = recupererValeur("/inforeseau.txt","type_eap").toInt();
+            String password       = recupererValeur("/inforeseau.txt","mot_de_passe");
+            String identifiant    = recupererValeur("/inforeseau.txt","identifiant");
+            String nomUtilisateur = recupererValeur("/inforeseau.txt","nom_utilisateur");
+            
+            // Essaye de se connecter au reseau
+            if(connexionWifi(nomReseau, wpa2_auth_method_t(type_eap), password ,identifiant, nomUtilisateur))
+            {
+                Serial.println("Connexion a "+nomReseau+" Reussie");
+                //initialise l'heure s'il arrive a se connecter
+                initHeure();
+            }
+            else
+            {
+                Serial.println("Echec de la connexion a "+nomReseau);
+            }
+        }
+    }
+    while(!estConnecte(nomReseau));
+
+    activerEnregistrerListeReseau();
+
     delay(1000);
 
     //Initialise la tâche température et humidité 
@@ -91,17 +133,42 @@ void setup() {
     initPresence(presence);
 
     delay(1000);
-    bool affiche = initAffichage(donnees); //Initialise l'affichage
+    initTacheAffichage(donnees);
 
     delay(1000);
     bool envoie = initEnvois(donnees); //Initialise l'envoi des données
+    
 }
 
 void loop() 
 {    
-    afficherContenuFichier("/inforeseau.txt");
+    afficherFichiers();
+
+    afficherContenuFichier("/index.html");
+
+    delay(10000);
+
+    afficherContenuFichier("/reseau.html");
+
+    delay(10000);
+
+    afficherContenuFichier("/configbd.html");
+
+    delay(10000);
+
     afficherContenuFichier("/listereseaux.txt");
+
+    delay(10000);
+
+    afficherContenuFichier("/inforeseau.txt");
+
+    delay(10000);
+
     afficherContenuFichier("/infoap.txt");
+
+    delay(10000);
+
     afficherContenuFichier("/infobd.txt");
+
     delay(10000);
 }

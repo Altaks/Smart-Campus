@@ -7,11 +7,6 @@
 void setupServeurWeb();
 
 /**
- * Ajoute la requête captive
-*/
-void ajouterCaptiveRequest();
-
-/**
  * initialise le serveur DNS
  */
 void setupServeurDNS();

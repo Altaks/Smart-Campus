@@ -59,14 +59,17 @@ void modifierFichier(String nomFichier, String baliseDebut, String baliseFin, St
     
         int indexDebut = ancienContenuFichier.indexOf(baliseDebut);
         int indexFin = ancienContenuFichier.indexOf(baliseFin);
-    
+
+        Serial.println("Index balise "+baliseDebut+" : "+indexDebut);
+        Serial.println("Index balise "+baliseFin+" : "+indexFin);
+        
         if(indexDebut == -1 || indexFin == -1)
         {
             Serial.println("Erreur lors de la modification du fichier");
             return;
         }
     
-        String nouveauContenuFichier = ancienContenuFichier.substring(0, indexDebut + baliseDebut.length()) + contenu + ancienContenuFichier.substring(indexFin);
+        String nouveauContenuFichier = ancienContenuFichier.substring(0, indexDebut + baliseDebut.length()) + "\n" + contenu + "\n" + ancienContenuFichier.substring(indexFin);
 
         file = SPIFFS.open(nomFichier, FILE_WRITE);
         if(!file)

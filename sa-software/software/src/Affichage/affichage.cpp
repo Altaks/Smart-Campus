@@ -28,6 +28,11 @@ bool initAffichage(struct Donnees* donnees)
     Serial.println("Ecran Initialise.");
     Serial.println("______________________________________");
 
+    return true;
+}
+
+bool initTacheAffichage(struct Donnees* donnees)
+{
     xTaskHandle affichageTaskHandle;
     xTaskCreate( //création de la tâche
       taskAffichage,
@@ -38,11 +43,7 @@ bool initAffichage(struct Donnees* donnees)
         &affichageTaskHandle
     );
 
-    if(affichageTaskHandle == NULL){
-        return false;
-    }
-
-    return true;
+    return affichageTaskHandle != NULL;
 }
 
 void afficher(struct Donnees * donnees){
@@ -141,4 +142,31 @@ void taskAffichage(void *pvParameters) {
         delay(3 * 1000);
         afficher(donnees);
     }
+}
+
+int displayText(String text, int x, int y, int fontSize, bool centered){
+    display->clear();
+    switch (fontSize)
+    {
+    case 10:
+        display->setFont(ArialMT_Plain_10);
+        break;
+    case 24:
+        display->setFont(ArialMT_Plain_24);
+        break;
+    default:
+        display->setFont(ArialMT_Plain_16);
+        break;
+    }
+    display->setTextAlignment(TEXT_ALIGN_LEFT);
+
+    if (centered){        
+        int w = text.length() * fontSize / 2;
+        int x = (display->getWidth() - w) / 2;
+        int y = (display->getHeight() - fontSize) / 2;
+    }
+
+    display->drawString(x, y, text);
+    display->display();
+    return 0;
 }

@@ -1,5 +1,6 @@
-#include "envois.h"
+#include "WiFi.h"
 
+#include "envois.h"
 
 // Décommenter/Commenter les Serial.println pour voir/ne pas voir les informations de debug en usb
 
@@ -50,7 +51,7 @@ int envoyer(struct Donnees* donnees){
     
     Serial.println("Vériication de la connexion au réseau");
     // verification de la connexion au réseau
-    if (!estConnecte()){
+    if (!estConnecte(String(WiFi.SSID()))){
         return -2;
     }
 

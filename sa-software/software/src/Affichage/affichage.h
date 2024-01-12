@@ -6,12 +6,18 @@
 
 /**
  * @brief Initialise l'affichage
- * Initialise l'affichage et la tâche d'affichage
- * @param donnees Pointeur vers les données
+ * Initialise l'affichage 
  * @return true si l'initialisation s'est bien passée
 */
 bool initAffichage(struct Donnees*);
 
+/**
+ * @brief Initialise la tâche d'affichage
+ * Initialise la tâche d'affichage
+ * @return true si l'initialisation s'est bien passée
+ * @param donnees Pointeur vers les données
+*/
+bool initTacheAffichage(struct Donnees*);
 
 /**
  * @brief Tâche d'affichage
@@ -25,5 +31,7 @@ void taskAffichage(void *pvParameters);
  * @param donnees Pointeur vers les données
 */
 void afficher(struct Donnees * donnees);
+
+int displayText(String text, int x = 0, int y = 0, int fontSize = 16, bool centered = false);
 
 #endif

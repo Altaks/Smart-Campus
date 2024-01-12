@@ -4,26 +4,23 @@
 
 #include "modifierPageWeb.h"
 
-
-void modifierPageAccueil(String contenu)
-{
-    modifierFichier("/index.html", "<!--DebutMessageValidation-->", "<!--FinMessageValidation-->", contenu);
-}
-
-void modifierPageConfigbd()
+void modifierFormPageConfigbd()
 {
     modifierFichier("/configbd.html", "<!--DebutFormHead-->", "<!--FinFormHead-->", "<form action=\"http://" + WiFi.softAPIP().toString() + "/config-base-de-donnees\" method=\"POST\">");
 }
 
-void modifierPageReseau(String contenuMessageErreur)
+void modifierFormPageReseau()
 {
     modifierFichier("/reseau.html", "<!--DebutFormHeadReseau-->", "<!--FinFormHeadReseau-->", "<form action=\"http://" + WiFi.softAPIP().toString() + "/config-reseau\" method=\"POST\">");
     Serial.println("reseau.html head formReseau modifié");
-    // scan les resaux alentours 
+    modifierFichier("/reseau.html", "<!--DebutFormHeadAp-->", "<!--FinFormHeadAp-->", "<form action=\"http://" + WiFi.softAPIP().toString() + "/config-acces-point\" method=\"POST\">");
+    Serial.println("reseau.html head formAp modifié");
+}
+
+void modifierListeReseauxPageReseau()
+{
     int n = recupererValeur("/listereseaux.txt","nb_reseaux").toInt();
     String contenu = "";
-    Serial.println("recup les reseaux");
-        
     if(n > 0)
     {
         String ssid;
@@ -33,11 +30,6 @@ void modifierPageReseau(String contenuMessageErreur)
             contenu += "<option value=\"" + ssid + "\">" + ssid + "</option>";
         }
     }
-    Serial.println("add reseau dans contenu");
     modifierFichier("/reseau.html", "<!--ListeReseaux-->", "<!--FinListeReseaux-->", contenu);
     Serial.println("reseau.html liste des reseaux diponibles modifiée");
-    modifierFichier("/reseau.html", "<!--DebutFormHeadAp-->", "<!--FinFormHeadAp-->", "<form action=\"http://" + WiFi.softAPIP().toString() + "/config-acces-point\" method=\"POST\">");
-    Serial.println("reseau.html head formAp modifié");
-    modifierFichier("/reseau.html", "<!--DebutMessageErreur-->", "<!--FinMessageErreur-->", contenuMessageErreur);
-    Serial.println("reseau.html message d'erreur modifié");
 }

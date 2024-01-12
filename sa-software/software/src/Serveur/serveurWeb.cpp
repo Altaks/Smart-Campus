@@ -4,7 +4,6 @@
 #include "ESPAsyncWebServer.h"
 #include "SPIFFS.h"
 
-#include "captiveRequestHandler.h"
 #include "modifierPageWeb.h"
 #include "serveurWeb.h"
 #include "Reseaux/station.h"
@@ -14,14 +13,11 @@
 DNSServer dnsServer;
 AsyncWebServer server(80);
 
-String user_name;
-String proficiency;
-
-bool name_received = false;
-bool proficiency_received = false;
-
 void setupServeurWeb()
 {
+    modifierFormPageConfigbd();
+    modifierFormPageReseau();
+
     server.on("/main.css", HTTP_GET, [](AsyncWebServerRequest *request)
     {
         request->send(SPIFFS, "/main.css", "text/css");
@@ -31,8 +27,6 @@ void setupServeurWeb()
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
     {
         Serial.println("Requete recue sur /");
-        modifierPageAccueil();
-        Serial.println("Page modifiée");
         request->send(SPIFFS, "/index.html","text/html");
         Serial.println("Page envoyée");
     });
@@ -40,7 +34,6 @@ void setupServeurWeb()
     server.on("/config-base-de-donnees", HTTP_GET, [](AsyncWebServerRequest *request)
     {
         Serial.println("Requete recue sur /config-base-de-donnees");
-        modifierPageConfigbd();
         Serial.println("Page modifiée");
         request->send(SPIFFS, "/configbd.html","text/html");
         Serial.println("Page envoyée");
@@ -49,7 +42,6 @@ void setupServeurWeb()
     server.on("/config-base-de-donnees", HTTP_POST, [] (AsyncWebServerRequest *request) 
     {
         Serial.println("Requete recue sur /config-base-de-donnees");
-
         String nom_sa = ""; 
         String localisation = "";
         String nom_bd = "";
@@ -79,22 +71,20 @@ void setupServeurWeb()
         Serial.println("nom_utilisateur: " + nom_utilisateur);
         Serial.println("mot_de_passe: " + mot_de_passe);
 
-        ecrireFichier("/infoap.txt",
+        ecrireFichier("/infobd.txt",
             "nom_sa:"+nom_sa+
             "\nlocalisation:"+localisation+
             "\nnom_bd:"+nom_bd+
             "\nnom_utilisateur:"+nom_utilisateur+
             "\nmot_de_passe:"+mot_de_passe);
 
-        modifierPageAccueil("Modification Base de données :<br>Nom du nom_sa : "+ nom_sa +"<br>Localisation : " + localisation+"<br>Nom de la base de données : " + nom_bd+"<br>Nom d'utilisateur : " + nom_utilisateur+"<br>Mot de passe : *");
-        request->send(SPIFFS, "/index.html","text/html");
- 
+        request->redirect("http://"+WiFi.softAPIP().toString()+"/");  
     });
 
     server.on("/config-reseau", HTTP_GET, [](AsyncWebServerRequest *request)
     {
         Serial.println("Requete recue sur /config-reseau");
-        modifierPageReseau();
+        modifierListeReseauxPageReseau();
         Serial.println("Page modifiée");
         request->send(SPIFFS, "/reseau.html","text/html");
         Serial.println("Page envoyée");
@@ -141,9 +131,7 @@ void setupServeurWeb()
             "\nmot_de_passe:"+mot_de_passe);
 
 
-        modifierPageAccueil("Modification Base de données :<br>Nom du reseau : "+ nom_reseau +"<br>Type de connexion : " + type_eap+"<br>Nom d'utilisateur : " + nom_utilisateur+"<br>Identifiant : " + identifiant+"<br>Mot de passe : *");
-        request->send(SPIFFS, "/index.html","text/html");
- 
+        request->redirect("http://"+WiFi.softAPIP().toString()+"/");  
     });
 
     server.on("/config-acces-point", HTTP_POST, [] (AsyncWebServerRequest *request) 
@@ -174,45 +162,29 @@ void setupServeurWeb()
             ecrireFichier("/infoap.txt",
                 "nom_ap:"+ssid+
                 "\nmot_de_passe:"+mot_de_passe);
-            modifierPageAccueil("Modification point d'accès :<br>Nom du reseau : "+ ssid +"<br>Mot de passe : *");
-            request->send(SPIFFS, "/index.html","text/html");
+            request->redirect("http://"+WiFi.softAPIP().toString()+"/"); 
+            String nomAP = recupererValeur("/infoap.txt","nom_ap");
+            String motDePasseAP = recupererValeur("/infoap.txt","mot_de_passe");
+            initReseauStationEtPointAcces();
+            delay(100);
+            creerPointAcces(nomAP,motDePasseAP);
         }
         else
         {
-            modifierPageReseau("Mot de passes différents");
-            request->send(SPIFFS, "/reseau.html","text/html");
+            request->redirect("http://"+WiFi.softAPIP().toString()+"/config-reseau");
         }
-                
-        String nomAP = recupererValeur("/infoap.txt","nom_ap");
-        String motDePasseAP = recupererValeur("/infoap.txt","mot_de_passe");
-        delay(100);
-        Serial.println(nomAP);
-        Serial.println(motDePasseAP);
-        //initialisation reseau
-        initReseauStationEtPointAcces();
-        delay(100);
-        creerPointAcces(nomAP,motDePasseAP);
         
     });
 
     server.onNotFound ( [](AsyncWebServerRequest *request)
     {
-        Serial.println("Requete recue sur non trouvé");
-        modifierPageAccueil();
-        Serial.println("Page modifiée");
-        request->send(SPIFFS, "/index.html","text/html");
-        Serial.println("Page envoyée");
+        request->redirect("http://"+WiFi.softAPIP().toString()+"/");
     });
-}
-
-void ajouterCaptiveRequest()
-{
-    server.addHandler(new CaptiveRequestHandler()).setFilter(ON_AP_FILTER);
 }
 
 void setupServeurDNS()
 {  
-    dnsServer.start(53, "*", WiFi.softAPIP());
+    dnsServer.start(53, "smart-campus.fr", WiFi.softAPIP());
 }
 
 void loopServeurDNS()
