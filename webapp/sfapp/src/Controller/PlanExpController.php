@@ -487,15 +487,15 @@ class PlanExpController extends AbstractController
         throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
     }
 
-    private function recupererEtatsCapteurs(array $listeSa, ReleveService $service) : array
+    private function recupererEtatsCapteurs(array $listeSa, $dateMoins5minet3secondes, ReleveService $service) : array
     {
-        $dateMoisDeCinqMinutes = time() - 5 * 60;
         $listeEtatsCapteurs = [];
         foreach ($listeSa as $sa)
         {
             if ($sa->getEtat() == "Opérationnel")
             {
                 $listeEtatsCapteurs[$sa->getId()] = [];
+
                 $temp = $service->getDernier($sa, "temp");
                 $hum = $service->getDernier($sa, "hum");
                 $co2 = $service->getDernier($sa, "co2");
@@ -504,9 +504,9 @@ class PlanExpController extends AbstractController
                 $dateHum = date_timestamp_get(new DateTime($hum["date"]));
                 $dateCo2 = date_timestamp_get(new DateTime($co2["date"]));
 
-                $listeEtatsCapteurs[$sa->getId()]["temp"] = ($temp["valeur"] != "" && $dateTemp>= $dateMoisDeCinqMinutes);
-                $listeEtatsCapteurs[$sa->getId()]["hum"] = ($hum["valeur"] != "" && $dateHum>= $dateMoisDeCinqMinutes);
-                $listeEtatsCapteurs[$sa->getId()]["co2"] = ($co2["valeur"] != "" && $dateCo2>= $dateMoisDeCinqMinutes);
+                $listeEtatsCapteurs[$sa->getId()]["temp"] = ($temp["valeur"] != "" && $dateTemp>= $dateMoins5minet3secondes);
+                $listeEtatsCapteurs[$sa->getId()]["hum"] = ($hum["valeur"] != "" && $dateHum>= $dateMoins5minet3secondes);
+                $listeEtatsCapteurs[$sa->getId()]["co2"] = ($co2["valeur"] != "" && $dateCo2>= $dateMoins5minet3secondes);
             }
             else
             {
@@ -543,6 +543,7 @@ class PlanExpController extends AbstractController
         $listeEtatsCapteurs = [];
         $choix = "Tous les SA";
         $choixParDefault = 0;
+        date_default_timezone_set("Europe/Paris");
 
         if($formEtats->isSubmitted() && $formEtats->isValid())
         {
@@ -552,7 +553,8 @@ class PlanExpController extends AbstractController
             {
                 case "Tous les SA":
                     $listeSa = $saRepository->findAll();
-                    $listeEtatsCapteurs = $this->recupererEtatsCapteurs($listeSa, $service);
+                    $dateMoins5minet30secondes = time() - 5*60 - 30;
+                    $listeEtatsCapteurs = $this->recupererEtatsCapteurs($listeSa, $dateMoins5minet30secondes, $service);
                     break;
                 case "En cours d'installation":
                     $listeSa = $saRepository->findBy(['etat' => "Installation"]);
@@ -562,7 +564,8 @@ class PlanExpController extends AbstractController
                     break;
                 case "Opérationnels":
                     $listeSa = $saRepository->findBy(['etat' => "Opérationnel"]);
-                    $listeEtatsCapteurs = $this->recupererEtatsCapteurs($listeSa, $service);
+                    $dateMoins5minet30secondes = time() - 5*60 - 30;
+                    $listeEtatsCapteurs = $this->recupererEtatsCapteurs($listeSa, $dateMoins5minet30secondes, $service);
                     break;
                 case "Réparations":
                     $listeSa = $saRepository->findBy(['etat' => "Réparation"]);
@@ -572,7 +575,8 @@ class PlanExpController extends AbstractController
         else
         {
             $listeSa = $saRepository->findAll();
-            $listeEtatsCapteurs = $this->recupererEtatsCapteurs($listeSa, $service);
+            $dateMoins5minet30secondes = time() - 5*60 - 30;
+            $listeEtatsCapteurs = $this->recupererEtatsCapteurs($listeSa, $dateMoins5minet30secondes, $service);
         }
 
         foreach ($listeSa as $sa)
