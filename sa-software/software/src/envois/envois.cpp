@@ -3,17 +3,18 @@
 #include "WiFi.h"
 
 #include "Fichiers/fichierSPIFFS.h"
+#include "Capteurs/presence.h"
+#include "Capteurs/tempEtHum.h"
+#include "Capteurs/qualAir.h"
 
 // Décommenter/Commenter les Serial.println pour voir/ne pas voir les informations de debug en usb
-
-struct Donnees * donnees_ptr = nullptr;
 
 void taskEnvois(void *pvParameters){
     while(1){
         Serial.println("______________________________________");
         Serial.println("Debut de l'envoie des donnees :");
         Serial.println("______________________________________");
-        int codeRetour = envoyer(donnees_ptr);
+        int codeRetour = envoyer();
         if (codeRetour == 0){
             Serial.println("Donnees envoyees");
         }
@@ -23,13 +24,11 @@ void taskEnvois(void *pvParameters){
         }
         Serial.println("______________________________________");
         // 5 minutes - 2 secondes pour laisser le temps à la tâche de récupérer la date (d'après mes tests, la récupération de la date prend 2 secondes de plus que le délai de 5 minutes)
-        vTaskDelay(pdMS_TO_TICKS(30 * 1000));//5 * 60 * 1000 - 2 * 1000)); 
+        vTaskDelay(pdMS_TO_TICKS(5 * 60 * 1000 - 2 * 1000)); 
     }
 }
 
-bool initEnvois(struct Donnees* donnees){
-
-    donnees_ptr = donnees;
+bool initEnvois(){
 
     xTaskHandle envoisTaskHandle;
 
@@ -49,7 +48,7 @@ bool initEnvois(struct Donnees* donnees){
     return true;
 }
 
-int envoyer(struct Donnees* donnees){
+int envoyer(){
     
     Serial.println("Vériication de la connexion au réseau");
     // verification de la connexion au réseau
@@ -71,12 +70,12 @@ int envoyer(struct Donnees* donnees){
     Serial.println("Serialisation des données récupérées");
     
     // recupérer les données
-    sprintf(s_donnees[0], "%.2f", donnees->tempEtHum->temperature); // %2.f pour  2 chiffres après la virgule
-    sprintf(s_donnees[1], "%2.f", donnees->tempEtHum->humidite); // %2.f pour avoir 2 chiffres après la virgule
-    sprintf(s_donnees[2], "%hu", *donnees->co2); // %hu pour avoir un unsigned short
+    sprintf(s_donnees[0], "%.2f", getTemperature()); //donnees->tempEtHum->temperature); // %2.f pour  2 chiffres après la virgule
+    sprintf(s_donnees[1], "%2.f", getHumidite()); //donnees->tempEtHum->humidite); // %2.f pour avoir 2 chiffres après la virgule
+    sprintf(s_donnees[2], "%hu", getCO2()); //*donnees->co2); // %hu pour avoir un unsigned short
 
     // presence est un booléen, on le converti en string
-    if (*donnees->presence == 1){
+    if (getPresence()){//*donnees->presence == 1){
         sprintf(s_donnees[3],  "true");
     }
     else{
@@ -111,9 +110,9 @@ int envoyer(struct Donnees* donnees){
 
     // Décommenter pour avoir les données de connexion à l'api
     // Serial.println("Donnees de connexion :");
-    // Serial.println(donnees->nomBD);
-    // Serial.println(donnees->nomUtilisateurBD);
-    // Serial.println(donnees->pwd);
+    // Serial.println(recupererValeur("/infobd.txt","nom_bd").c_str());
+    // Serial.println(recupererValeur("/infobd.txt","nom_utilisateur").c_str());
+    // Serial.println(recupererValeur("/infobd.txt","mot_de_passe").c_str());
 
     // met un timeout à 7 seconds
     http.setTimeout(7000);
@@ -132,10 +131,6 @@ int envoyer(struct Donnees* donnees){
     http.addHeader("userpass", recupererValeur("/infobd.txt","mot_de_passe").c_str());
     http.addHeader("Content-Type", "application/json");
 
-    Serial.println("nombre de propriété dans le header : "+int(http.headers()));
-    for(int i = 0 ; i < http.headers() ; i++)
-        Serial.println(http.headerName(i) + " : " + http.header(i));
-
     Serial.println("Envoie de chaque donnees");
 
     for(unsigned short i = 0; i < 4; i++){
@@ -152,7 +147,13 @@ int envoyer(struct Donnees* donnees){
                                     "\"}";
 
         Serial.println("Envoie des donnees");
-        
+
+        // Décommenter pour avoir la donnée envoyée à l'api
+        // Serial.println(donneesAEnvoyerStr);
+
+        // Décommenter pour voir la mémoire libre sur l'esp        
+        // Serial.println("Memoire RAM restante : " + String(ESP.getFreeHeap()) + "o");
+
         // Envoie des données
         int codeReponse = http.POST(donneesAEnvoyerStr);
 

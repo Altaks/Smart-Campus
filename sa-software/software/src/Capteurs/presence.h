@@ -2,7 +2,12 @@
 
 /**
  * Fonction permettant d'initialiser la détection de présence
- * @param presence pointeur vers la variable de présence
  * @return void
 */
-void initPresence(bool * presence);
+void initPresence();
+
+/**
+ * Fonction permettant de recupérer la valeur du capteur de présence
+ * @return true si une personne est détecté | false sinon
+*/
+bool getPresence();

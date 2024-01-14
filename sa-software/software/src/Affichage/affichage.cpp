@@ -1,10 +1,14 @@
 #include "affichage.h"
+
 #include "typeDef.h"
+#include "Capteurs/qualAir.h"
+#include "Capteurs/tempEtHum.h"
 #include "Heure/heureLocal.h"
+#include "Reseaux/station.h"
 
 SSD1306Wire * display;
 
-bool initAffichage(struct Donnees* donnees)
+bool initAffichage()
 {
     Serial.println("______________________________________");
     Serial.println("Début de l'initialisation de l'écran :");
@@ -31,14 +35,14 @@ bool initAffichage(struct Donnees* donnees)
     return true;
 }
 
-bool initTacheAffichage(struct Donnees* donnees)
+bool initTacheAffichage()
 {
     xTaskHandle affichageTaskHandle;
     xTaskCreate( //création de la tâche
       taskAffichage,
       "taskTempEtHum",
       10000,
-      (void*)donnees,
+      NULL,
       1,
         &affichageTaskHandle
     );
@@ -46,10 +50,13 @@ bool initTacheAffichage(struct Donnees* donnees)
     return affichageTaskHandle != NULL;
 }
 
-void afficher(struct Donnees * donnees){
+void afficher(PAGE &page){
 
     // reset de l'écran
     display->clear();
+
+    // selectionne la police d'écriture
+    display->setFont(ArialMT_Plain_16);
 
     // affichage de la date et de l'heure
     String dateTime;
@@ -64,72 +71,45 @@ void afficher(struct Donnees * donnees){
 
     display->drawString(0, 0, dateTime);
 
-    // vériication de l'accès aux données
-    if (donnees == nullptr) {
-        display->drawString(0, 25, "Erreur de donnees");
-        display->display();
-        Serial.println("Erreur lors de la récupération des données pour l'affichage");
-        return;
-    }
+    display->drawString(0,48,"IP : " + getIP());
 
     // affichage des données
-    switch (donnees->page) {
+    switch (page) {
         case TEMPERATURE :
-            // vérification de l'accès des données
-            if (donnees->tempEtHum == nullptr) {
-                display->drawString(0, 25, "Temp : Erreur");
-                Serial.println("Erreur lors de la récupération des données de température et d'humidité pour l'affichage");
-                donnees->page = HUMIDITE;
-                break;
-            }
             // vérification de la présence des données
-            if (donnees->tempEtHum->temperature != -1) {
+            if (getTemperature() != -1) {
                 char temp[20];
-                sprintf(temp, "Temp : %.2f°C", donnees->tempEtHum->temperature);
+                sprintf(temp, "Temp : %.2f°C", getTemperature());
                 display->drawString(0, 25, temp);
             }
             else {
                 display->drawString(0, 25, "Temp : N/A");
             }
-            donnees->page = HUMIDITE;
+            page = HUMIDITE;
             break;
         case HUMIDITE :
-            // vérification de l'accès des données
-            if (donnees->tempEtHum == nullptr) {
-                display->drawString(0, 25, "Hum : Erreur");
-                Serial.println("Erreur lors de la récupération des données de température et d'humidité pour l'affichage");
-                donnees->page = CO2;
-                break;
-            }
             // vérification de la présence des données
-            if (donnees->tempEtHum->humidite != -1) {
+            if (getHumidite() != -1) {
                 char temp[17];
-                sprintf(temp, "Hum : %.2f%s", donnees->tempEtHum->humidite, "%");
+                sprintf(temp, "Hum : %.2f%s", getHumidite(), "%");
                 display->drawString(0, 25, temp);
             }
             else {
                 display->drawString(0, 25, "Hum : N/A");
             }
-            donnees->page = CO2;
+            page = CO2;
             break;
         case CO2 :
-            // vérification de l'accès des données
-            if (donnees->co2 == nullptr) {
-                display->drawString(0, 25, "CO2 : Erreur");
-                donnees->page = TEMPERATURE;
-                Serial.println("Erreur lors de la récupération des données de CO2 pour l'affichage");
-                break;
-            }
             // vérification de la présence des données
-            if (*donnees->co2 != -1) {
+            if (getCO2() != -1) {
                 char temp[17];
-                sprintf(temp, "CO2 : %d ppm", *donnees->co2);
+                sprintf(temp, "CO2 : %d ppm", getCO2());
                 display->drawString(0, 25, temp);
             }
             else {
                 display->drawString(0, 25, "CO2 : N/A");
             }
-            donnees->page = TEMPERATURE;
+            page = TEMPERATURE;
         break;
     }
     // affichage des données de la salle
@@ -137,10 +117,11 @@ void afficher(struct Donnees * donnees){
 }
 
 void taskAffichage(void *pvParameters) {
-    struct Donnees * donnees = (struct Donnees *) pvParameters;
+
+    PAGE page = TEMPERATURE;
     while(true){
         delay(3 * 1000);
-        afficher(donnees);
+        afficher(page);
     }
 }
 

@@ -1,29 +1,28 @@
 #include <DNSServer.h>
-#include <WiFi.h>
 #include <AsyncTCP.h>
 #include "ESPAsyncWebServer.h"
 #include "SPIFFS.h"
 
 #include "modifierPageWeb.h"
 #include "serveurWeb.h"
-#include "Reseaux/station.h"
-#include "Reseaux/pointAcces.h"
+
 #include "Fichiers/fichierSPIFFS.h"
+
+#include "Reseaux/station.h"
 
 DNSServer dnsServer;
 AsyncWebServer server(80);
 
 void setupServeurWeb()
 {
-    modifierFormPageConfigbd();
-    modifierFormPageReseau();
-
+    // Permet de recupérer le fichier main
     server.on("/main.css", HTTP_GET, [](AsyncWebServerRequest *request)
     {
         request->send(SPIFFS, "/main.css", "text/css");
         Serial.println("Page envoyée");
     });
 
+    // Permet d'accéder a la page d'accueil
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
     {
         Serial.println("Requete recue sur /");
@@ -31,17 +30,22 @@ void setupServeurWeb()
         Serial.println("Page envoyée");
     });
 
+    // Permet d'accéder a la page de configuration de la base de données
     server.on("/config-base-de-donnees", HTTP_GET, [](AsyncWebServerRequest *request)
     {
         Serial.println("Requete recue sur /config-base-de-donnees");
+        modifierFormPageConfigbd();
         Serial.println("Page modifiée");
         request->send(SPIFFS, "/configbd.html","text/html");
         Serial.println("Page envoyée");
     });
 
+    // Permet de récupérer les informations de la base de données et de les enregistrer dans le fichier /infobd.txt
     server.on("/config-base-de-donnees", HTTP_POST, [] (AsyncWebServerRequest *request) 
     {
         Serial.println("Requete recue sur /config-base-de-donnees");
+        modifierFormPageReseau();
+        
         String nom_sa = ""; 
         String localisation = "";
         String nom_bd = "";
@@ -78,9 +82,10 @@ void setupServeurWeb()
             "\nnom_utilisateur:"+nom_utilisateur+
             "\nmot_de_passe:"+mot_de_passe);
 
-        request->redirect("http://"+WiFi.softAPIP().toString()+"/");  
+        request->redirect("http://"+getIP()+"/");  
     });
 
+    // Permet d'accéder a la page de configuration du réseau
     server.on("/config-reseau", HTTP_GET, [](AsyncWebServerRequest *request)
     {
         Serial.println("Requete recue sur /config-reseau");
@@ -90,6 +95,7 @@ void setupServeurWeb()
         Serial.println("Page envoyée");
     });
 
+    // Permet de récupérer les informations du wifi auquel connecter le SA et de les enregistrer dans le fichier /inforeseau.txt
     server.on("/config-reseau", HTTP_POST, [] (AsyncWebServerRequest *request) 
     {
         Serial.println("Requette recue sur /config-reseau");
@@ -131,9 +137,10 @@ void setupServeurWeb()
             "\nmot_de_passe:"+mot_de_passe);
 
 
-        request->redirect("http://"+WiFi.softAPIP().toString()+"/");  
+        request->redirect("http://"+getIP()+"/");  
     });
 
+    // Permet de récupérer les informations du point d'accès wifi et de les enregistrer dans le fichier /infoap.txt
     server.on("/config-acces-point", HTTP_POST, [] (AsyncWebServerRequest *request) 
     {
         Serial.println("Requette recue sur /config-acces-point");
@@ -162,23 +169,22 @@ void setupServeurWeb()
             ecrireFichier("/infoap.txt",
                 "nom_ap:"+ssid+
                 "\nmot_de_passe:"+mot_de_passe);
-            request->redirect("http://"+WiFi.softAPIP().toString()+"/"); 
+            request->redirect("http://"+getIP()+"/"); 
             String nomAP = recupererValeur("/infoap.txt","nom_ap");
             String motDePasseAP = recupererValeur("/infoap.txt","mot_de_passe");
-            initReseauStationEtPointAcces();
-            delay(100);
-            creerPointAcces(nomAP,motDePasseAP);
+            WiFi.softAP(ssid,mot_de_passe);    
         }
         else
         {
-            request->redirect("http://"+WiFi.softAPIP().toString()+"/config-reseau");
+            request->redirect("http://"+getIP()+"/config-reseau");
         }
         
     });
 
+    // Permet de renvoyer les requetes ou la route n'a pas été initialisé vers la page d'accueil
     server.onNotFound ( [](AsyncWebServerRequest *request)
     {
-        request->redirect("http://"+WiFi.softAPIP().toString()+"/");
+        request->redirect("http://"+getIP()+"/");
     });
 }
 
@@ -195,7 +201,7 @@ void loopServeurDNS()
 void taskServeurDNS(void * parameter){
     while(true){
         loopServeurDNS();
-        vTaskDelay(1000);
+        vTaskDelay(100);
     }
 }
 

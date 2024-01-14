@@ -1,71 +1,57 @@
 #include <Arduino.h>
-#include <WiFi.h>
+
+#include "typeDef.h"
+
+#include "Affichage/affichage.h"
+
 #include "Capteurs/tempEtHum.h"
-#include "Heure/heureLocal.h"
 #include "Capteurs/qualAir.h"
 #include "Capteurs/presence.h"
-#include "Affichage/affichage.h"
-#include "Reseaux/pointAcces.h"
-#include "Reseaux/station.h"
-#include "typeDef.h"
+
 #include "envois/envois.h"
-#include "Serveur/serveurWeb.h"
+
 #include "Fichiers/fichierSPIFFS.h"
 
-TempEtHum* tempEtHum;
-unsigned short* co2;
-PAGE page;
-Donnees* donnees;
-bool * presence;
+#include "Heure/heureLocal.h"
+
+#include "Reseaux/pointAcces.h"
+#include "Reseaux/station.h"
+
+#include "Serveur/serveurWeb.h"
+#include "Serveur/modifierPageWeb.h"
 
 void setup() {
-    tempEtHum = new TempEtHum();
-    co2 = new (unsigned short);
-    page = TEMPERATURE;
-    presence = new (bool);
-    tempEtHum->humidite = 60;
-    tempEtHum->temperature = 21;
-    *presence = false;
-
-    donnees = new Donnees();
-    donnees->tempEtHum = tempEtHum;
-    donnees->co2 = co2;
-    donnees->page;
-    donnees->presence = presence;
-
 
     Serial.begin(9600);
     while(!Serial);
 
     delay(1000);
 
-    //initilaisation système de fichier
+    // Initilaisation système de fichier
     initSystemeFichier();
+    
     delay(100);
     
+    // Récupère les informations du point d'accès 
     String nomAP = recupererValeur("/infoap.txt","nom_ap");
     String motDePasseAP = recupererValeur("/infoap.txt","mot_de_passe");
-    delay(100);
-
-    //initialisation reseau
+    
+    // Initialisation reseau en mode STATION et POINT D'ACCES
     initReseauStationEtPointAcces();
-    delay(100);
     creerPointAcces(nomAP,motDePasseAP);
-    delay(100);
 
     //Initialise le serveur web et le serveur DNS
     setupServeurWeb();
     setupServeurDNS();
-
-    delay(100);
-
     activerServeurDNS();
 
     delay(100);
-    //bool affiche = initAffichage(donnees); //Initialise l'affichage
-    //displayText("Veuillez connecter\nle systeme a un\nréseau");
 
-    delay(100);
+    //Initialise l'affichage
+    bool affiche = initAffichage(); 
+    
+    //Affichage du nom de l'AP et de l'adresse IP a utilisé
+    displayText("Nom du Wifi : \n" + nomAP+"\nIP : "+getIP(),0,10);
 
     String nomReseau;
 
@@ -92,7 +78,6 @@ void setup() {
             if(connexionWifi(nomReseau, wpa2_auth_method_t(type_eap), password ,identifiant, nomUtilisateur))
             {
                 Serial.println("Connexion a "+nomReseau+" Reussie");
-                //initialise l'heure s'il arrive a se connecter
             }
             else
             {
@@ -102,29 +87,27 @@ void setup() {
     }
     while(!estConnecte(nomReseau));
     
+    // Initialise l'heure (peut prendre quelques secondes avant de se connecté au serveur ntp)
     initHeure();
-    
+
+    // Désactive le point d'accès wifi (le serveur reste disponible en se connectant au même routeur)
+    initReseauStation();
+
+    // Active l'enregistrement périodique des reseaux wifi détectés par l'esp dans le fichier /listereseaux.txt
     activerEnregistrerListeReseau();
 
-    delay(1000);
+    // Initialise les capteurs 
+    initTempEtHum();
+    initQualAir();
+    initPresence();
 
-    //Initialise la tâche température et humidité 
-    //initTempEtHum(tempEtHum);
+    // Active l'affichage carrousel  
+    initTacheAffichage();
 
-    delay(1000);
+    // Initialise l'envoi des données
+    bool envoie = initEnvois(); 
 
-    //Initialise la tâche de CO2
-    //initQualAir(co2);
-
-    delay(1000);
-    //initPresence(presence);
-
-    delay(1000);
-    // initTacheAffichage(donnees);
-
-    delay(1000);
-    bool envoie = initEnvois(donnees); //Initialise l'envoi des données
-
+    // Affiche le contenu des fichiers contenant les informations a conservé dans le SA
     afficherContenuFichier("/infoap.txt");
     afficherContenuFichier("/infobd.txt");
     afficherContenuFichier("/inforeseau.txt");
@@ -133,8 +116,5 @@ void setup() {
 
 void loop() 
 {    
-    Serial.println();
-    Serial.println("Memoire RAM restante : " + String(ESP.getFreeHeap()) + "o");
-    Serial.println();
-    delay(10000);
+    delay(60 * 1000);
 }

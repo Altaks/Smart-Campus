@@ -1,14 +1,26 @@
 //
 // Created by Adrien on 20/12/23.
 //
-
-#include <WiFi.h>
 #include <Arduino.h>
 
 #include "station.h"
+
 #include "typeDef.h"
 #include "Fichiers/fichierSPIFFS.h"
 #include "Heure/heureLocal.h"
+
+void initReseauStation()
+{
+    // Pour pouvoir connecter le SA a un wifi
+    WiFi.mode(WIFI_STA);
+    WiFi.disconnect();
+    WiFi.begin();
+}
+
+String getIP()
+{
+    return (WiFi.getMode() == WIFI_STA)? WiFi.localIP().toString():WiFi.softAPIP().toString();
+}
 
 void taskEnregistrerListeReseau(void * parameter){
     while(true){

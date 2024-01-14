@@ -1,20 +1,20 @@
 #include <SPIFFS.h>
-#include "WiFi.h"
+#include "Reseaux/station.h"
 #include "Fichiers/fichierSPIFFS.h"
 
 #include "modifierPageWeb.h"
 
 void modifierFormPageConfigbd()
 {
-    modifierFichier("/configbd.html", "<!--DebutFormHead-->", "<!--FinFormHead-->", "<form action=\"http://" + WiFi.softAPIP().toString() + "/config-base-de-donnees\" method=\"POST\">");
+    String ip = getIP() ;
+    modifierFichier("/configbd.html", "<!--DebutFormHead-->", "<!--FinFormHead-->", "<form action=\"http://" + ip + "/config-base-de-donnees\" method=\"POST\">");
 }
 
 void modifierFormPageReseau()
 {
-    modifierFichier("/reseau.html", "<!--DebutFormHeadReseau-->", "<!--FinFormHeadReseau-->", "<form action=\"http://" + WiFi.softAPIP().toString() + "/config-reseau\" method=\"POST\">");
-    Serial.println("reseau.html head formReseau modifié");
-    modifierFichier("/reseau.html", "<!--DebutFormHeadAp-->", "<!--FinFormHeadAp-->", "<form action=\"http://" + WiFi.softAPIP().toString() + "/config-acces-point\" method=\"POST\">");
-    Serial.println("reseau.html head formAp modifié");
+    String ip = getIP() ;
+    modifierFichier("/reseau.html", "<!--DebutFormHeadReseau-->", "<!--FinFormHeadReseau-->", "<form action=\"http://" + ip + "/config-reseau\" method=\"POST\">");
+    modifierFichier("/reseau.html", "<!--DebutFormHeadAp-->", "<!--FinFormHeadAp-->", "<form action=\"http://" + ip + "/config-acces-point\" method=\"POST\">");
 }
 
 void modifierListeReseauxPageReseau()

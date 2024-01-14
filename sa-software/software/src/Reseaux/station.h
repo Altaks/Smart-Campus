@@ -7,6 +7,18 @@
 
 // Inclusion des librairies principales
 #include <WString.h>
+#include <WiFi.h>
+
+/**
+ * Initialise les paramètres wifi en mode station
+ */
+void initReseauStation();
+
+/**
+ * Permet de recupérer l'adresse IP du SA
+ * @return l'adresse IP du SA sur le reseau
+*/
+String getIP();
 
 /**
  * Enregistre la liste des reseaux dans le fichier listereseaux.txt

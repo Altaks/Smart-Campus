@@ -18,12 +18,4 @@ enum PAGE {
     CO2
 };
 
-struct Donnees{
-    TempEtHum* tempEtHum;
-    unsigned short * co2;
-    bool * presence;
-    PAGE page;
-};
-
-
 #endif

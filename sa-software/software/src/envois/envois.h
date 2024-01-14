@@ -11,10 +11,9 @@
 /**
  * Fonction permettant d'initialiser l'envois des données
  * Créer une tâche qui envoie les données toutes les 5 minutes
- * @param donnees pointeur vers la structure de données
  * @return true si l'initialisation s'est bien passée, false sinon
 */
-bool initEnvois(struct Donnees*);
+bool initEnvois();
 
 /**
  * Fonction permettant d'envoyer les données
@@ -25,10 +24,9 @@ void taskEnvois(void *pvParameters);
 
 /**
  * Fonction permettant d'envoyer les données
- * @param donnees pointeur vers la structure de données
  * @return 0 si l'envoi s'est bien passé, le code d'erreur http si positif ou le code d'erreur interne sinon
 */
-int envoyer(struct Donnees*);
+int envoyer();
 
 /**
  * Fonction permettant de convertir un code d'erreur en String

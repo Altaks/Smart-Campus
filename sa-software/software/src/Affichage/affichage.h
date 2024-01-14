@@ -9,15 +9,14 @@
  * Initialise l'affichage 
  * @return true si l'initialisation s'est bien passée
 */
-bool initAffichage(struct Donnees*);
+bool initAffichage();
 
 /**
  * @brief Initialise la tâche d'affichage
  * Initialise la tâche d'affichage
  * @return true si l'initialisation s'est bien passée
- * @param donnees Pointeur vers les données
 */
-bool initTacheAffichage(struct Donnees*);
+bool initTacheAffichage();
 
 /**
  * @brief Tâche d'affichage
@@ -28,9 +27,9 @@ void taskAffichage(void *pvParameters);
 /**
  * @brief Affiche les données sur l'écran
  * Affiche les données sur l'écran
- * @param donnees Pointeur vers les données
+ * @param PAGE Page a afficher
 */
-void afficher(struct Donnees * donnees);
+void afficher(PAGE &);
 
 int displayText(String text, int x = 0, int y = 0, int fontSize = 16, bool centered = false);
 

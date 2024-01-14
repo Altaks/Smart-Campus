@@ -23,10 +23,12 @@
 /**
  * Fonction permettant d'initialiser le capteur de qualité de l'air
  */
-void initQualAir(unsigned short * co2);
+void initQualAir();
 
 /**
- * Fonction permettant de récupérer la qualité de l'air et l'injecter dans la variable globale co2
- */
-void taskQualAir(void * pvParameters);
+ * Fonction permettant de recupérer la valeur du capteur de CO2
+ * @return La quantité de CO2 mesurer par le capteur de CO2
+*/
+int getCO2();
+
 #endif //SOFTWARE_QUALAIR_H
