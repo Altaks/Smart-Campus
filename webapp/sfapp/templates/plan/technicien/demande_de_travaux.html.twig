@@ -32,6 +32,34 @@
         </div>
     </div>
 
+    {% if demandeTravaux.Type == "Réparation" %}
+        <div id="envoyer-mail" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+            Envoyer un mail depuis la boite mail par défaut
+            <div class="tooltip-arrow" data-popper-arrow></div>
+        </div>
+        <div class="relative overflow-x-auto lg:max-w-7xl mx-auto mt-5">
+            <p class="flex items-center p-4 mb-4 text-yellow-800 rounded-xl bg-yellow-100 dark:bg-gray-800 dark:text-yellow-300" id="commentaire">
+        {% if  demandeTravaux.EmailDemandeur is not null and demandeTravaux.Commentaire is not null %}
+
+                Demande de {{ demandeTravaux.EmailDemandeur }}
+                <a data-tooltip-target="envoyer-mail" class="ml-2" href="mailto:{{ demandeTravaux.EmailDemandeur }}? &subject=Erreur Smart Campus de la salle {{ salle.nom }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(0, 0, 0, 1);transform: ;msFilter:;"><path d="m21.426 11.095-17-8A.999.999 0 0 0 3.03 4.242L4.969 12 3.03 19.758a.998.998 0 0 0 1.396 1.147l17-8a1 1 0 0 0 0-1.81zM5.481 18.197l.839-3.357L12 12 6.32 9.16l-.839-3.357L18.651 12l-13.17 6.197z"></path></svg>
+                </a>
+                : {{ demandeTravaux.Commentaire }}
+        {% elseif  demandeTravaux.EmailDemandeur is not null %}
+                Demande de {{ demandeTravaux.EmailDemandeur }}
+                <a class="ml-2" href="mailto:{{ demandeTravaux.EmailDemandeur }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(0, 0, 0, 1);transform: ;msFilter:;"><path d="m21.426 11.095-17-8A.999.999 0 0 0 3.03 4.242L4.969 12 3.03 19.758a.998.998 0 0 0 1.396 1.147l17-8a1 1 0 0 0 0-1.81zM5.481 18.197l.839-3.357L12 12 6.32 9.16l-.839-3.357L18.651 12l-13.17 6.197z"></path></svg>
+                </a>
+        {% elseif demandeTravaux.Commentaire is not null %}
+                {{ demandeTravaux.Commentaire }}
+        {% endif %}
+            </p>
+        </div>
+    {% endif %}
+
+
+
     <div class="max-w-screen-xl w-5/6 mx-auto">
         <h2 class="mt-12 mb-4 text-3xl">Relevés</h2>
         {% if listeReleves is not null %}

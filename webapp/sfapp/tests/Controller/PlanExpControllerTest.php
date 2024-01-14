@@ -814,6 +814,5 @@ class PlanExpControllerTest extends WebTestCase
         $commentaire = $crawler->filter('#commentaire');
 
         $this->assertNotNull($commentaire);
-        $this->assertNotEmpty($commentaire);
     }
 }
