@@ -794,4 +794,26 @@ class PlanExpControllerTest extends WebTestCase
         // Assertion de rediction vers la page d'accueil
         $this->assertResponseRedirects('/plan/lister-sa', 302);
     }
+
+    public function test_liste_demande_travaux_technicien_commentaire_present(){
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+
+        $demandeTravauxRepository = static::getContainer()->get(DemandeTravauxRepository::class);
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+
+        $client->loginUser($testUser);
+
+        $demande = $demandeTravauxRepository->findOneBy([
+            'type' => 'Installation',
+            'terminee' => false
+        ]);
+
+        $crawler = $client->request('GET', '/plan/demande-travaux/' . $demande->getId());
+
+        $commentaire = $crawler->filter('#commentaire');
+
+        $this->assertNotNull($commentaire);
+        $this->assertNotEmpty($commentaire);
+    }
 }
