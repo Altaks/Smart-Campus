@@ -15,6 +15,12 @@
 void initHeure();  
 
 /**
+ * Permet de savoir si la date a été initialisée
+ * @return true si la date est initilisée | false sinon
+*/
+bool dateEstInitilaisee();
+
+/**
  * Permet de recupérer la date actuelle
  * @return la date actuelle au format "YYYY-MM-DD hh:mm:ss" || "Date Error" si la date n'est pas accessible
 */

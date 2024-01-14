@@ -14,6 +14,12 @@ void initHeure()
     }
 }
 
+bool dateEstInitilaisee()
+{
+    struct tm timeinfo;
+    return getLocalTime(&timeinfo, 0);
+}
+
 String getDate()
 {
     struct tm timeinfo;

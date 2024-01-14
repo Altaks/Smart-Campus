@@ -89,7 +89,16 @@ void setup() {
     
     // Initialise l'heure (peut prendre quelques secondes avant de se connecté au serveur ntp)
     initHeure();
+    Serial.print("Initilisation de la date en cours");
+    displayText("Initilisation de la\ndate en cours...");
 
+    while (! dateEstInitilaisee())
+    {
+        Serial.print(".");
+        delay(250);
+    }
+    Serial.println();
+    
     // Désactive le point d'accès wifi (le serveur reste disponible en se connectant au même routeur)
     initReseauStation();
 
