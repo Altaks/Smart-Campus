@@ -141,81 +141,89 @@ class PublicControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h1', 'Veuillez choisir une salle');
     }
 
-     /*public function test_releves_alertes_et_conseils(): void
+     public function test_releves_alertes_et_conseils(): void
     {
         $client = static::createClient();
 
         $salleRepository = static ::getContainer()->get(SalleRepository::class);
-        $salle = $salleRepository->findOneBy(['nom' => 'D206']);
+        $salleSaOperationnel = $salleRepository->findAllSallesAvecSAOperationnel();
 
-        $crawler = $client->request('POST', '/releves', [
-            'form[salle]' => $salle->getId()
-        ]);
-
-        $crawler = $client->submitForm('submit', [
-            'form[salle]' => $salle->getId()
-        ]);
+        $client->request('GET', '/releves');
 
         $this->assertResponseIsSuccessful();
 
-        $this->assertEquals(0,$crawler->filter('form')->count());
+        $crawler = $client->getCrawler();
 
-        $conseilTemp = $crawler->filter('#conseilTemp');
-        $conseilHum = $crawler->filter('#conseilHum');
-        $conseilQual = $crawler->filter('#conseilQual');
-        $alerteTemp = $crawler->filter('#alerteTemp');
-        $alerteHum = $crawler->filter('#alerteHum');
-        $alerteQual = $crawler->filter('#alerteQual');
+        foreach ($salleSaOperationnel as $salle)
+        {
+            // select the form of a select element
+            $form = $crawler->filter('form[name="form"]')->form(); // il faut récupérer le formulaire symfony avec le nom qui lui a été donné
+            $form['form[salle]'] = $salle->getId(); // tu lui donne les infos que tu veux avec le nom des éléments du formulaire
 
-        $seuilService = new SeuilService();
-        $seuils = $seuilService->getSeuils($client->getContainer()->get('doctrine'));
+            $client->submit($form);
 
-        $relevesService = new  ReleveService();
-        $relevesTemp = $relevesService->getDernier($salle->getSystemeAcquisition(),'temp')['valeur'];
-        $relevesHum = $relevesService->getDernier($salle->getSystemeAcquisition(),'hum')['valeur'];
-        $relevesQual = $relevesService->getDernier($salle->getSystemeAcquisition(),'co2')['valeur'];
+            $this->assertResponseIsSuccessful();
 
-        #if ($conseilTemp->count() != 0 && $alerteTemp->count() != 0) {
-            if ($seuils['temp_min'] > $relevesTemp) {
-                $this->assertEquals('Il est conseillé de monter le chauffage et de fermer les fenêtres', $conseilTemp->text());
-                $this->assertEquals('La température de la salle est trop basse', $alerteTemp->text());
-            }
-            else if ($seuils['temp_max'] < $relevesTemp) {
-                $this->assertEquals('Il est conseillé de baisser le chauffage et d\'ouvrir les fenêtres', $conseilTemp->text());
-                $this->assertEquals('La température de la salle est trop élevé', $alerteTemp->text());
-            }
-        #}
-        else {
-            $this->assertGreaterThan($seuils['temp_min'], $relevesTemp);
-            $this->assertLessThan($seuils['temp_max'], $relevesTemp);
-        }
+            $crawler = $client->getCrawler();
 
-        if ($conseilHum->count() != 0) {
-            if ($seuils['humidite_max'] < $relevesHum) {
-                $this->assertEquals('Il est conseillé de fermer les fenêtres', $conseilHum->text());
-                $this->assertEquals('Le niveau d\'humidité de la salle et trop élevé', $alerteHum->text());
-            }
-        }
-        else {
-            $this->assertLessThan($seuils['humidite_max'], $relevesHum);
-        }
+            $conseilTemp = $crawler->filter('#conseilTemp');
+            $conseilHum = $crawler->filter('#conseilHum');
+            $conseilQual = $crawler->filter('#conseilQual');
+            $alerteTemp = $crawler->filter('#alerteTemp');
+            $alerteHum = $crawler->filter('#alerteHum');
+            $alerteQual = $crawler->filter('#alerteQual');
 
-        if ($conseilQual->count() != 0) {
-            if ($seuils['co2_premier_palier'] < $relevesQual) {
-                $this->assertEquals('Il est conseillé d\'aérer la salle', $conseilQual->text());
+            $seuilService = new SeuilService();
+            $seuils = $seuilService->getSeuils($client->getContainer()->get('doctrine'));
 
-                if ($seuils['co2_second_palier'] > $relevesQual) {
-                    $this->assertEquals('La qualité de l\'air est mauvaise', $alerteQual->text());
+            $relevesService = new  ReleveService();
+            $relevesTemp = $relevesService->getDernier($salle->getSystemeAcquisition(),'temp')['valeur'];
+            $relevesHum = $relevesService->getDernier($salle->getSystemeAcquisition(),'hum')['valeur'];
+            $relevesQual = $relevesService->getDernier($salle->getSystemeAcquisition(),'co2')['valeur'];
+
+            if ($conseilTemp->count() != 0 && $alerteTemp->count() != 0) {
+                if ($seuils['temp_min'] > $relevesTemp) {
+                    $this->assertEquals('Il est conseillé de monter le chauffage et de fermer les fenêtres', $conseilTemp->text());
+                    $this->assertEquals('La température de la salle est trop basse', $alerteTemp->text());
                 }
-                else {
-                    $this->assertEquals('La qualité de l\'air est très mauvaise', $alerteQual->text());
+                else if ($seuils['temp_max'] < $relevesTemp) {
+                    $this->assertEquals('Il est conseillé de baisser le chauffage et d\'ouvrir les fenêtres', $conseilTemp->text());
+                    $this->assertEquals('La température de la salle est trop élevé', $alerteTemp->text());
                 }
             }
+            else {
+                $this->assertGreaterThan($seuils['temp_min'], $relevesTemp);
+                $this->assertLessThan($seuils['temp_max'], $relevesTemp);
+            }
+
+            if ($conseilHum->count() != 0) {
+                if ($seuils['humidite_max'] < $relevesHum) {
+                    $this->assertEquals('Il est conseillé de fermer les fenêtres', $conseilHum->text());
+                    $this->assertEquals('Le niveau d\'humidité de la salle et trop élevé', $alerteHum->text());
+                }
+            }
+            else {
+                $this->assertLessThan($seuils['humidite_max'], $relevesHum);
+            }
+
+            if ($conseilQual->count() != 0) {
+                if ($seuils['co2_premier_palier'] < $relevesQual) {
+                    $this->assertEquals('Il est conseillé d\'aérer la salle', $conseilQual->text());
+
+                    if ($seuils['co2_second_palier'] > $relevesQual) {
+                        $this->assertEquals('La qualité de l\'air est mauvaise', $alerteQual->text());
+                    }
+                    else {
+                        $this->assertEquals('La qualité de l\'air est très mauvaise', $alerteQual->text());
+                    }
+                }
+            }
+            else {
+                $this->assertLessThan($seuils['co2_premier_palier'], $relevesQual);
+            }
         }
-        else {
-            $this->assertLessThan($seuils['co2_premier_palier'], $relevesQual);
-        }
-    }*/
+
+    }
 
     public function test_signaler_erreur_requette_avec_utilisateur_connecte_en_temps_que_technicien(): void
     {
