@@ -8,6 +8,11 @@ void modifierFormPageConfigbd()
 {
     String ip = getIP() ;
     modifierFichier("/configbd.html", "<!--DebutFormHead-->", "<!--FinFormHead-->", "<form action=\"http://" + ip + "/config-base-de-donnees\" method=\"POST\">");
+    modifierFichier("/configbd.html","<!--DebutNomSA-->", "<!--FinNomSA-->","<input type=\"text\" name=\"nom_sa\" id=\"nom_sa\" value=\""+recupererValeur("/infobd.txt","nom_sa")+"\">");
+    modifierFichier("/configbd.html","<!--DebutLocalisation-->", "<!--FinLocalisation-->","<input type=\"text\" name=\"localisation\" id=\"localisation\" value=\""+recupererValeur("/infobd.txt","localisation")+"\">");
+    modifierFichier("/configbd.html","<!--DebutNomBd-->", "<!--FinNomBd-->","<input type=\"text\" name=\"nom_bd\" id=\"nom_bd\" value=\""+recupererValeur("/infobd.txt","nom_bd")+"\">");
+    modifierFichier("/configbd.html","<!--DebutNomUtilisateur-->", "<!--FinNomUtilisateur-->","<input type=\"text\" name=\"nom_utilisateur\" id=\"nom_utilisateur\" value=\""+recupererValeur("/infobd.txt","nom_utilisateur")+"\">");
+    modifierFichier("/configbd.html","<!--DebutMotDePasse-->", "<!--FinMotDePasse-->","<input type=\"password\" name=\"mot_de_passe\" id=\"mot_de_passe\" value=\""+recupererValeur("/infobd.txt","mot_de_passe")+"\">");
 }
 
 void modifierFormPageReseau()

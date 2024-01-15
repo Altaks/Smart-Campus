@@ -84,6 +84,7 @@ void setup() {
                 Serial.println("Echec de la connexion a "+nomReseau);
             }
         }
+        delay(1000);
     }
     while(!estConnecte(nomReseau));
     

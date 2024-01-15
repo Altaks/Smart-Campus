@@ -40,6 +40,7 @@ String recupererValeur(String nomFichier, String nomValeur);
  * Vérifie si un texte est trouvable dans un fichier donné
  * @param nomFichier nom du fichier
  * @param texte texte a chercher
+ * @return true si le texte est trouvable dans le fichier | false sinon
 */
 bool estDansFichier(String nomFichier, String texte);
 
