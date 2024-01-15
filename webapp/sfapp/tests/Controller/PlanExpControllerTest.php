@@ -815,4 +815,112 @@ class PlanExpControllerTest extends WebTestCase
 
         $this->assertNotNull($commentaire);
     }
+
+    public function test_demande_reparation_technicien_sa_valide(){
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+        $systemeAcquisitionRepository = static::getContainer()->get(SystemeAcquisitionRepository::class);
+
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+        $sa = new SystemeAcquisition();
+        $sa->setNom("ESP-999");
+        $sa->setBaseDonnees("sae34bdk1eq1");
+        $sa->setEtat("Opérationnel");
+
+        $salle = new Salle();
+        $salle->setNom("X002");
+        $salle->setBatiment("Bâtiment X");
+        $salle->setOrientation("No");
+        $salle->setNombrePorte(1);
+        $salle->setNombreFenetre(6);
+        $salle->setContientPc(false);
+        $salle->setSystemeAcquisition($sa);
+
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $entityManager->persist($salle);
+        $entityManager->persist($sa);
+        $entityManager->flush();
+
+        $sa = $systemeAcquisitionRepository->findOneBy(['nom' => 'ESP-999']);
+        $salle = $sa->getSalle();
+
+        $client->loginUser($testUser);
+
+        $crawler = $client->request('GET', '/signaler-erreur/' . $salle->getId());
+
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton('submit')->form();
+        $form['form[commentaire]'] = 'Erreur de test';
+        $form['form[emailDemandeur]'] = 'jmalki@exemple.com';
+
+        $client->submit($form);
+
+        $this -> assertResponseRedirects('/plan/lister-sa', 302);
+
+        $sql = "DELETE FROM salle WHERE nom = 'X002'";
+        $stmt = $entityManager->getConnection()->prepare($sql);
+        $stmt->execute();
+
+        $sql = "DELETE FROM systeme_acquisition WHERE nom = 'ESP-999'";
+        $stmt = $entityManager->getConnection()->prepare($sql);
+        $stmt->execute();
+    }
+
+    public function test_demande_reparation_technicien_sa_invalide()
+    {
+        $client = static::createClient();
+        $userRepository = static::getContainer()->get(UtilisateurRepository::class);
+
+        $testUser = $userRepository->findOneBy(['identifiant' => 'jmalki']);
+        $client->loginUser($testUser);
+
+        $sa = new SystemeAcquisition();
+        $sa->setNom("ESP-999");
+        $sa->setBaseDonnees("sae34bdk1eq1");
+        $sa->setEtat("Non installé");
+
+        $salle = new Salle();
+        $salle->setNom("X002");
+        $salle->setBatiment("Bâtiment X");
+        $salle->setOrientation("No");
+        $salle->setNombrePorte(1);
+        $salle->setNombreFenetre(6);
+        $salle->setContientPc(false);
+        $salle->setSystemeAcquisition($sa);
+
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $entityManager->persist($salle);
+        $entityManager->persist($sa);
+        $entityManager->flush();
+
+        $client->request('GET', '/signaler-erreur/' . $salle->getId() . "/1");
+
+        $this->assertResponseRedirects('/plan/lister-sa', 302);
+        $this->assertResponseStatusCodeSame(302);
+
+        $sa->setEtat("Réparation");
+        $entityManager->persist($sa);
+        $entityManager->flush();
+
+        $crawler = $client->request('GET', '/signaler-erreur/' . $salle->getId() . "/1");
+        $this->assertResponseIsSuccessful();
+
+
+        $sa->setEtat("Installation");
+        $entityManager->persist($sa);
+        $entityManager->flush();
+
+        $client->request('GET', '/signaler-erreur/' . $salle->getId() . "/1");
+        $this->assertResponseIsSuccessful();
+
+
+        $sql = "DELETE FROM salle WHERE nom = 'X002'";
+        $stmt = $entityManager->getConnection()->prepare($sql);
+        $stmt->execute();
+
+        $sql = "DELETE FROM systeme_acquisition WHERE nom = 'ESP-999'";
+        $stmt = $entityManager->getConnection()->prepare($sql);
+        $stmt->execute();
+    }
 }
