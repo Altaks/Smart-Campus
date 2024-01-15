@@ -22,7 +22,7 @@
             <br>
             <div class="wrap">
                 <div>
-                    <label for="">Choisir un résesau</label>
+                    <label for="nom_reseau">Choisir un résesau</label>
                     <select name="nom_reseau" id="nom_reseau">
                         <!--ListeReseaux-->
                         <option value="Livebox">Livebox</option>
@@ -32,7 +32,7 @@
                     </select>
                 </div>
                 <div>
-                    <label for="">Type de résesau</label>
+                    <label for="type_eap">Type de résesau</label>
                     <select name="type_eap" id="type_eap">
                         <option value="0">TLS</option>
                         <option value="1">PEAP</option>
@@ -40,12 +40,14 @@
                     </select>
                 </div>
             </div>
-            <label for="">Nom d'utilisateur</label>
-            <input type="text" name="nom_utilisateur" id="nom_utilisateur">
-            <br>
-            <label for="">Identifiant</label>
-            <input type="text" name="identifiant" id="identifiant">
-            <br>
+            <div id="div_id_nom_util" class="hidden">
+                <label for="">Nom d'utilisateur</label>
+                <input type="text" name="nom_utilisateur" id="nom_utilisateur">
+                <br>
+                <label for="">Identifiant</label>
+                <input type="text" name="identifiant" id="identifiant">
+                <br>
+            </div>
             <label for="">Mot de passe</label>
             <input type="password" name="mot_de_passe" id="mot_de_passe">
             <br>
@@ -73,5 +75,29 @@
             <input type="submit" value="Valider la reconfiguration">
         </form>
     </div>
+    <script >
+        let type_eap = document.getElementById('type_eap');
+
+        window.onload = changementEap;
+        type_eap.addEventListener("change", changementEap);
+        function changementEap(){
+            type_eap = document.getElementById('type_eap');
+            let div_id_nom_util = document.getElementById('div_id_nom_util');
+            console.log(div_id_nom_util)
+
+            console.log(type_eap.options[type_eap.selectedIndex].value)
+            if(type_eap.options[type_eap.selectedIndex].value == 0)
+            {
+                div_id_nom_util.classList.add("hidden");
+                div_id_nom_util.classList.remove("visible");  
+            }
+            else
+            {
+                div_id_nom_util.classList.remove("hidden");
+                div_id_nom_util.classList.add("visible");  
+            }
+        }
+
+    </script>
 </body>
 </html>
