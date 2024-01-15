@@ -172,7 +172,7 @@ void setupServeurWeb()
             request->redirect("http://"+getIP()+"/"); 
             String nomAP = recupererValeur("/infoap.txt","nom_ap");
             String motDePasseAP = recupererValeur("/infoap.txt","mot_de_passe");
-            WiFi.softAP(ssid,mot_de_passe);    
+            if(WiFi.getMode() != WIFI_STA) WiFi.softAP(ssid,mot_de_passe);    
         }
         else
         {
