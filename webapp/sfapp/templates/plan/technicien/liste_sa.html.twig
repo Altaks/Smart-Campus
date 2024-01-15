@@ -155,6 +155,19 @@
                             {% endif %}
                         </td>
                         <td class="py-4 flex flex-row justify-center">
+
+                            {% if systemeAcquisition.etat == "Opérationnel" %}
+                                <a class="" data-tooltip-target="tooltip-erreur-{{systemeAcquisition.id}}" href="/signaler-erreur/{{ systemeAcquisition.salle.id }}/1">
+                                    <box-icon name='bug' type='solid' color='#ff9b00' ></box-icon>
+                                </a>
+
+                                <div id="tooltip-erreur-{{systemeAcquisition.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                    Signaler une erreur
+                                    <div class="tooltip-arrow" data-popper-arrow></div>
+                                </div>
+                                <div class="mx-2"></div>
+                            {% endif %}
+
                             <a data-tooltip-target="tooltip-delete-{{systemeAcquisition.id}}" href="/plan/retirer-sa/{{ systemeAcquisition.id }}">
                                 <box-icon name='trash' type='solid' color='rgba(255,0,0,0.85)'></box-icon>
                             </a>
@@ -183,7 +196,12 @@
                         <th scope="col" class="px-6 py-3">
                             Etat des capteurs
                         </th>
+                        <th scope="col" class="px-6 py-3">
+                        </th>
                     {% endif %}
+                    <th scope="col" class="py-3 text-center">
+                        Actions
+                    </th>
                 </tr>
                 </thead>
                 <thead>
@@ -238,7 +256,32 @@
                                 </div>
                             {% endif %}
                         </td>
+                        <td></td>
                     {% endif %}
+
+                    <td class="py-4 flex flex-row justify-center">
+
+                        {% if systemeAcquisition.etat == "Opérationnel" %}
+                            <a class="" data-tooltip-target="tooltip-erreur-{{systemeAcquisition.id}}" href="/signaler-erreur/{{ systemeAcquisition.salle.id }}/1">
+                                <box-icon name='bug' type='solid' color='#ff9b00' ></box-icon>
+                            </a>
+
+                            <div id="tooltip-erreur-{{systemeAcquisition.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                Signaler une erreur
+                                <div class="tooltip-arrow" data-popper-arrow></div>
+                            </div>
+                            <div class="mx-2"></div>
+                        {% endif %}
+
+                        <a data-tooltip-target="tooltip-delete-{{systemeAcquisition.id}}" href="/plan/retirer-sa/{{ systemeAcquisition.id }}">
+                            <box-icon name='trash' type='solid' color='rgba(255,0,0,0.85)'></box-icon>
+                        </a>
+
+                        <div id="tooltip-delete-{{systemeAcquisition.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                            Supprimer le SA
+                            <div class="tooltip-arrow" data-popper-arrow></div>
+                        </div>
+                    </td>
                 </tr>
                 {% endfor %}
 
@@ -247,6 +290,9 @@
                 <tr>
                     <th scope="col" class="px-6 py-3">
                         Nom
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-center">
+                        Actions
                     </th>
                 </tr>
                 </thead>
@@ -257,6 +303,16 @@
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ systemeAcquisition.nom }}
                         </th>
+                        <td class="py-4 flex flex-row justify-center">
+                            <a data-tooltip-target="tooltip-delete-{{systemeAcquisition.id}}" href="/plan/retirer-sa/{{ systemeAcquisition.id }}">
+                                <box-icon name='trash' type='solid' color='rgba(255,0,0,0.85)'></box-icon>
+                            </a>
+
+                            <div id="tooltip-delete-{{systemeAcquisition.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                Supprimer le SA
+                                <div class="tooltip-arrow" data-popper-arrow></div>
+                            </div>
+                        </td>
                     </tr>
                 {% endfor %}
 
