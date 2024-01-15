@@ -617,6 +617,18 @@ class PlanExpController extends AbstractController
             $listeEtatsCapteurs = $this->recupererEtatsCapteurs($listeSa, $dateMoins5minet30secondes, $service);
         }
 
+        foreach ($listeSa as $sa)
+        {
+            if ($sa->getEtat() == "Installation" || $sa->getEtat() == "Réparation")
+            {
+                $dt = $demandeTravauxRepository->findOneBy(['systemeAcquisition' => $sa, 'type' => $sa->getEtat(), 'terminee' => false]);
+
+                if ($dt != null) {
+                    $listeSalleSaIntall[$sa->getId()] = $dt->getSalle();
+                }
+            }
+        }
+
 
         usort($listeSa, "self::comparaison_etat_sa");
 
@@ -627,7 +639,7 @@ class PlanExpController extends AbstractController
             'choix' => $choix,
             'defaut' => $choixParDefault,
             'listeEtatCapteurs' => $listeEtatsCapteurs,
-            'listeSalleSaIntall' => $listeSalleSaIntall
+            'listeSalleSaDT' => $listeSalleSaIntall
         ]);
     }
 

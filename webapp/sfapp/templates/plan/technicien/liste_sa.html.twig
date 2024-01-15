@@ -65,15 +65,15 @@
                             {{ systemeAcquisition.nom }}
                         </th>
                         <td class="py-4">
-                            {% if systemeAcquisition.etat == 'Installation' %}
-                                {{ attribute(listeSalleSaIntall, systemeAcquisition.id).nom|default('-') }}
+                            {% if systemeAcquisition.etat == 'Installation' or (systemeAcquisition.etat == 'Réparation' and systemeAcquisition.Salle is null )%}
+                                {{ attribute(listeSalleSaDT, systemeAcquisition.id).nom|default('-') }}
                             {% else %}
                                 {{ systemeAcquisition.Salle.nom|default('-') }}
                             {% endif %}
                         </td>
                         <td class="py-4">
-                            {% if systemeAcquisition.etat == 'Installation' %}
-                                {{ attribute(listeSalleSaIntall, systemeAcquisition.id).Batiment|default('-') }}
+                            {% if systemeAcquisition.etat == 'Installation' or (systemeAcquisition.etat == 'Réparation' and systemeAcquisition.Salle is null ) %}
+                                {{ attribute(listeSalleSaDT, systemeAcquisition.id).Batiment|default('-') }}
                             {% else %}
                                 {{ systemeAcquisition.Salle.Batiment|default('-') }}
                             {% endif %}
@@ -171,15 +171,15 @@
                         {{ systemeAcquisition.nom }}
                     </th>
                     <td class="px-6 py-4">
-                        {% if systemeAcquisition.etat == 'Installation' %}
-                            {{ attribute(listeSalleSaIntall, systemeAcquisition.id).nom|default('-') }}
+                        {% if systemeAcquisition.etat == 'Installation' or (systemeAcquisition.etat == 'Réparation' and systemeAcquisition.Salle is null )%}
+                            {{ attribute(listeSalleSaDT, systemeAcquisition.id).nom|default('-') }}
                         {% else %}
                             {{ systemeAcquisition.Salle.nom|default('-') }}
                         {% endif %}
                     </td>
                     <td class="px-6 py-4">
-                        {% if systemeAcquisition.etat == 'Installation' %}
-                            {{ attribute(listeSalleSaIntall, systemeAcquisition.id).Batiment|default('-') }}
+                        {% if systemeAcquisition.etat == 'Installation' or (systemeAcquisition.etat == 'Réparation' and systemeAcquisition.Salle is null ) %}
+                            {{ attribute(listeSalleSaDT, systemeAcquisition.id).Batiment|default('-') }}
                         {% else %}
                             {{ systemeAcquisition.Salle.Batiment|default('-') }}
                         {% endif %}
