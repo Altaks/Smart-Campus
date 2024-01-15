@@ -82,12 +82,12 @@
                     </div>
                     {% if temp_diff > 0 %}
                         <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-400 text-center">
-                            + {{ temp_diff }} °C
+                            + {{ temp_diff | number_format(2) }} °C
                             <box-icon name='up-arrow-alt' color="#16a34a"></box-icon>
                         </div>
                     {% elseif temp_diff < 0 %}
                         <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-red-500 dark:text-red-400 text-center">
-                            {{ temp_diff }} °C
+                            {{ temp_diff | number_format(2) }} °C
                             <box-icon name='down-arrow-alt' color="#ef4444"></box-icon>
                         </div>
                     {% else %}
@@ -96,14 +96,13 @@
                         </div>
                     {% endif %}
                 </div>
-                <div id="data-labels-chart"></div>
+                <div id="temps-labels-chart"></div>
             </div>
 
             <script>
                 // ApexCharts options and config
                 window.addEventListener("load", function() {
                     let options = {
-                        // enable and customize data labels using the following example, learn more from here: https://apexcharts.com/docs/datalabels/
                         dataLabels: {
                             enabled: false,
                         },
@@ -121,8 +120,42 @@
                                 name: "Températures locales",
                                 data: [{% for val in temp_releves %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}],
                                 color: "#1A56DB",
+                            },
+                            {
+                                name: "Températures extérieures",
+                                data: [{% for val in temp_env %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}],
+                                color: "#7F8C8D",
                             }
                         ],
+                        annotations: {
+                            yaxis: [
+                                {
+                                    y: {{ seuils.temp_max }},
+                                    borderColor: '#C70039',
+                                    label: {
+                                        borderColor: '#C70039',
+                                        style: {
+                                            color: '#fff',
+                                            background: '#C70039',
+                                        },
+                                        text: 'Température Max',
+                                    }
+                                },
+                                {
+                                    y: {{ seuils.temp_min }},
+                                    borderColor: '#C70039',
+                                    strokeDashArray: 4,
+                                    label: {
+                                        borderColor: '#C70039',
+                                        style: {
+                                            color: '#fff',
+                                            background: '#C70039',
+                                        },
+                                        text: 'Température Min',
+                                    }
+                                }
+                            ]
+                        },
                         chart: {
                             height: "100%",
                             maxWidth: "100%",
@@ -132,7 +165,7 @@
                                 enabled: false,
                             },
                             toolbar: {
-                                show: false,
+                                show: true,
                             },
                         },
                         tooltip: {
@@ -180,8 +213,8 @@
                         },
                     }
 
-                    if (document.getElementById("data-labels-chart") && typeof ApexCharts !== 'undefined') {
-                        const chart = new ApexCharts(document.getElementById("data-labels-chart"), options);
+                    if (document.getElementById("temps-labels-chart") && typeof ApexCharts !== 'undefined') {
+                        const chart = new ApexCharts(document.getElementById("temps-labels-chart"), options);
                         chart.render();
                     }
                 });
@@ -193,7 +226,7 @@
         {% endif %}
         {% if hum_dates is defined and hum_dates is not null and hum_releves is defined and hum_releves is not null %}
             <div class="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 my-6">
-                <div class="flex justify-between">
+                <div class="flex justify-between mb-5">
                     <div>
                         <h5 class="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">Humidité</h5>
                         <p class="text-base font-normal text-gray-500 dark:text-gray-400">en %</p>
@@ -214,12 +247,12 @@
                     </div>
                     {% if hum_diff > 0 %}
                         <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-red-500 dark:text-red-400 text-center">
-                            + {{ hum_diff }} %
+                            + {{ hum_diff | number_format(2)}} %
                             <box-icon name='up-arrow-alt' color="#ef4444"></box-icon>
                         </div>
                     {% elseif hum_diff < 0 %}
                         <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-400 text-center">
-                            {{ hum_diff }} %
+                            {{ hum_diff | number_format(2)}} %
                             <box-icon name='down-arrow-alt' color="#16a34a"></box-icon>
                         </div>
                     {% else %}
@@ -228,12 +261,54 @@
                         </div>
                     {% endif %}
                 </div>
-                <div id="hum-chart"></div>
+                <br>
+                <div id="hum-labels-chart" class="my-3"></div>
             </div>
             <script>
                 // ApexCharts options and config
                 window.addEventListener("load", function() {
                     let options = {
+                        dataLabels: {
+                            enabled: false,
+                        },
+                        grid: {
+                            show: false,
+                            strokeDashArray: 4,
+                            padding: {
+                                left: 16,
+                                right: 16,
+                                top: -26
+                            },
+                        },
+                        series: [
+                            {
+                                name: "Humidité locale",
+                                data: [{% for val in hum_releves %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}],
+                                color: "#1A56DB",
+                            },
+                            {
+                                name: "Humidité extérieure",
+                                data: [{% for val in hum_env %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}],
+                                color: "#7F8C8D",
+                            }
+                        ],
+                        annotations: {
+                            yaxis: [
+                                {
+                                    y: {{ seuils.humidite_max }},
+                                    borderColor: '#C70039',
+                                    strokeDashArray: 4,
+                                    label: {
+                                        borderColor: '#C70039',
+                                        style: {
+                                            color: '#fff',
+                                            background: '#C70039',
+                                        },
+                                        text: 'Humidité Max',
+                                    }
+                                }
+                            ]
+                        },
                         chart: {
                             height: "100%",
                             maxWidth: "100%",
@@ -243,7 +318,7 @@
                                 enabled: false,
                             },
                             toolbar: {
-                                show: false,
+                                show: true,
                             },
                         },
                         tooltip: {
@@ -251,6 +326,9 @@
                             x: {
                                 show: false,
                             },
+                        },
+                        legend: {
+                            show: true
                         },
                         fill: {
                             type: "gradient",
@@ -261,31 +339,12 @@
                                 gradientToColors: ["#1C64F2"],
                             },
                         },
-                        dataLabels: {
-                            enabled: false,
-                        },
                         stroke: {
-                            width: 6,
+                            width: 5,
                         },
-                        grid: {
-                            show: false,
-                            strokeDashArray: 4,
-                            padding: {
-                                left: 2,
-                                right: 2,
-                                top: 0
-                            },
-                        },
-                        series: [
-                            {
-                                name: "Humidité",
-                                data: [{% for val in hum_releves %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}],
-                                color: "#1A56DB",
-                            },
-                        ],
                         xaxis: {
                             categories: [
-                                {% for val in hum_dates %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}
+                                {% for val in hum_dates %}"{{ val | format_datetime('full', 'short', locale='fr') | title }}"{% if loop.last == false %},{% endif %}{% endfor %}
                             ],
                             labels: {
                                 show: false,
@@ -299,16 +358,21 @@
                         },
                         yaxis: {
                             show: false,
+                            labels: {
+                                formatter: function (value) {
+                                    return value + ' %';
+                                }
+                            }
                         },
                     }
 
-                    if (document.getElementById("hum-chart") && typeof ApexCharts !== 'undefined') {
-                        const chart = new ApexCharts(document.getElementById("hum-chart"), options);
+                    if (document.getElementById("hum-labels-chart") && typeof ApexCharts !== 'undefined') {
+                        const chart = new ApexCharts(document.getElementById("hum-labels-chart"), options);
                         chart.render();
                     }
                 });
             </script>
-        {% elseif hum_error is defined %}
+            {% elseif hum_error is defined %}
             <div class="bg-red-300 rounded-lg text-red-950 text-xl w-full text-center my-12 p-6">
                 {{ hum_error }}
             </div>
@@ -342,12 +406,12 @@
                     </div>
                     {% if co2_diff > 0 %}
                         <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-red-500 dark:text-red-400 text-center">
-                            + {{ co2_diff }} ppm
+                            + {{ co2_diff | number_format(2) }} ppm
                             <box-icon name='up-arrow-alt' color="#ef4444"></box-icon>
                         </div>
                     {% elseif co2_diff < 0 %}
                         <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-400 text-center">
-                            {{ co2_diff }} ppm
+                            {{ co2_diff | number_format(2) }} ppm
                             <box-icon name='down-arrow-alt' color="#16a34a"></box-icon>
                         </div>
                     {% else %}
@@ -371,7 +435,7 @@
                                 enabled: false,
                             },
                             toolbar: {
-                                show: false,
+                                show: true,
                             },
                         },
                         tooltip: {
@@ -411,9 +475,39 @@
                                 color: "#1A56DB",
                             %},
                         ],
+                        annotations: {
+                            yaxis: [
+                                {
+                                    y: {{ seuils.co2_premier_palier }},
+                                    strokeDashArray: 4,
+                                    borderColor: '#F2B02B',
+                                    label: {
+                                        borderColor: '#F2B02B',
+                                        style: {
+                                            color: '#000',
+                                            background: '#F2B02B',
+                                        },
+                                        text: 'CO2 1er palier',
+                                    }
+                                },
+                                {
+                                    y: {{ seuils.co2_second_palier }},
+                                    borderColor: '#C70039',
+                                    strokeDashArray: 4,
+                                    label: {
+                                        borderColor: '#C70039',
+                                        style: {
+                                            color: '#fff',
+                                            background: '#C70039',
+                                        },
+                                        text: 'CO2 2nd palier',
+                                    }
+                                }
+                            ]
+                        },
                         xaxis: {
                             categories: [
-                                {% for val in co2_dates %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}
+                                {% for val in co2_dates %}"{{ val | format_datetime('full', 'short', locale='fr') | title }}"{% if loop.last == false %},{% endif %}{% endfor %}
                             ],
                             labels: {
                                 show: false,
@@ -427,6 +521,11 @@
                         },
                         yaxis: {
                             show: false,
+                            labels: {
+                                formatter: function (value) {
+                                    return value + ' ppm';
+                                }
+                            }
                         },
                     }
 

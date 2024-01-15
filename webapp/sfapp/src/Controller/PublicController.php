@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 class PublicController extends AbstractController
 {
@@ -71,7 +72,7 @@ class PublicController extends AbstractController
     }
 
     #[Route('/releves', name: 'app_releves')]
-    public function releves(ManagerRegistry $managerRegistry, ReleveService $releveService, SeuilService $seuilService, Request $request)
+    public function releves(ManagerRegistry $managerRegistry, EnvironnementExterieurAPIService $envAPI, ReleveService $releveService, SeuilService $seuilService, Request $request)
     {
 
         $sallesRepository = $managerRegistry->getRepository('App\Entity\Salle');
@@ -177,6 +178,30 @@ class PublicController extends AbstractController
                 $last_co2_diff = $relevesCo2[count($relevesCo2) - 1] - $relevesCo2[count($relevesCo2) - 2];
             }
 
+            $envData = $envAPI->queryDailyTempsAndHumidity();
+
+            $envTemperatures = [];
+            $envHumidity = [];
+
+            $ttmp_now = new \DateTime("now");
+
+            foreach ($datesTemp as $date){
+                $timestamp = new \DateTime($date);
+                $timestamp = $timestamp->getTimestamp();
+                $timestamp = $timestamp - ($timestamp % 3600); // Arrondi à l'heure vers le bas
+
+                $ttmp_date = new \DateTime("@" . $timestamp);
+
+                while(!in_array($timestamp, $envData["timestamps"]) && $ttmp_now > $ttmp_date){
+                    $timestamp += 3600;
+                    $ttmp_date = new \DateTime("@" . $timestamp);
+                }
+
+                $ttmp_index = array_search($timestamp, $envData["timestamps"]);
+
+                $envTemperatures[] = $envData["temperatures"][$ttmp_index];
+                $envHumidity[] = $envData["humidity"][$ttmp_index];
+            }
 
             // Renvoyer la vue
             return $this->render('public/releves.html.twig', [
@@ -186,12 +211,14 @@ class PublicController extends AbstractController
 
                 'temp_dates' => $datesTemp,
                 'temp_releves' => $relevesTemp,
+                'temp_env' => $envTemperatures,
                 'temp_diff' => $last_temps_diff,
                 'temp_error' => $temp_err,
                 'temp_dernier' => $dernierTemp,
 
                 'hum_dates' => $datesHum,
                 'hum_releves' => $relevesHum,
+                'hum_env' => $envHumidity,
                 'hum_diff' => $last_humidity_diff,
                 'hum_error' => $hum_err,
                 'hum_dernier' => $dernierHum,
