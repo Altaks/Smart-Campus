@@ -118,6 +118,35 @@
                                 color: "#7F8C8D",
                             }
                         ],
+                        annotations: {
+                            yaxis: [
+                                {
+                                    y: {{ seuils.temp_max }},
+                                    borderColor: '#C70039',
+                                    label: {
+                                        borderColor: '#C70039',
+                                        style: {
+                                            color: '#fff',
+                                            background: '#C70039',
+                                        },
+                                        text: 'Température Max',
+                                    }
+                                },
+                                {
+                                    y: {{ seuils.temp_min }},
+                                    borderColor: '#C70039',
+                                    strokeDashArray: 4,
+                                    label: {
+                                        borderColor: '#C70039',
+                                        style: {
+                                            color: '#fff',
+                                            background: '#C70039',
+                                        },
+                                        text: 'Température Min',
+                                    }
+                                }
+                            ]
+                        },
                         chart: {
                             height: "100%",
                             maxWidth: "100%",
@@ -254,6 +283,23 @@
                                 color: "#7F8C8D",
                             }
                         ],
+                        annotations: {
+                            yaxis: [
+                                {
+                                    y: {{ seuils.humidite_max }},
+                                    borderColor: '#C70039',
+                                    strokeDashArray: 4,
+                                    label: {
+                                        borderColor: '#C70039',
+                                        style: {
+                                            color: '#fff',
+                                            background: '#C70039',
+                                        },
+                                        text: 'Humidité Max',
+                                    }
+                                }
+                            ]
+                        },
                         chart: {
                             height: "100%",
                             maxWidth: "100%",
@@ -420,6 +466,36 @@
                                 color: "#1A56DB",
                             },
                         ],
+                        annotations: {
+                            yaxis: [
+                                {
+                                    y: {{ seuils.co2_premier_palier }},
+                                    strokeDashArray: 4,
+                                    borderColor: '#F2B02B',
+                                    label: {
+                                        borderColor: '#F2B02B',
+                                        style: {
+                                            color: '#000',
+                                            background: '#F2B02B',
+                                        },
+                                        text: 'CO2 1er palier',
+                                    }
+                                },
+                                {
+                                    y: {{ seuils.co2_second_palier }},
+                                    borderColor: '#C70039',
+                                    strokeDashArray: 4,
+                                    label: {
+                                        borderColor: '#C70039',
+                                        style: {
+                                            color: '#fff',
+                                            background: '#C70039',
+                                        },
+                                        text: 'CO2 2nd palier',
+                                    }
+                                }
+                            ]
+                        },
                         xaxis: {
                             categories: [
                                 {% for val in co2_dates %}"{{ val | format_datetime('full', 'short', locale='fr') | title }}"{% if loop.last == false %},{% endif %}{% endfor %}
