@@ -306,6 +306,8 @@ class AppFixtures extends Fixture
             ->setType("Réparation")
             ->setTerminee(false)
             ->setSystemeAcquisition($esp_007)
+            ->setEmailDemandeur("ksimon@etudiant.univ-lr.fr")
+            ->setCommentaire("Le système d'acquisition ne fonctionne pas")
             ->setDate($maintenant); // maintenant
         $esp_007->setEtat("Réparation");
 
@@ -314,7 +316,10 @@ class AppFixtures extends Fixture
             ->setType("Réparation")
             ->setTerminee(false)
             ->setSystemeAcquisition($esp_008)
+            ->setEmailDemandeur("ksimon@etudiant.univ-lr.fr")
+            ->setCommentaire("Le système d'acquisition ne fonctionne pas")
             ->setDate($sept_jours_cinq_heures_trente_minutes_avant); // 7 jours, 5h et 30 minutes avant
+
         $esp_008->setEtat("Réparation");
 
         $demandeRep3 = new DemandeTravaux();
@@ -322,6 +327,8 @@ class AppFixtures extends Fixture
             ->setType("Réparation")
             ->setTerminee(false)
             ->setSystemeAcquisition($esp_009)
+            ->setEmailDemandeur("ksimon@etudiant.univ-lr.fr")
+            ->setCommentaire("Le système d'acquisition ne fonctionne pas")
             ->setDate($quatres_jours_dis_heures_dix_minutes_avant); // 14 jours, 10h et 10 minutes avant
         $esp_009->setEtat("Réparation");
 
