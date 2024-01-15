@@ -89,7 +89,7 @@ class PublicController extends AbstractController
                 'choice_value' => function(?Salle $salle) {
                     return $salle ? $salle->getId() : '';
                 },
-                'label' => 'Salle',
+                'label' => 'Veuillez choisir une salle',
                 'placeholder' => 'Choisir une salle',
                 'required' => true,
                 'attr' => [

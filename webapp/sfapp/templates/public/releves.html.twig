@@ -29,9 +29,9 @@
     <h1 class="text-4xl pb-12 text-center">Relevés</h1>
     <div class="w-2/3 mx-auto flex justify-between">
         <div>
-            <h1>Veuillez choisir une salle</h1>
             {{ form_start(form) }}
-                <select name="{{ field_name(form.salle) }}" class="form-control bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange="this.form.submit()">
+                <label class="text-xl">{{ field_label(form.salle) }}</label>
+                <select name="{{ field_name(form.salle) }}" class="form-control bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-5" onchange="this.form.submit()">
                     <option value="" disabled>Choisir une salle</option>
                     {% for label, value in field_choices(form.salle) %}
                         {% if form_selected is defined and label == form_selected.nom %}
@@ -44,8 +44,8 @@
             {{ form_end(form) }}
         </div>
         {% if form_selected is defined and form_selected is not null %}
-            <div class="my-auto">
-                <a href="/signaler-erreur/{{ form_selected.id }}" class="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
+            <div class="flex flex-column-reverse">
+                <a href="/signaler-erreur/{{ form_selected.id }}" class="mt-[auto] text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:ring-red-300 font-medium rounded-lg px-5 py-2.5">
                     Signaler une erreur</a>
             </div>
         {% endif %}
