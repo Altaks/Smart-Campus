@@ -132,18 +132,9 @@
 
         fenetre.addEventListener('input',verifierEntrees)
         porte.addEventListener('input',verifierEntrees)
-        for(const radio of radios)
-        {
-            radio.addEventListener('input',verifierEntrees)
-        }
-        for(const decrement of decrements)
-        {
-            decrement.addEventListener('click',attendreVerifierEntrees)
-        }
-        for(const increment of increments)
-        {
-            increment.addEventListener('click',attendreVerifierEntrees)
-        }
+        for(const radio of radios) radio.addEventListener('input',verifierEntrees)
+        for(const decrement of decrements) decrement.addEventListener('click',attendreVerifierEntrees)
+        for(const increment of increments) increment.addEventListener('click',attendreVerifierEntrees)
 
         function attendreVerifierEntrees()
         {
@@ -155,14 +146,8 @@
             let porte = document.getElementById('porte-input');
             let radios = document.querySelectorAll("[id='inline-radio']");
 
-            if(fenetre.value.length > 0 && porte.value.length > 0 && (radios[0].checked || radios[1].checked))
-            {
-                enableSubmitButton()
-            }
-            else
-            {
-                disableSubmitButton()
-            }
+            if(fenetre.value.length > 0 && porte.value.length > 0 && (radios[0].checked || radios[1].checked)) enableSubmitButton()
+            else disableSubmitButton()
         }
 
         function enableSubmitButton(){

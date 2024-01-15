@@ -70,14 +70,8 @@
             let email = document.getElementById('email');
             let commentaire = document.getElementById('commentaire');
 
-            if(email.value.length > 0 && commentaire.value.length > 0)
-            {
-                enableSubmitButton()
-            }
-            else
-            {
-                disableSubmitButton()
-            }
+            if(email.value.length > 0 && commentaire.value.length > 0) enableSubmitButton()
+            else disableSubmitButton()
         }
 
         function enableSubmitButton(){

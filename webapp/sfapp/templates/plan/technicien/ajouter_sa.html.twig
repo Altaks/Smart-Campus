@@ -64,35 +64,16 @@
         let sa = document.getElementById('form_nom');
         let baseDonnees = document.getElementById('form_baseDonnees');
 
-        sa.addEventListener('input', function() {
-            let sa = document.getElementById('form_nom');
-            if (sa.value.length === 0) {
-                disableSubmitButton()
-            } else {
-                let baseDonnees = document.getElementById('form_baseDonnees');
-                disableSubmitButton()
-                if( baseDonnees.value.length === 0) {
-                }
-                else {
-                    enableSubmitButton();
-                }
-            }
-        })
+        sa.addEventListener('input',verifierEntrees)
+        baseDonnees.addEventListener('input',verifierEntrees)
 
-        baseDonnees.addEventListener('input', function(e) {
+        function verifierEntrees(){
+            let sa = document.getElementById('form_nom');
             let baseDonnees = document.getElementById('form_baseDonnees');
-            if (baseDonnees.value.length === 0) {
-                disableSubmitButton()
-            } else {
-                let sa = document.getElementById('form_nom');
-                if( sa.value.length === 0) {
-                    disableSubmitButton();
-                }
-                else {
-                    enableSubmitButton();
-                }
-            }
-        });
+
+            if(sa.value.length > 0 && baseDonnees.value.length > 0 ) enableSubmitButton()
+            else disableSubmitButton()
+        }
 
         function enableSubmitButton(){
             let button = document.getElementById("form_save");

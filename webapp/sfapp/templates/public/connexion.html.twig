@@ -47,36 +47,16 @@
         let identifiant = document.getElementById('identifiant');
         let motDePasse = document.getElementById('mot_de_passe');
 
-        identifiant.addEventListener('input', function() {
-            let identifiant = document.getElementById('identifiant');
-            if (identifiant.value.length === 0) {
-                disableSubmitButton()
-            } else {
-                let motDePasse = document.getElementById('mot_de_passe');
-                disableSubmitButton()
-                if( motDePasse.value.length === 0) {
-                }
-                else {
-                    enableSubmitButton();
-                }
-            }
-        })
+        identifiant.addEventListener('input',verifierEntrees)
+        motDePasse.addEventListener('input',verifierEntrees)
 
-        motDePasse.addEventListener('input', function(e) {
+        function verifierEntrees(){
+            let identifiant = document.getElementById('identifiant');
             let motDePasse = document.getElementById('mot_de_passe');
-            if (motDePasse.value.length === 0) {
-                disableSubmitButton()
-            } else {
-                let identifiant = document.getElementById('identifiant');
-                let submit = document.getElementById('submit');
-                if( identifiant.value.length === 0) {
-                    disableSubmitButton();
-                }
-                else {
-                    enableSubmitButton();
-                }
-            }
-        });
+
+            if(identifiant.value.length > 0 && motDePasse.value.length > 0 ) enableSubmitButton()
+            else disableSubmitButton()
+        }
 
         function enableSubmitButton(){
             let button = document.getElementById("submit");
