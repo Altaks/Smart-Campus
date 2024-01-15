@@ -37,7 +37,7 @@
 
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authentificate') }}">
 
-            <button disabled type="submit" id="submit" class="cursor-not-allowed w-2/3 rounded-lg bg-[#0f6eb1] text-white p-1 self-center mt-6">Se connecter</button>
+            <button disabled type="submit" id="submit" class="cursor-not-allowed w-2/3 self-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 mt-5">Se connecter</button>
         </form>
         {% if erreur %}
             <p class="text-red-500 m-auto mt-16">Identifiant ou mot de passe invalides.</p>

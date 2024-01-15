@@ -174,7 +174,7 @@ class PlanExpController extends AbstractController
                 'required' => true
             ])
             ->add('ajouter', SubmitType::class,[
-                'label' => 'Ajouter salle'
+                'label' => 'Ajouter la salle'
             ])
             ->getForm();
 
@@ -236,7 +236,7 @@ class PlanExpController extends AbstractController
                 'required' => true
             ])
             ->add('modifier', SubmitType::class,[
-                'label' => 'Modifier salle'
+                'label' => 'Modifier la salle'
             ])
             ->getForm();
 
