@@ -103,8 +103,14 @@ void setup() {
     // Désactive le point d'accès wifi (le serveur reste disponible en se connectant au même routeur)
     initReseauStation();
 
+    // Affiche le contenu des fichiers contenant les informations a conservé dans le SA
+    afficherContenuFichier("/infoap.txt");
+    afficherContenuFichier("/infobd.txt");
+    afficherContenuFichier("/inforeseau.txt");
+    afficherContenuFichier("/listereseau.txt");
+
     // Active l'enregistrement périodique des reseaux wifi détectés par l'esp dans le fichier /listereseaux.txt
-    activerEnregistrerListeReseau();
+    // activerEnregistrerListeReseau();
 
     // Initialise les capteurs 
     initTempEtHum();
@@ -116,12 +122,6 @@ void setup() {
 
     // Initialise l'envoi des données
     bool envoie = initEnvois(); 
-
-    // Affiche le contenu des fichiers contenant les informations a conservé dans le SA
-    afficherContenuFichier("/infoap.txt");
-    afficherContenuFichier("/infobd.txt");
-    afficherContenuFichier("/inforeseau.txt");
-    afficherContenuFichier("/listereseau.txt");
 }
 
 void loop() 
