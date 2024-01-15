@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\DemandeTravaux;
 use App\Entity\Salle;
 use App\Entity\Seuil;
 use App\Service\EnvironnementExterieurAPIService;
@@ -11,6 +12,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -206,5 +209,75 @@ class PublicController extends AbstractController
         return $this->render('public/releves.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/signaler-erreur/{id}', name: 'app_signaler_erreur')]
+    public function signalerErreur(ManagerRegistry $registry, $id, Request $request)
+    {
+        $salle = $registry->getRepository('App\Entity\Salle')->find($id);
+
+        if ($salle == null || $salle->getSystemeAcquisition() == null || $salle->getSystemeAcquisition()->getEtat() != "Opérationnel") {
+            return $this->redirectToRoute('accueil');
+        }
+
+        $demandeTravauxRepository = $registry->getRepository('App\Entity\DemandeTravaux');
+
+        $demande = $demandeTravauxRepository->findOneBy([
+            'salle' => $salle,
+            'terminee' => false,
+        ]);
+
+        if ($demande != null) {
+            return $this->redirectToRoute('accueil');
+        }
+
+        $demande = new DemandeTravaux();
+
+        $form = $this->createFormBuilder($demande)
+            ->add('emailDemandeur', TextType::class, [
+                'label' => 'Email (pour vous contacter en cas de besoin)',
+                'required' => true,
+                'attr' => [
+                    'class' => 'form-control'
+                ]
+            ])
+            ->add('commentaire', TextType::class, [
+                'label' => 'Commentaire',
+                'required' => true,
+                'attr' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'Décrivez le problème, exemple : "La température dépasse les 100°C"'
+                ]
+            ])
+            ->add('submit', SubmitType::class, [
+                'label' => 'Envoyer'
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $demande->setSalle($salle);
+            $demande->setType("Réparation");
+            $demande->setSystemeAcquisition($salle->getSystemeAcquisition());
+            $demande->setTerminee(false);
+            $demande->setDate(new \DateTime());
+            $demande->setEmailDemandeur($form->get('emailDemandeur')->getData());
+            $demande->setCommentaire($form->get('commentaire')->getData());
+            $manager = $registry->getManager();
+            $manager->persist($demande);
+
+            $salle->getSystemeAcquisition()->setEtat("Réparation");
+
+            $manager->flush();
+
+            return $this->redirectToRoute('accueil');
+        }
+
+        return $this->render('public/signaler_erreur.html.twig', [
+            'form' => $form,
+            'salle' => $salle,
+        ]);
+
     }
 }
