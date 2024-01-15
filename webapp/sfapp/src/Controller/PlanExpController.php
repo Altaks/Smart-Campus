@@ -426,6 +426,9 @@ class PlanExpController extends AbstractController
 
             if ($systemeAcquisition != null){
                 $systemeAcquisition->setEtat("Non installé");
+                if ($systemeAcquisition->getSalle() != null){
+                    $systemeAcquisition->getSalle()->setSystemeAcquisition(null);
+                }
             }
 
             $id = $formSystemeAcqui->getData()['sa'];
@@ -437,7 +440,7 @@ class PlanExpController extends AbstractController
 
             $sa = $sysAcquiRepository->findOneBy(['id' => $id]);
             $demandeTravaux->setSystemeAcquisition($sa);
-            $sa->setEtat("Installation");
+            $sa->setEtat($demandeTravaux->getType());
             $entityManager->flush();
 
             return $this->redirect('/plan/demande-travaux/' . $demandeTravaux->getId());

@@ -211,9 +211,17 @@ class PublicController extends AbstractController
         ]);
     }
 
-    #[Route('/signaler-erreur/{id}', name: 'app_signaler_erreur')]
-    public function signalerErreur(ManagerRegistry $registry, $id, Request $request)
+    #[Route('/signaler-erreur/{id}/{tech?}', name: 'app_signaler_erreur')]
+    public function signalerErreur(ManagerRegistry $registry, $id, ?bool $tech, Request $request)
     {
+        if ($tech == null) {
+            $tech = false;
+        }
+
+        if ($tech && !$this->isGranted("ROLE_TECHNICIEN")) {
+            return $this->redirectToRoute('accueil');
+        }
+
         $salle = $registry->getRepository('App\Entity\Salle')->find($id);
 
         if ($salle == null || $salle->getSystemeAcquisition() == null || $salle->getSystemeAcquisition()->getEtat() != "Opérationnel") {
@@ -271,12 +279,17 @@ class PublicController extends AbstractController
 
             $manager->flush();
 
+            if ($tech) {
+                return $this->redirectToRoute('technicien_liste_sa');
+            }
+
             return $this->redirectToRoute('accueil');
         }
 
         return $this->render('public/signaler_erreur.html.twig', [
             'form' => $form,
             'salle' => $salle,
+            'tech' => $tech,
         ]);
 
     }

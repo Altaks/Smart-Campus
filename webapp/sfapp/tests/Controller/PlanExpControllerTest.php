@@ -846,7 +846,7 @@ class PlanExpControllerTest extends WebTestCase
 
         $client->loginUser($testUser);
 
-        $crawler = $client->request('GET', '/signaler-erreur/' . $salle->getId());
+        $crawler = $client->request('GET', '/signaler-erreur/' . $salle->getId() . '/1');
 
         $this->assertResponseIsSuccessful();
 
@@ -856,7 +856,21 @@ class PlanExpControllerTest extends WebTestCase
 
         $client->submit($form);
 
-        $this -> assertResponseRedirects('/plan/lister-sa', 302);
+        $client->followRedirect();
+        $this->assertResponseIsSuccessful();
+
+        $demandeTravauxRepository = static::getContainer()->get(DemandeTravauxRepository::class);
+        $demande = $demandeTravauxRepository->findOneBy([
+            'salle' => $salle,
+            'type' => 'Réparation',
+            'terminee' => false
+        ]);
+
+        $this->assertNotNull($demande);
+
+        $sql = "DELETE FROM demande_travaux WHERE id = ".$demande->getId();
+        $stmt = $entityManager->getConnection()->prepare($sql);
+        $stmt->execute();
 
         $sql = "DELETE FROM salle WHERE nom = 'X002'";
         $stmt = $entityManager->getConnection()->prepare($sql);
@@ -895,23 +909,22 @@ class PlanExpControllerTest extends WebTestCase
         $entityManager->flush();
 
         $client->request('GET', '/signaler-erreur/' . $salle->getId() . "/1");
-
-        $this->assertResponseRedirects('/plan/lister-sa', 302);
-        $this->assertResponseStatusCodeSame(302);
+        $client->followRedirect();
+        $this->assertResponseIsSuccessful();
 
         $sa->setEtat("Réparation");
-        $entityManager->persist($sa);
         $entityManager->flush();
 
         $crawler = $client->request('GET', '/signaler-erreur/' . $salle->getId() . "/1");
+        $client->followRedirect();
         $this->assertResponseIsSuccessful();
 
 
         $sa->setEtat("Installation");
-        $entityManager->persist($sa);
         $entityManager->flush();
 
         $client->request('GET', '/signaler-erreur/' . $salle->getId() . "/1");
+        $client->followRedirect();
         $this->assertResponseIsSuccessful();
 
 
