@@ -49,8 +49,8 @@ class PlanExpController extends AbstractController
      * Charge de mission : Consulter les infos des salles du plan d'expérimentation
      */
     #[IsGranted("ROLE_CHARGE_DE_MISSION")]
-    #[Route('/plan', name: 'cdm_plan')]
-    public function cdm_plan(ManagerRegistry $doctrine): Response
+    #[Route('/plan/lister-salles', name: 'cdm_lister_salles')]
+    public function cdm_lister_salles(ManagerRegistry $doctrine): Response
     {
         $entityManager = $doctrine->getManager();
         $sallesRepository = $entityManager->getRepository('App\Entity\Salle');
@@ -125,7 +125,7 @@ class PlanExpController extends AbstractController
         $entityManager->persist($demandeTravaux);
         $entityManager->flush();
 
-        return $this->redirectToRoute("cdm_plan");
+        return $this->redirectToRoute("cdm_lister_salles");
     }
 
     #[Route('/plan/ajouter-salle', name: 'cdm_ajouter_salle')]
@@ -184,7 +184,7 @@ class PlanExpController extends AbstractController
             $salle = $formSalle->getData();
             $entityManager->persist($salle);
             $entityManager->flush();
-            return $this->redirectToRoute('cdm_plan');
+            return $this->redirectToRoute('cdm_lister_salles');
         }
 
         return $this->render('plan/charge_de_mission/ajouter_salle.html.twig', [
@@ -208,7 +208,7 @@ class PlanExpController extends AbstractController
             $entityManager->remove($salle);
             $entityManager->flush();
         }
-        return $this->redirect("/plan");
+        return $this->redirectToRoute('cdm_lister_salles');
     }
 
     #[Route('/plan/modifier-salle/{id}', name: 'cdm_modifier_salle')]
@@ -245,20 +245,13 @@ class PlanExpController extends AbstractController
         if($formSalle->isSubmitted() && $formSalle->isValid()) {
             $salle = $formSalle->getData();
             $entityManager->flush();
-            return $this->redirectToRoute('cdm_plan');
+            return $this->redirectToRoute('cdm_lister_salles');
         }
 
         return $this->render('plan/charge_de_mission/modifier_salle.html.twig', [
             'formSalle' => $formSalle,
             'salle' => $salle
         ]);
-    }
-
-    #[Route('/plan/lister-salles', name: 'cdm_lister_salles')]
-    public function cdm_lister_salles(ManagerRegistry $doctrine): Response
-    {
-        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
-        return $this->render('plan/charge_de_mission/lister_salles.html.twig', []);
     }
 
     #[IsGranted("ROLE_CHARGE_DE_MISSION")]
