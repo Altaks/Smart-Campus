@@ -30,30 +30,69 @@
     <div class="w-2/3 mx-auto">
         <h1 class="text-4xl pb-12 text-center">Signaler une erreur pour la salle <i>{{ salle.Nom }}</i></h1>
 
-    <div class="mx-auto mt-4 w-2/3">
-        {{ form_start(form) }}
-            <div class="mb-5 mx-5">
-                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ field_label(form.emailDemandeur) }}</label>
-                <input  name="{{ field_name(form.emailDemandeur) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ex: ksimon@etudiant.univ-lr.fr"/>
-                {{ form_errors(form.emailDemandeur, {
-                    error_item_class: 'text-red-600 text-sm mt-1',
-                }) }}
-            </div>
-            <div class="mb-5 mx-5">
-                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ field_label(form.commentaire) }}</label>
-                <textarea  name="{{ field_name(form.commentaire) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Décrivez le problème, exemple : &#34La température dépasse les 100°C&#34" rows="5"></textarea>
-                {{ form_errors(form.commentaire, {
-                    error_item_class: 'text-red-600 text-sm mt-1',
-                }) }}
-            </div>
+        <div class="mx-auto mt-4 w-2/3">
+            {{ form_start(form) }}
+                <div class="mb-5 mx-5">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ field_label(form.emailDemandeur) }}</label>
+                    <input id="email" name="{{ field_name(form.emailDemandeur) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ex: ksimon@etudiant.univ-lr.fr"/>
+                    {{ form_errors(form.emailDemandeur, {
+                        error_item_class: 'text-red-600 text-sm mt-1',
+                    }) }}
+                </div>
+                <div class="mb-5 mx-5">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ field_label(form.commentaire) }}</label>
+                    <textarea id="commentaire" name="{{ field_name(form.commentaire) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Décrivez le problème, exemple : &#34La température dépasse les 100°C&#34" rows="5"></textarea>
+                    {{ form_errors(form.commentaire, {
+                        error_item_class: 'text-red-600 text-sm mt-1',
+                    }) }}
+                </div>
 
-            <div class="flex justify-center">
-                <button id="submit" type="submit" name="{{ field_name(form.submit) }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                    {{ field_label(form.submit) }}</button>
-            </div>
+                <div class="flex justify-center">
+                    <button id="submit" type="submit" disabled name="{{ field_name(form.submit) }}" class="cursor-not-allowed text-white bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        {{ field_label(form.submit) }}</button>
+                </div>
 
-        {{ form_end(form) }}
+            {{ form_end(form) }}
+        </div>
     </div>
-    </div>
+    <script>
+        let email = document.getElementById('email');
+        let commentaire = document.getElementById('commentaire');
+
+        email.addEventListener('input',verifierEntrees)
+        commentaire.addEventListener('input',verifierEntrees)
+
+        function verifierEntrees(){
+            let email = document.getElementById('email');
+            let commentaire = document.getElementById('commentaire');
+
+            if(email.value.length > 0 && commentaire.value.length > 0)
+            {
+                enableSubmitButton()
+            }
+            else
+            {
+                disableSubmitButton()
+            }
+        }
+
+        function enableSubmitButton(){
+            let button = document.getElementById("submit");
+            if (button.disabled){
+                button.disabled = false;
+                button.classList.remove("cursor-not-allowed");
+                button.classList.add("hover:bg-blue-800");
+            }
+        }
+        function disableSubmitButton(){
+            let button = document.getElementById("submit");
+            if (!button.disabled){
+                button.disabled = true;
+                button.classList.add("cursor-not-allowed");
+                button.classList.remove("hover:bg-blue-800");
+            }
+        }
+    </script>
+
 
 {% endblock %}
