@@ -86,6 +86,10 @@ class ReleveService {
 
         // Conversion de la réponse
         $data = $response->toArray();
+        if ($data == null) return [
+            "date" => null,
+            "valeur" => null
+        ];
         $data = $data[0];
         return [
             "date" => $data["dateCapture"],
