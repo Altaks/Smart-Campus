@@ -55,7 +55,6 @@ int envoyer(){
     // verification de la connexion au réseau
     if (WiFi.status() != WL_CONNECTED){
         abort(); // redemarre l'esp pour se reconnecter au réseau
-        return -2;
     }
 
     Serial.println("Obtention de la date");
@@ -123,11 +122,22 @@ int envoyer(){
     
     Serial.println("Creation du header de la requete");
 
+    String nomSA = recupererValeur("/infobd.txt","nom_sa").c_str();
+    String nomBd = recupererValeur("/infobd.txt","nom_bd").c_str();
+    String nomUtilisateur = recupererValeur("/infobd.txt","nom_utilisateur").c_str();
+    String motDePasse = recupererValeur("/infobd.txt","mot_de_passe").c_str();
+    
+
+    if(nomBd.isEmpty() || nomUtilisateur.isEmpty() || motDePasse.isEmpty() || nomSA.isEmpty()){
+        return -2;
+    }
+    
+
     // configure le header de la requete
     http.addHeader("accept", "application/ld+json");
-    http.addHeader("dbname", recupererValeur("/infobd.txt","nom_bd").c_str());
-    http.addHeader("username", recupererValeur("/infobd.txt","nom_utilisateur").c_str());
-    http.addHeader("userpass", recupererValeur("/infobd.txt","mot_de_passe").c_str());
+    http.addHeader("dbname", nomBd);
+    http.addHeader("username", nomUtilisateur);
+    http.addHeader("userpass", motDePasse);
     http.addHeader("Content-Type", "application/json");
 
     Serial.println("Envoie de chaque donnees");
@@ -190,7 +200,7 @@ String errreurToString(int code){
     case -1:
         return "Erreur de date";
     case -2:
-        return "Erreur de connexion";
+        return "Erreur lors de la récupération des données de connexion à la base de données";
     case -3:
         return "Données non disponibles";
     case -4:
