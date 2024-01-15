@@ -31,6 +31,17 @@ void taskAffichage(void *pvParameters);
 */
 void afficher(PAGE &);
 
-int displayText(String text, int x = 0, int y = 0, int fontSize = 16, bool centered = false);
+/**
+ * \brief Affiche un texte sur l'écran
+ * Affiche un texte souhaité sur l'écran avec une taille de police et une position donnée
+ * L'écran est effacé avant l'affichage
+ * L'écran doit être initialisé avant l'appel de cette fonction
+ * \param text le texte à afficher
+ * \param x position x du texte
+ * \param y position y du texte
+ * \param fontSize taille de la police (16, 24, 32) par défaut 16
+ * \param centered si le texte doit être centré ou non
+ */
+void displayText(String text, int x = 0, int y = 0, int fontSize = 16, bool centered = false);
 
 #endif

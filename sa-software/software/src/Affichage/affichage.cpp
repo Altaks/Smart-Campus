@@ -40,7 +40,7 @@ bool initTacheAffichage()
     xTaskHandle affichageTaskHandle;
     xTaskCreate( //création de la tâche
       taskAffichage,
-      "taskTempEtHum",
+      "Affichage des données en local",
       10000,
       NULL,
       1,
@@ -69,8 +69,10 @@ void afficher(PAGE &page){
         dateTime = String(getJour()) + "/" + String(getMois()) + "/" + String(getAnnee()) + " " + String(getHeure()) + ":" + String(getMinute());
     }
 
+    // affichage de la date et de l'heure
     display->drawString(0, 0, dateTime);
 
+    // affichage de l'adresse IP
     display->drawString(0,48,"IP : " + getIP());
 
     // affichage des données
@@ -125,7 +127,7 @@ void taskAffichage(void *pvParameters) {
     }
 }
 
-int displayText(String text, int x, int y, int fontSize, bool centered){
+void displayText(String text, int x, int y, int fontSize, bool centered){
     display->clear();
     switch (fontSize)
     {
@@ -143,11 +145,10 @@ int displayText(String text, int x, int y, int fontSize, bool centered){
 
     if (centered){        
         int w = text.length() * fontSize / 2;
-        int x = (display->getWidth() - w) / 2;
-        int y = (display->getHeight() - fontSize) / 2;
+        x = (display->getWidth() - w) / 2;
+        y = (display->getHeight() - fontSize) / 2;
     }
 
     display->drawString(x, y, text);
     display->display();
-    return 0;
 }

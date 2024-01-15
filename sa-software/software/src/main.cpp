@@ -55,6 +55,8 @@ void setup() {
 
     String nomReseau;
 
+    Serial.println("Connexion au reseau wifi");
+
     // tant que le SA n'est pas connecté à internet
     do
     {
@@ -118,7 +120,7 @@ void setup() {
     initPresence();
 
     // Active l'affichage carrousel  
-    initTacheAffichage();
+    if (affiche) {initTacheAffichage();}
 
     // Initialise l'envoi des données
     bool envoie = initEnvois(); 

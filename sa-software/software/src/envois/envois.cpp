@@ -11,6 +11,7 @@
 
 void taskEnvois(void *pvParameters){
     while(1){
+        vTaskDelay(pdMS_TO_TICKS(30 * 1000));
         Serial.println("______________________________________");
         Serial.println("Debut de l'envoie des donnees :");
         Serial.println("______________________________________");
@@ -24,7 +25,7 @@ void taskEnvois(void *pvParameters){
         }
         Serial.println("______________________________________");
         // 5 minutes - 2 secondes pour laisser le temps à la tâche de récupérer la date (d'après mes tests, la récupération de la date prend 2 secondes de plus que le délai de 5 minutes)
-        vTaskDelay(pdMS_TO_TICKS(5 * 60 * 1000 - 2 * 1000)); 
+        vTaskDelay(pdMS_TO_TICKS(4 * 60 * 1000 + 28 * 1000));
     }
 }
 
@@ -34,7 +35,7 @@ bool initEnvois(){
 
     xTaskCreate( //création de la tâche
       taskEnvois,
-      "taskEnvois",
+      "Envois dess donnees sur l'api",
       10000,
       NULL,
       1,
@@ -52,8 +53,8 @@ int envoyer(){
     
     Serial.println("Vériication de la connexion au réseau");
     // verification de la connexion au réseau
-    if (!WiFi.status() == WL_CONNECTED){
-        abort();
+    if (WiFi.status() != WL_CONNECTED){
+        abort(); // redemarre l'esp pour se reconnecter au réseau
         return -2;
     }
 
@@ -70,9 +71,10 @@ int envoyer(){
     Serial.println("Serialisation des données récupérées");
     
     // recupérer les données
-    sprintf(s_donnees[0], "%.2f", getTemperature()); //donnees->tempEtHum->temperature); // %2.f pour  2 chiffres après la virgule
-    sprintf(s_donnees[1], "%2.f", getHumidite()); //donnees->tempEtHum->humidite); // %2.f pour avoir 2 chiffres après la virgule
-    sprintf(s_donnees[2], "%hu", getCO2()); //*donnees->co2); // %hu pour avoir un unsigned short
+    // si une donnée n'est pas disponible, on met une chaine de caractère vide
+    getTemperature() == -1 ? sprintf(s_donnees[0], "") : sprintf(s_donnees[0], "%.2f", getTemperature()); //donnees->tempEtHum->temperature); // %2.f pour  2 chiffres après la virgule
+    getHumidite() == -1 ? sprintf(s_donnees[1], "") : sprintf(s_donnees[1], "%2.f", getHumidite()); //donnees->tempEtHum->humidite); // %2.f pour avoir 2 chiffres après la virgule
+    getCO2() == -1 ? sprintf(s_donnees[2], "") : sprintf(s_donnees[2], "%hu", getCO2()); //*donnees->co2); // %hu pour avoir un unsigned short
 
     // presence est un booléen, on le converti en string
     if (getPresence()){//*donnees->presence == 1){
@@ -114,9 +116,6 @@ int envoyer(){
     // Serial.println(recupererValeur("/infobd.txt","nom_utilisateur").c_str());
     // Serial.println(recupererValeur("/infobd.txt","mot_de_passe").c_str());
 
-    // met un timeout à 7 seconds
-    http.setTimeout(7000);
-
     Serial.println("Connexion au serveur d'api");
 
     // configure la connexion au serveur d'api (changer l'url si besoin)
@@ -133,10 +132,17 @@ int envoyer(){
 
     Serial.println("Envoie de chaque donnees");
 
+    int codeErreur = 0;
+
     for(unsigned short i = 0; i < 4; i++){
-        size_t n;
 
         Serial.println("Sérialisation des donnees de "+ nomsValeurs[i]);
+
+        if (s_donnees[i] == ""){
+            Serial.println("Données non disponibles");
+            codeErreur = -3;
+            continue;
+        }
 
         // Création de la chaine de caractère à envoyer
         String donneesAEnvoyerStr = "{\"nom\":\""+ nomsValeurs[i] +
@@ -151,8 +157,8 @@ int envoyer(){
         // Décommenter pour avoir la donnée envoyée à l'api
         // Serial.println(donneesAEnvoyerStr);
 
-        // Décommenter pour voir la mémoire libre sur l'esp        
-        // Serial.println("Memoire RAM restante : " + String(ESP.getFreeHeap()) + "o");
+        // Décommenter pour voir la mémoire libre sur l'esp
+        Serial.println("Memoire RAM restante : " + String(ESP.getFreeHeap()) + "o");
 
         // Envoie des données
         int codeReponse = http.POST(donneesAEnvoyerStr);
@@ -164,22 +170,31 @@ int envoyer(){
         else{
             Serial.println("Code de reponse : " + String(codeReponse));
         }
+
+        if (codeReponse != 201){
+            codeErreur = -4;
+        }
+
     }
     
     // libère les ressources
     http.end();
-    return 0;
+
+    return codeErreur;
 }
 
 String errreurToString(int code){
+
     switch (code)
     {
     case -1:
         return "Erreur de date";
-        break;
     case -2:
         return "Erreur de connexion";
-        break;
+    case -3:
+        return "Données non disponibles";
+    case -4:
+        return "Erreur lors de l'envoi des données (requette http)";
     default:
         return "Erreur inconnue";
     }
