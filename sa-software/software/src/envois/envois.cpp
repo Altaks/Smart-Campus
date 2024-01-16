@@ -71,9 +71,9 @@ int envoyer(){
     
     // recupérer les données
     // si une donnée n'est pas disponible, on met une chaine de caractère vide
-    getTemperature() == -1 ? sprintf(s_donnees[0], "") : sprintf(s_donnees[0], "%.2f", getTemperature()); //donnees->tempEtHum->temperature); // %2.f pour  2 chiffres après la virgule
-    getHumidite() == -1 ? sprintf(s_donnees[1], "") : sprintf(s_donnees[1], "%2.f", getHumidite()); //donnees->tempEtHum->humidite); // %2.f pour avoir 2 chiffres après la virgule
-    getCO2() == -1 ? sprintf(s_donnees[2], "") : sprintf(s_donnees[2], "%hu", getCO2()); //*donnees->co2); // %hu pour avoir un unsigned short
+    getTemperature() == -1 ? sprintf(s_donnees[0], "%c", EOF) : sprintf(s_donnees[0], "%.2f", getTemperature()); //donnees->tempEtHum->temperature); // %2.f pour  2 chiffres après la virgule
+    getHumidite() == -1 ? sprintf(s_donnees[1], "%c", EOF) : sprintf(s_donnees[1], "%2.f", getHumidite()); //donnees->tempEtHum->humidite); // %2.f pour avoir 2 chiffres après la virgule
+    getCO2() == 0 ? sprintf(s_donnees[2], "%c", EOF) : sprintf(s_donnees[2], "%hu", getCO2()); //*donnees->co2); // %hu pour avoir un unsigned short
 
     // presence est un booléen, on le converti en string
     if (getPresence()){//*donnees->presence == 1){
@@ -146,12 +146,11 @@ int envoyer(){
 
     for(unsigned short i = 0; i < 4; i++){
 
-        Serial.println("Sérialisation des donnees de "+ nomsValeurs[i]);
+        Serial.printf("Récupération des données de %s\n", nomsValeurs[i]);
 
-        if (s_donnees[i] == ""){
-            Serial.println("Données non disponibles");
-            codeErreur = -3;
-            continue;
+        while(strlen(s_donnees[i]) == 1 && i < 4){
+            i++;
+            Serial.printf("Erreur lors de la récupération des données.\nRécupération des données de %s\n", nomsValeurs[i]);
         }
 
         // Création de la chaine de caractère à envoyer

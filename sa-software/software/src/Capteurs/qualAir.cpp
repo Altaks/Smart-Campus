@@ -4,6 +4,8 @@
 
 #include "qualAir.h"
 
+bool status = false;
+
 /**
  * Fonction permettant de convertir 4 valeurs de 8 bits chacune en une valeur sur 32 bits
  * @param value l'adresse des 32 bits
@@ -95,11 +97,8 @@ void initQualAir()
     /*
      * Vérification du statut du capteur
      */
-    while (sgp_probe() != STATUS_OK) {
-        while(1);
-    }
-
-    /*
+    if (sgp_probe() == STATUS_OK) {
+        /*
      * Lecture des signaux avec des appels bloquants
      */
     err = sgp_measure_signals_blocking_read(&scaled_ethanol_signal,
@@ -107,10 +106,15 @@ void initQualAir()
     
     // Ecrire la baseline dans l'EEPROM
     set_baseline();
+
+    status = true;
+    }
 }
 
 int getCO2()
 {
+    if (!status){return 0;}
+
     s16 err=0;
     u16 tvoc_ppb, co2_eq_ppm;
     err = sgp_measure_iaq_blocking_read(&tvoc_ppb, &co2_eq_ppm); // Appel de la fonction de lecture des valeurs de qualité de l'air

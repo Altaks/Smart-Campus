@@ -103,7 +103,7 @@ void afficher(PAGE &page){
             break;
         case CO2 :
             // vérification de la présence des données
-            if (getCO2() != -1) {
+            if (getCO2() != 0) {
                 char temp[17];
                 sprintf(temp, "CO2 : %d ppm", getCO2());
                 display->drawString(0, 25, temp);
