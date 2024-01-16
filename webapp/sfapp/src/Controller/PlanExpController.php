@@ -518,6 +518,7 @@ class PlanExpController extends AbstractController
         return $this->redirect("/plan/lister-sa");
     }
 
+
     private function recupererEtatsCapteurs(array $listeSa, $dateMoins5minet3secondes, ReleveService $service) : array
     {
         $listeEtatsCapteurs = [];
@@ -525,19 +526,7 @@ class PlanExpController extends AbstractController
         {
             if ($sa->getEtat() == "Opérationnel")
             {
-                $listeEtatsCapteurs[$sa->getId()] = [];
-
-                $temp = $service->getDernier($sa, "temp");
-                $hum = $service->getDernier($sa, "hum");
-                $co2 = $service->getDernier($sa, "co2");
-
-                $dateTemp = date_timestamp_get(new DateTime($temp["date"]));
-                $dateHum = date_timestamp_get(new DateTime($hum["date"]));
-                $dateCo2 = date_timestamp_get(new DateTime($co2["date"]));
-
-                $listeEtatsCapteurs[$sa->getId()]["temp"] = ($temp["valeur"] != "" && $dateTemp>= $dateMoins5minet3secondes);
-                $listeEtatsCapteurs[$sa->getId()]["hum"] = ($hum["valeur"] != "" && $dateHum>= $dateMoins5minet3secondes);
-                $listeEtatsCapteurs[$sa->getId()]["co2"] = ($co2["valeur"] != "" && $dateCo2>= $dateMoins5minet3secondes);
+                $listeEtatsCapteurs[$sa->getId()] = $service->verifierEtatCapteurs($sa);
             }
             else
             {
