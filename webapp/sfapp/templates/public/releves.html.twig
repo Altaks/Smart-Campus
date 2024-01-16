@@ -32,7 +32,7 @@
             {{ form_start(form) }}
                 <label class="text-xl">{{ field_label(form.salle) }}</label>
                 <select name="{{ field_name(form.salle) }}" class="form-control bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-5" onchange="this.form.submit()">
-                    <option value="" disabled>Choisir une salle</option>
+                    <option value="" disabled selected>Choisir une salle</option>
                     {% for label, value in field_choices(form.salle) %}
                         {% if form_selected is defined and label == form_selected.nom %}
                             <option value="{{ value }}" selected>{{ label }}</option>
@@ -120,11 +120,6 @@
                                 name: "Températures locales",
                                 data: [{% for val in temp_releves %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}],
                                 color: "#1A56DB",
-                            },
-                            {
-                                name: "Températures extérieures",
-                                data: [{% for val in temp_env %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}],
-                                color: "#7F8C8D",
                             }
                         ],
                         annotations: {
@@ -284,11 +279,6 @@
                                 name: "Humidité locale",
                                 data: [{% for val in hum_releves %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}],
                                 color: "#1A56DB",
-                            },
-                            {
-                                name: "Humidité extérieure",
-                                data: [{% for val in hum_env %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}],
-                                color: "#7F8C8D",
                             }
                         ],
                         annotations: {
@@ -397,7 +387,7 @@
                         <div class="text-green-500">
                             {% if co2_dernier > seuils.co2_premier_palier %}
                                 <p id="conseilQual">
-                                    Il est conseillé d\'aérer la salle
+                                    Il est conseillé d'aérer la salle
                                 </p>
                             {% endif %}
                         </div>
