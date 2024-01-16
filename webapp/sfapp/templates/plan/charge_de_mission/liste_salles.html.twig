@@ -19,39 +19,39 @@
         <nav class="flex" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
                 <li class="inline-flex items-center">
-                    <a href="/accueil" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
-                        <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <a href="/accueil" class="inline-flex items-center lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                        <svg class="lg:w-3 lg:h-3 lg:me-2.5 w-6 h-6 me-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                             <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
                         </svg>
                         Accueil
                     </a>
                 </li>
                 <li>
-                    <div class="flex items-center">
-                        <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                    <div class="flex items-center lg:text-sm text-2xl">
+                        <svg class="rtl:rotate-180 lg:w-3 lg:h-3 w-6 h-6 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
                         </svg>
-                        <a href="/plan/lister-salles" class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Liste des salles</a>
+                        <a href="/plan/lister-salles" class="ms-1 lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Liste des salles</a>
                     </div>
                 </li>
             </ol>
         </nav>
     </div>
-    <div class="relative overflow-x-auto max-w-7xl mx-auto">
-        <h1 class="text-4xl pb-12 text-center">Plan d'expérimentation</h1>
-        <div class="mb-3 flex flex-row-reverse">
+    <div class="flex flex-col xl:w-2/3 w-5/6 items-center mx-auto">
+        <h1 class="lg:text-4xl text-7xl pb-12 text-center">Plan d'expérimentation</h1>
+        <div class="mb-3 self-end">
             <div>
-            <button
-                    type="button"
-                    class="float-right font-bold text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
-                    onclick="window.location.href='/plan/ajouter-salle'"
-            >
-                Ajouter une salle
-            </button>
+                <button
+                        type="button"
+                        class="font-bold text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg lg:text-sm text-3xl px-5 py-2.5 focus:outline-none"
+                        onclick="window.location.href='/plan/ajouter-salle'"
+                >
+                    Ajouter une salle
+                </button>
             </div>
         </div>
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 rounded-t-2xl">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <thead class="lg:text-xs text-xl text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
                 <th scope="col" class="px-6 py-3">
                     Nom
@@ -59,16 +59,16 @@
                 <th scope="col" class="px-6 py-3">
                     Bâtiment
                 </th>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" class="px-6 py-3 hidden lg:table-cell">
                     Orientation
                 </th>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" class="px-6 py-3 hidden lg:table-cell">
                     Contient PC
                 </th>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" class="px-6 py-3 hidden lg:table-cell">
                     Portes
                 </th>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" class="px-6 py-3 hidden lg:table-cell">
                     Fenêtres
                 </th>
                 <th scope="col" class="px-6 py-3">
@@ -82,27 +82,27 @@
 
             {% for salle in salle %}
                 <tbody>
-                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <tr class="lg:text-base text-2xl bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {{ salle.nom }}
                     </th>
                     <td class="px-6 py-4">
                         {{ salle.batiment }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 hidden lg:table-cell">
                         {{ orientation[salle.orientation] }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 hidden lg:table-cell">
                         {% if salle.contientPc %}
                             Oui
                         {% else %}
                             Non
                         {% endif %}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 hidden lg:table-cell">
                         {{ salle.nombrePorte }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 hidden lg:table-cell">
                         {{ salle.nombreFenetre }}
                     </td>
                     <td class="px-6 py-4">
@@ -130,14 +130,14 @@
                     </td>
                     <td>
                         <a data-tooltip-target="tooltip-modifier-{{salle.id}}" href="/plan/modifier-salle/{{ salle.id }}" class="mx-2">
-                            <box-icon name='edit' color='#000000'></box-icon>
+                            <box-icon name='edit' color='#000000' class="lg:w-6 lg:h-6 w-9 h-9"></box-icon>
                         </a>
                         <div id="tooltip-modifier-{{salle.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
                             Modifier la salle
                             <div class="tooltip-arrow" data-popper-arrow></div>
                         </div>
                         <a data-tooltip-target="tooltip-delete-{{salle.id}}" href="/plan/retirer-salle/{{ salle.id }}" class="mx-2">
-                            <box-icon name='trash' type='solid' color='rgba(255,0,0,0.85)' ></box-icon>
+                            <box-icon name='trash' type='solid' color='rgba(255,0,0,0.85)' class="lg:w-6 lg:h-6 w-9 h-9"></box-icon>
                         </a>
                         <div id="tooltip-delete-{{salle.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
                             Supprimer la salle
