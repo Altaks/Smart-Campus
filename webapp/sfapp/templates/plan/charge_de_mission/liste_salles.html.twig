@@ -129,12 +129,20 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="/plan/modifier-salle/{{ salle.id }}" class="mx-2">
+                        <a data-tooltip-target="tooltip-modifier-{{salle.id}}" href="/plan/modifier-salle/{{ salle.id }}" class="mx-2">
                             <box-icon name='edit' color='#000000'></box-icon>
                         </a>
-                        <a href="/plan/retirer-salle/{{ salle.id }}" class="mx-2">
+                        <div id="tooltip-modifier-{{salle.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                            Modifier la salle
+                            <div class="tooltip-arrow" data-popper-arrow></div>
+                        </div>
+                        <a data-tooltip-target="tooltip-delete-{{salle.id}}" href="/plan/retirer-salle/{{ salle.id }}" class="mx-2">
                             <box-icon name='trash' type='solid' color='rgba(255,0,0,0.85)' ></box-icon>
                         </a>
+                        <div id="tooltip-delete-{{salle.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                            Supprimer la salle
+                            <div class="tooltip-arrow" data-popper-arrow></div>
+                        </div>
                     </td>
                 </tr>
                 </tbody>
