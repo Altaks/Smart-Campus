@@ -11,14 +11,6 @@ SSD1306Wire * display;
 int carrouselDelay = 3000;
 int flicker = 6;
 
-struct Error {
-    bool tempError = false;
-    bool co2Error = false;
-    bool humError = false;
-};
-
-Error error;
-
 bool initAffichage()
 {
     Serial.println("______________________________________");

@@ -20,6 +20,8 @@
 #include "Serveur/serveurWeb.h"
 #include "Serveur/modifierPageWeb.h"
 
+#include "LED/led.h"
+
 void setup() {
 
     Serial.begin(9600);
@@ -29,6 +31,11 @@ void setup() {
 
     // Initilaisation système de fichier
     initSystemeFichier();
+
+
+    //LED
+    initLED();
+    bool truc = initTaskLED();
     
     delay(100);
     
@@ -118,6 +125,7 @@ void setup() {
     initTempEtHum();
     initQualAir();
     initPresence();
+
 
     // Active l'affichage carrousel  
     if (affiche) {initTacheAffichage();}

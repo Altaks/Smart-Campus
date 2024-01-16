@@ -113,9 +113,9 @@ void initQualAir()
 
 int getCO2()
 {
-    if (!status){return 0;}
+    if (!status){return -1;}
 
-    s16 err=0;
+    s16 err=0;  
     u16 tvoc_ppb, co2_eq_ppm;
     err = sgp_measure_iaq_blocking_read(&tvoc_ppb, &co2_eq_ppm); // Appel de la fonction de lecture des valeurs de qualité de l'air
     store_baseline();
@@ -126,6 +126,6 @@ int getCO2()
     } else {
         // Si erreur, afficher un message d'erreur et mettre la variable globale à -1 (valeur d'erreur)
         Serial.println("error reading IAQ values\n");
-        return 0;
+        return -1;
     }
 }
