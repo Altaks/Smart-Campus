@@ -227,13 +227,19 @@ class PublicController extends AbstractController
         }
 
         if ($tech && !$this->isGranted("ROLE_TECHNICIEN")) {
-            return $this->redirectToRoute('accueil');
+            return $this->render('bundles/TwigBundle/Exception/error403.html.twig', [
+                'message' => "Seuls les techniciens peuvent accéder à cette page."
+                ],
+                new Response("Seuls les techniciens peuvent accéder à cette page.", 403));
         }
 
         $salle = $registry->getRepository('App\Entity\Salle')->find($id);
 
         if ($salle == null || $salle->getSystemeAcquisition() == null || $salle->getSystemeAcquisition()->getEtat() != "Opérationnel") {
-            return $this->redirectToRoute('accueil');
+            return $this->render('bundles/TwigBundle/Exception/error405.html.twig', [
+                'message' => "Vous ne pouvez pas signaler d'erreur pour cette salle. (Salle inexistante ou système d'acquisition non opérationnel)"
+                ],
+                new Response("La salle n'existe pas ou n'a pas de système d'acquisition opérationnel.", 404));
         }
 
         $demandeTravauxRepository = $registry->getRepository('App\Entity\DemandeTravaux');
@@ -243,8 +249,14 @@ class PublicController extends AbstractController
             'terminee' => false,
         ]);
 
+        // cette vérification n'est pas nécessaire car le formulaire ne peut pas être affiché si une demande est déjà en cours (systemeAcquisition->etat != "Opérationnel")
+        // mais par précaution on la laisse
         if ($demande != null) {
-            return $this->redirectToRoute('accueil');
+            return $this->render('bundles/TwigBundle/Exception/error405.html.twig', [
+                'message' => "Vous ne pouvez pas signaler d'erreur pour cette salle. (Une demande de travaux est déjà en cours)"
+                ],
+                // code 418 : I'm a teapot car cette erreur ne devrait pas arriver
+                new Response("Une demande de travaux est déjà en cours pour cette salle.", 418));
         }
 
         $demande = new DemandeTravaux();
