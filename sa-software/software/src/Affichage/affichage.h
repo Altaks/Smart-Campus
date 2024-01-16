@@ -4,6 +4,8 @@
 #include <SSD1306Wire.h>
 #include "typeDef.h"
 
+
+
 /**
  * @brief Initialise l'affichage
  * Initialise l'affichage 
@@ -43,5 +45,7 @@ void afficher(PAGE &);
  * \param centered si le texte doit être centré ou non
  */
 void displayText(String text, int x = 0, int y = 0, int fontSize = 16, bool centered = false);
+
+void displayResetInfos(String dateTime, String ip);
 
 #endif
