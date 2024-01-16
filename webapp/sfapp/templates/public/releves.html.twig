@@ -8,32 +8,32 @@
         <nav class="flex" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
                 <li class="inline-flex items-center">
-                    <a href="/accueil" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
-                        <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <a href="/accueil" class="inline-flex items-center lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                        <svg class="lg:w-3 lg:h-3 lg:me-2.5 w-6 h-6 me-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                             <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
                         </svg>
                         Accueil
                     </a>
                 </li>
                 <li>
-                    <div class="flex items-center">
-                        <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                    <div class="flex items-center lg:text-sm text-2xl">
+                        <svg class="rtl:rotate-180 lg:w-3 lg:h-3 w-6 h-6 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
                         </svg>
-                        <a href="/releves" class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Relevés</a>
+                        <a href="/releves" class="ms-1 lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Relevés</a>
                     </div>
                 </li>
             </ol>
         </nav>
     </div>
-    <h1 class="text-4xl pb-12 text-center">Relevés</h1>
-    <div class="w-2/3 mx-auto flex justify-between">
+    <h1 class="lg:text-4xl text-7xl pb-12 text-center">Relevés</h1>
+    <div class="lg:w-2/3 w-5/6 mx-auto flex justify-between">
         <div>
             {{ form_start(form) }}
-                <label class="text-xl">{{ field_label(form.salle) }}</label>
-                <select name="{{ field_name(form.salle) }}" class="form-control bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-5" onchange="this.form.submit()">
-                    <option value="" disabled selected>Choisir une salle</option>
-                    {% for label, value in field_choices(form.salle) %}
+            <label class="lg:text-xl text-3xl">{{ field_label(form.salle) }}</label>
+            <select name="{{ field_name(form.salle) }}" class="form-control bg-gray-50 border border-gray-300 text-gray-900 lg:text-sm text-2xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-5" onchange="this.form.submit()">
+                <option value="" disabled selected>Choisir une salle</option>
+                {% for label, value in field_choices(form.salle) %}
                         {% if form_selected is defined and label == form_selected.nom %}
                             <option value="{{ value }}" selected>{{ label }}</option>
                         {% else %}
@@ -45,22 +45,26 @@
         </div>
         {% if form_selected is defined and form_selected is not null %}
             <div class="flex flex-column-reverse">
-                <a href="/signaler-erreur/{{ form_selected.id }}" class="mt-[auto] text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:ring-red-300 font-medium rounded-lg px-5 py-2.5">
+                <a href="/signaler-erreur/{{ form_selected.id }}" class="mt-[auto] text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:ring-red-300 font-medium rounded-lg px-5 py-2.5 lg:text-base text-2xl">
                     Signaler une erreur</a>
             </div>
         {% endif %}
     </div>
-    <div class="w-2/3 mx-auto my-12">
+    <div class="lg:w-2/3 w-5/6 mx-auto my-12">
         {% if temp_dates is defined and temp_dates is not null and temp_releves is defined and temp_releves is not null %}
             <div class="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
                 <div class="flex justify-between mb-5">
                     <div>
                         <h5 class="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">Températures</h5>
-                        <p class="text-base font-normal text-gray-500 dark:text-gray-400">en °C</p>
-                        <div class="text-red-500">
-                            {% if temp_dernier > seuils.temp_max %}
+                        <p class="lg:text-base text-xl font-normal text-gray-500 dark:text-gray-400">en °C</p>
+                        <div class="lg:text-base text-xl text-red-500">
+                            {% if temp_dernier is null or temp_dernier is empty %}
                                 <p id="alerteTemp">
-                                    La température de la salle est trop élevé
+                                    La dernière valeur récupérée est invalide
+                                </p>
+                            {% elseif temp_dernier > seuils.temp_max %}
+                                <p id="alerteTemp">
+                                    La température de la salle est trop élevée
                                 </p>
                             {% elseif temp_dernier < seuils.temp_min %}
                                 <p id="alerteTemp">
@@ -68,8 +72,12 @@
                                 </p>
                             {% endif %}
                         </div>
-                        <div class="text-green-500">
-                            {% if temp_dernier > seuils.temp_max %}
+                        <div class="lg:text-base text-xl text-green-500">
+                            {% if temp_dernier is null or temp_dernier is empty %}
+                                <p id="conseilTemp">
+                                    Veuillez signaler l'erreur
+                                </p>
+                            {% elseif temp_dernier > seuils.temp_max %}
                                 <p id="conseilTemp">
                                     Il est conseillé de baisser le chauffage et d'ouvrir les fenêtres
                                 </p>
@@ -81,17 +89,17 @@
                         </div>
                     </div>
                     {% if temp_diff > 0 %}
-                        <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-400 text-center">
+                        <div class="flex items-center px-2.5 py-0.5 lg:text-base text-xl font-semibold text-green-500 dark:text-green-400 text-center">
                             + {{ temp_diff | number_format(2) }} °C
                             <box-icon name='up-arrow-alt' color="#16a34a"></box-icon>
                         </div>
                     {% elseif temp_diff < 0 %}
-                        <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-red-500 dark:text-red-400 text-center">
+                        <div class="flex items-center px-2.5 py-0.5 lg:text-base text-xl font-semibold text-red-500 dark:text-red-400 text-center">
                             {{ temp_diff | number_format(2) }} °C
                             <box-icon name='down-arrow-alt' color="#ef4444"></box-icon>
                         </div>
                     {% else %}
-                        <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-gray-900 dark:text-gray-400 text-center">
+                        <div class="flex items-center px-2.5 py-0.5 lg:text-base text-xl font-semibold text-gray-900 dark:text-gray-400 text-center">
                             =
                         </div>
                     {% endif %}
@@ -213,7 +221,7 @@
                     }
                 });
             </script>
-        {% elseif temp_error is defined %}
+            {% elseif temp_error is defined %}
             <div class="bg-red-300 rounded-lg text-red-950 text-xl w-full text-center my-12 p-6">
                 {{ temp_error }}
             </div>
@@ -223,16 +231,24 @@
                 <div class="flex justify-between mb-5">
                     <div>
                         <h5 class="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">Humidité</h5>
-                        <p class="text-base font-normal text-gray-500 dark:text-gray-400">en %</p>
-                        <div class="text-red-500">
-                            {% if hum_dernier > seuils.humidite_max %}
+                        <p class="lg:text-base text-xl font-normal text-gray-500 dark:text-gray-400">en %</p>
+                        <div class="lg:text-base text-xl text-red-500">
+                            {% if hum_dernier is null or temp_dernier is empty %}
+                                <p id="alerteHum">
+                                    La dernière valeur récupérée est invalide
+                                </p>
+                            {% elseif hum_dernier > seuils.humidite_max %}
                                 <p id="alerteHum">
                                     Le niveau d'humidité de la salle et trop élevé
                                 </p>
                             {% endif %}
                         </div>
-                        <div class="text-green-500">
-                            {% if hum_dernier > seuils.humidite_max %}
+                        <div class="lg:text-base text-xl text-green-500">
+                            {% if hum_dernier is null or temp_dernier is empty %}
+                                <p id="conseilHum">
+                                    Veuillez signaler l'erreur
+                                </p>
+                            {% elseif hum_dernier > seuils.humidite_max %}
                                 <p id="conseilHum">
                                     Il est conseillé de fermer les fenêtres
                                 </p>
@@ -240,17 +256,17 @@
                         </div>
                     </div>
                     {% if hum_diff > 0 %}
-                        <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-red-500 dark:text-red-400 text-center">
+                        <div class="flex items-center px-2.5 py-0.5 lg:text-base text-xl font-semibold text-red-500 dark:text-red-400 text-center">
                             + {{ hum_diff | number_format(2)}} %
                             <box-icon name='up-arrow-alt' color="#ef4444"></box-icon>
                         </div>
                     {% elseif hum_diff < 0 %}
-                        <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-400 text-center">
+                        <div class="flex items-center px-2.5 py-0.5 lg:text-base text-xl font-semibold text-green-500 dark:text-green-400 text-center">
                             {{ hum_diff | number_format(2)}} %
                             <box-icon name='down-arrow-alt' color="#16a34a"></box-icon>
                         </div>
                     {% else %}
-                        <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-gray-900 dark:text-gray-400 text-center">
+                        <div class="flex items-center px-2.5 py-0.5 lg:text-base text-xl font-semibold text-gray-900 dark:text-gray-400 text-center">
                             =
                         </div>
                     {% endif %}
@@ -370,9 +386,13 @@
                 <div class="flex justify-between">
                     <div>
                         <h5 class="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">Qualité de l'air</h5>
-                        <p class="text-base font-normal text-gray-500 dark:text-gray-400">en ppm</p>
-                        <div class="text-red-500">
-                            {% if co2_dernier > seuils.co2_premier_palier %}
+                        <p class="lg:text-base text-xl font-normal text-gray-500 dark:text-gray-400">en ppm</p>
+                        <div class="lg:text-base text-xl text-red-500">
+                            {% if co2_dernier is null or temp_dernier is empty %}
+                                <p id="alerteQual">
+                                    La dernière valeur récupérée est invalide
+                                </p>
+                            {% elseif co2_dernier > seuils.co2_premier_palier %}
                                 {% if co2_dernier > seuils.co2_second_palier %}
                                     <p id="alerteQual">
                                         La qualité de l'air est très mauvaise
@@ -384,8 +404,12 @@
                                 {% endif %}
                             {% endif %}
                         </div>
-                        <div class="text-green-500">
-                            {% if co2_dernier > seuils.co2_premier_palier %}
+                        <div class="lg:text-base text-xl text-green-500">
+                            {% if co2_dernier is null or temp_dernier is empty %}
+                                <p id="conseilQual">
+                                    Veuillez signaler l'erreur
+                                </p>
+                            {% elseif co2_dernier > seuils.co2_premier_palier %}
                                 <p id="conseilQual">
                                     Il est conseillé d'aérer la salle
                                 </p>
@@ -393,17 +417,17 @@
                         </div>
                     </div>
                     {% if co2_diff > 0 %}
-                        <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-red-500 dark:text-red-400 text-center">
+                        <div class="flex items-center px-2.5 py-0.5 lg:text-base text-xl font-semibold text-red-500 dark:text-red-400 text-center">
                             + {{ co2_diff | number_format(2) }} ppm
                             <box-icon name='up-arrow-alt' color="#ef4444"></box-icon>
                         </div>
                     {% elseif co2_diff < 0 %}
-                        <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-400 text-center">
+                        <div class="flex items-center px-2.5 py-0.5 lg:text-base text-xl font-semibold text-green-500 dark:text-green-400 text-center">
                             {{ co2_diff | number_format(2) }} ppm
                             <box-icon name='down-arrow-alt' color="#16a34a"></box-icon>
                         </div>
                     {% else %}
-                        <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-gray-900 dark:text-gray-400 text-center">
+                        <div class="flex items-center px-2.5 py-0.5 lg:text-base text-xl font-semibold text-gray-900 dark:text-gray-400 text-center">
                             =
                         </div>
                     {% endif %}
