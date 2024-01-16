@@ -35,8 +35,8 @@ bool initEnvois(){
 
     xTaskCreate( //création de la tâche
       taskEnvois,
-      "Envois dess donnees sur l'api",
-      10000,
+      "Envois des donnees sur l'api",
+      4000,
       NULL,
       1,
       &envoisTaskHandle

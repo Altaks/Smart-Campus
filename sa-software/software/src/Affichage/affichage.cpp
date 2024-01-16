@@ -41,7 +41,7 @@ bool initTacheAffichage()
     xTaskCreate( //création de la tâche
       taskAffichage,
       "Affichage des données en local",
-      10000,
+      3000,
       NULL,
       1,
         &affichageTaskHandle

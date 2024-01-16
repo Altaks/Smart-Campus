@@ -34,7 +34,7 @@ int envoyer();
 */
 String errreurToString(int);
 
-const String nomsValeurs[] = {"temp", "hum", "co2", "lum", "pres"};
+const String nomsValeurs[] = {"temp", "hum", "co2", "pres"};
 
 
 #endif
