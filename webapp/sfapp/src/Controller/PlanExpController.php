@@ -312,11 +312,11 @@ class PlanExpController extends AbstractController
                 return $this->redirectToRoute('accueil');
             }
 
-            if($seuil_temp_min_val > $seuil_temp_max_val)
+            if($seuil_temp_min_val >= $seuil_temp_max_val)
             {
                 $erreurs['temp'] = "Le seuil bas ne peut pas être plus grand que le seuil haut";
             }
-            if($seuil_co2_premier_palier_val > $seuil_co2_second_palier_val)
+            if($seuil_co2_premier_palier_val >= $seuil_co2_second_palier_val)
             {
                 $erreurs['co2'] = "Le seuil moyen ne peut pas être plus grand que le seuil haut";
             }

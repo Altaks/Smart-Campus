@@ -67,6 +67,7 @@
                 </div>
             </div>
         </div>
+        <p class="text-red-600 text-center text-sm mt-1">{{ erreurs.temp|default }}</p>
 
         <h2 class="lg:text-2xl text-center mt-10">Humidité</h2>
 
@@ -126,6 +127,7 @@
                 </div>
             </div>
         </div>
+        <p class="text-red-600 text-center text-sm mt-1">{{ erreurs.co2|default }}</p>
         <div class="grid grid-cols-subgrid gap-4 col-span-3 mt-5">
             <div class="mx-auto col-start-1">
                 <button id="submit" type="submit" name="{{ field_name(form.ajouter) }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
@@ -134,5 +136,54 @@
         </div>
         {{ form_end(form) }}
     </div>
+    <script>
+        let temp_min = document.getElementById('temp_min');
+        let temp_max = document.getElementById('temp_max');
+        let humidite_max = document.getElementById('humidite_max');
+        let co2_premier_palier = document.getElementById('co2_premier_palier');
+        let co2_second_palier = document.getElementById('co2_second_palier');
+        let decrements = document.querySelectorAll("[id='decrement-button']");
+        let increments = document.querySelectorAll("[id='increment-button']");
+        console.log("test")
+        temp_min.addEventListener('input',verifierEntrees)
+        temp_max.addEventListener('input',verifierEntrees)
+        humidite_max.addEventListener('input',verifierEntrees)
+        co2_premier_palier.addEventListener('input',verifierEntrees)
+        co2_second_palier.addEventListener('input',verifierEntrees)
+        for(const decrement of decrements) decrement.addEventListener('click',attendreVerifierEntrees)
+        for(const increment of increments) increment.addEventListener('click',attendreVerifierEntrees)
+
+        function attendreVerifierEntrees() {
+            setTimeout(function(){verifierEntrees()}, 100)
+        }
+
+        function verifierEntrees(){
+            let temp_min = document.getElementById('temp_min');
+            let temp_max = document.getElementById('temp_max');
+            let humidite_max = document.getElementById('humidite_max');
+            let co2_premier_palier = document.getElementById('co2_premier_palier');
+            let co2_second_palier = document.getElementById('co2_second_palier');
+
+            if(temp_min.value.length > 0 && temp_max.value.length > 0 && humidite_max.value.length > 0 && co2_premier_palier.value.length > 0 && co2_second_palier.value.length > 0) enableSubmitButton()
+            else disableSubmitButton()
+        }
+
+        function enableSubmitButton(){
+            let button = document.getElementById("submit");
+            if (button.disabled){
+                button.disabled = false;
+                button.classList.remove("cursor-not-allowed");
+                button.classList.add("hover:bg-blue-800");
+            }
+        }
+        function disableSubmitButton(){
+            let button = document.getElementById("submit");
+            if (!button.disabled){
+                button.disabled = true;
+                button.classList.add("cursor-not-allowed");
+                button.classList.remove("hover:bg-blue-800");
+            }
+        }
+    </script>
 
 {% endblock %}
