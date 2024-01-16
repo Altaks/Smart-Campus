@@ -114,6 +114,7 @@ class PublicController extends AbstractController
                 $comparable_date = new \DateTime($date);
                 if(date_diff($comparable_date, new \DateTime())->d > 0) unset($releves30Jours[$date]);
                 if($comparable_date > new \DateTime()) unset($releves30Jours[$date]);
+                if ($vals['temp'] == null && $vals['hum'] == null && $vals['co2'] == null) unset($releves30Jours[$date]);
             }
 
             $datesTemp = [];
@@ -132,15 +133,15 @@ class PublicController extends AbstractController
             $seuils = $seuilService->getSeuils($managerRegistry);
 
             foreach ($releves30Jours as $date => $releves){
-                if($releves['temp'] != null){
+                if($releves['temp'] != null && $releves['temp'] != "null"){
                     $datesTemp[] = $date;
                     $relevesTemp[] = $releves['temp'];
                 }
-                if($releves['hum'] != null){
+                if($releves['hum'] != null && $releves['hum'] != "null"){
                     $datesHum[] = $date;
                     $relevesHum[] = $releves['hum'];
                 }
-                if($releves['co2'] != null){
+                if($releves['co2'] != null && $releves['co2'] != "null"){
                     $datesCo2[] = $date;
                     $relevesCo2[] = $releves['co2'];
                 }
@@ -155,7 +156,9 @@ class PublicController extends AbstractController
                 $datesTemp = null;
                 $relevesTemp = null;
             } else if(count($relevesTemp) > 1){
-                $last_temps_diff = $relevesTemp[count($relevesTemp) - 1] - $relevesTemp[count($relevesTemp) - 2];
+                if ($relevesTemp[count($relevesTemp) - 2] != "null" && $relevesTemp[count($relevesTemp) - 1] != "null") {
+                    $last_temps_diff = $relevesTemp[count($relevesTemp) - 1] - $relevesTemp[count($relevesTemp) - 2];
+                }
             }
 
             $last_humidity_diff = 0;
@@ -165,7 +168,9 @@ class PublicController extends AbstractController
                 $datesHum = null;
                 $relevesHum = null;
             } else if(count($relevesHum) > 1){
-                $last_humidity_diff = $relevesHum[count($relevesHum) - 1] - $relevesHum[count($relevesHum) - 2];
+                if ($relevesHum[count($relevesHum) - 2] != "null" && $relevesHum[count($relevesHum) - 1] != "null"){
+                    $last_humidity_diff = $relevesHum[count($relevesHum) - 1] - $relevesHum[count($relevesHum) - 2];
+                }
             }
 
             $last_co2_diff = 0;
@@ -175,7 +180,10 @@ class PublicController extends AbstractController
                 $datesCo2 = null;
                 $relevesCo2 = null;
             } else if(count($relevesCo2) > 1){
-                $last_co2_diff = $relevesCo2[count($relevesCo2) - 1] - $relevesCo2[count($relevesCo2) - 2];
+                if ($relevesCo2[count($relevesCo2) - 2] != "null" && $relevesCo2[count($relevesCo2) - 1] != "null"){
+                    $last_co2_diff = $relevesCo2[count($relevesCo2) - 1] - $relevesCo2[count($relevesCo2) - 2];
+                }
+
             }
 
             $envData = $envAPI->queryDailyTempsAndHumidity();
