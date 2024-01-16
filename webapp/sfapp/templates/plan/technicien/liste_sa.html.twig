@@ -54,9 +54,13 @@
         </div>
     </div>
 
-    <div class="max-w-screen-xl mx-auto mt-10">
+
+    <div class="max-w-screen-xl mx-auto my-10">
+
+        <input type="text" id="searchInput" class="mb-5 w-max bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onkeyup="search()" placeholder="Rechercher un système">
+
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <table id="liste-sa" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 rounded-t-2xl">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
 
                 {% if choix == "Tous les SA" %}
@@ -83,7 +87,7 @@
                 </thead>
                 <thead>
                 {% for systemeAcquisition in listeSa %}
-                    <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ systemeAcquisition.nom }}
                         </th>
@@ -322,5 +326,62 @@
             </table>
         </div>
     </div>
+
+    <script>
+        function search() {
+            // Declare variables
+            let input, filter, table, tr, i, txtValue;
+            input = document.getElementById("searchInput");
+            txt = input.value;
+            let array = txt.split(" ");
+            array.forEach(function (element, index) {
+                if (element.length >= 2){
+                    array[index] = element.toUpperCase();
+                }
+            });
+
+            table = document.getElementById("liste-sa");
+            tr = table.getElementsByTagName("tr");
+            for (i = 1; i < tr.length; i++) {
+                let nb = 0;
+                let nbFilter = array.length;
+
+                for (txt of array) {
+                    filter = txt.toUpperCase();
+                    // Loop through all table rows, and hide those who don't match the search query
+
+                    let salle, nom;
+                    td1 = tr[i].getElementsByTagName("th")[0];
+                    if (td1) {
+                        txtValue = td1.textContent || td1.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            nom = true;
+                        } else {
+                            nom = false;
+                        }
+                    }
+                    td2 = tr[i].getElementsByTagName("td")[0];
+                    if (td2) {
+                        txtValue = td2.textContent || td2.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            salle = true;
+                        } else {
+                            salle = false;
+                        }
+                    }
+                    if (nom || salle) {
+                        nb++;
+                    }
+                }
+
+                if (nb === nbFilter) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+
+        }
+    </script>
 
 {% endblock %}

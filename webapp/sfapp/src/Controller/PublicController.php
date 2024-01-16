@@ -200,7 +200,7 @@ class PublicController extends AbstractController
 
                 $ttmp_date = new \DateTime("@" . $timestamp);
 
-                while(!in_array($timestamp, $envData["timestamps"]) && $ttmp_now > $ttmp_date){
+                while(!in_array($timestamp, $envData["timestamps"]) && $ttmp_now >= $ttmp_date){
                     $timestamp += 3600;
                     $ttmp_date = new \DateTime("@" . $timestamp);
                 }

@@ -37,7 +37,7 @@
             </ol>
         </nav>
     </div>
-    <div class="relative overflow-x-auto max-w-7xl mx-auto">
+    <div class="relative overflow-x-auto max-w-7xl mx-auto mb-10">
         <h1 class="text-4xl pb-12 text-center">Plan d'expérimentation</h1>
         <div class="mb-3 flex flex-row-reverse">
             <div>
@@ -50,7 +50,10 @@
             </button>
             </div>
         </div>
-        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 rounded-t-2xl">
+
+        <input type="text" id="searchInput" class="mb-5 w-max bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onkeyup="search()" placeholder="Rechercher une salle">
+
+        <table id="liste-salle" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 rounded-t-2xl">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
                 <th scope="col" class="px-6 py-3">
@@ -149,6 +152,63 @@
             {% endfor %}
         </table>
     </div>
+
+    <script>
+        function search() {
+            // Declare variables
+            let input, filter, table, tr, i, txtValue;
+            input = document.getElementById("searchInput");
+            txt = input.value;
+            let array = txt.split(" ");
+            array.forEach(function (element, index) {
+                if (element.length >= 2){
+                    array[index] = element.toUpperCase();
+                }
+            });
+
+            table = document.getElementById("liste-salle");
+            tr = table.getElementsByTagName("tr");
+            for (i = 1; i < tr.length; i++) {
+                let nb = 0;
+                let nbFilter = array.length;
+
+                for (txt of array) {
+                    filter = txt.toUpperCase();
+                    // Loop through all table rows, and hide those who don't match the search query
+
+                    let bat, nom, ori;
+                    td = tr[i].getElementsByTagName("th")[0];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            nom = true;
+                        } else {
+                            nom = false;
+                        }
+                    }
+                    td = tr[i].getElementsByTagName("td")[0];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            bat = true;
+                        } else {
+                            bat = false;
+                        }
+                    }
+                    if (nom || bat) {
+                        nb++;
+                    }
+                }
+
+                if (nb === nbFilter) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+
+        }
+    </script>
 
 
 {% endblock %}
