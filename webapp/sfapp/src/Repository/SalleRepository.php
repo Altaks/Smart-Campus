@@ -23,10 +23,13 @@ class SalleRepository extends ServiceEntityRepository
 
     public function findAllSallesAvecSAOperationnel(): array
     {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.systemeAcquisition IS NOT NULL')
-            ->getQuery()
-            ->getResult();
+        $entityManager = $this->getEntityManager();
+
+         // Récupération de toutes les salles ayant des relevés avec du DQL
+        $query = $entityManager->createQuery("SELECT s FROM App\Entity\Salle s JOIN s.systemeAcquisition sys WHERE sys.etat = 'Opérationnel'");
+
+        // returns an array of Product objects
+        return $query->getResult();
     }
 
 //    /**
