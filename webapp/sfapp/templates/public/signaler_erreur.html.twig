@@ -8,51 +8,51 @@
         <nav class="flex" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
                 <li class="inline-flex items-center">
-                    <a href="/accueil" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
-                        <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <a href="/accueil" class="inline-flex items-center lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                        <svg class="lg:w-3 lg:h-3 lg:me-2.5 w-6 h-6 me-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                             <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
                         </svg>
                         Accueil
                     </a>
                 </li>
                 <li>
-                    <div class="flex items-center">
-                        <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                    <div class="flex items-center lg:text-sm text-2xl">
+                        <svg class="rtl:rotate-180 lg:w-3 lg:h-3 w-6 h-6 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
                         </svg>
-                        <a href="/signaler-erreur/{{ salle.Id }}" class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Signaler une erreur</a>
+                        <a href="/signaler-erreur/{{ salle.Id }}" class="ms-1 lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Signaler une erreur</a>
                     </div>
                 </li>
             </ol>
         </nav>
     </div>
 
-    <div class="w-2/3 mx-auto">
+    <div class="w-full flex flex-col items-center">
         {% if tech %}
-            <h1 class="text-3xl font-bold text-center mb-12">Signaler une erreur pour la salle <i>{{ salle.Nom }} : système {{ salle.SystemeAcquisition.nom }}</i></h1>
+            <h1 class="lg:text-4xl text-7xl font-bold text-center mb-12">Signaler une erreur pour la salle <i>{{ salle.Nom }} : système {{ salle.SystemeAcquisition.nom }}</i></h1>
         {% else %}
-            <h1 class="text-3xl font-bold text-center mb-12">Signaler une erreur pour la salle <i>{{ salle.Nom }} </i></h1>
+            <h1 class="lg:text-4xl text-7xl font-bold text-center mb-12">Signaler une erreur pour la salle <i>{{ salle.Nom }} </i></h1>
         {% endif %}
 
-        <div class="mx-auto mt-4 w-2/3">
+        <div class="mt-4 lg:w-4/9">
             {{ form_start(form) }}
-                <div class="mb-5 mx-5">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ field_label(form.emailDemandeur) }}</label>
-                    <input id="email" name="{{ field_name(form.emailDemandeur) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ex: ksimon@etudiant.univ-lr.fr"/>
+                <div class="lg:mb-5 mb-14 mx-5">
+                    <label class="block mb-2 lg:text-2xl text-4xl font-medium text-gray-900 dark:text-white">{{ field_label(form.emailDemandeur) }}</label>
+                    <input id="email" name="{{ field_name(form.emailDemandeur) }}" class="bg-gray-50 border border-gray-300 text-gray-900 lg:text-sm text-3xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ex: ksimon@etudiant.univ-lr.fr"/>
                     {{ form_errors(form.emailDemandeur, {
                         error_item_class: 'text-red-600 text-sm mt-1',
                     }) }}
                 </div>
                 <div class="mb-5 mx-5">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ field_label(form.commentaire) }}</label>
-                    <textarea id="commentaire" name="{{ field_name(form.commentaire) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Décrivez le problème, exemple : &#34La température dépasse les 100°C&#34" rows="5"></textarea>
+                    <label class="block mb-2 lg:text-2xl text-4xl font-medium text-gray-900 dark:text-white">{{ field_label(form.commentaire) }}</label>
+                    <textarea id="commentaire" name="{{ field_name(form.commentaire) }}" class="bg-gray-50 border border-gray-300 text-gray-900 lg:text-sm text-3xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Décrivez le problème, exemple : &#34La température dépasse les 100°C&#34" rows="5"></textarea>
                     {{ form_errors(form.commentaire, {
                         error_item_class: 'text-red-600 text-sm mt-1',
                     }) }}
                 </div>
 
                 <div class="flex justify-center">
-                    <button id="submit" type="submit" disabled name="{{ field_name(form.submit) }}" class="cursor-not-allowed text-white bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                    <button id="submit" type="submit" disabled name="{{ field_name(form.submit) }}" class="cursor-not-allowed text-white bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg lg:text-sm text-3xl px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                         {{ field_label(form.submit) }}</button>
                 </div>
 
