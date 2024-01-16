@@ -175,6 +175,46 @@ class ReleveService {
         return $response->getStatusCode() == 200;
     }
 
+    public function verifierEtatCapteurs(SystemeAcquisition $sa){
+        date_default_timezone_set('Europe/Paris');
+        $dateMoinsCinqMinutesTrenteSecondes = new DateTime('@' . (time()-330));
+        $dateDemain = new DateTime('@' . (time()+24*60*60));
+
+        $client = HttpClient::create([
+            'headers' => [
+                'accept' => 'application/json',
+                'dbname' => $sa->getBaseDonnees(),
+                'username' => 'm2eq3',
+                'userpass' => 'howjoc-dyjhId-hiwre0'
+            ]
+        ]);
+
+        $response = $client->request('GET', 'https://sae34.k8s.iut-larochelle.fr/api/captures/interval' , [
+            'query' => [
+                'date1' => $dateMoinsCinqMinutesTrenteSecondes->format('Y-m-d'),
+                'date2' => $dateDemain->format('Y-m-d'),
+                'page' => 1
+            ]
+        ]);
+
+        $data = $response->toArray();
+
+        $capteurs = ["temp" => false, "hum" => false, "co2" => false];
+
+        foreach($data as $releve){
+
+            $date = new DateTime($releve["dateCapture"]);
+            if (date_timestamp_get($date) < date_timestamp_get($dateMoinsCinqMinutesTrenteSecondes) || date_timestamp_get($date) > time()) continue;
+            if ($releve["nom"] == "temp") $capteurs["temp"] = true;
+            elseif ($releve["nom"] == "hum") $capteurs["hum"] = true;
+            elseif ($releve["nom"] == "co2") $capteurs["co2"] = true;
+
+            if ($capteurs["temp"] && $capteurs["hum"] && $capteurs["co2"]) break;
+        }
+
+        return $capteurs;
+    }
+
 }
 
 ?>
