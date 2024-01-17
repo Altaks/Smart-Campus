@@ -28,25 +28,26 @@ void setup() {
     while(!Serial);
 
     delay(1000);
-
+    Serial.println("1");
     // Initilaisation système de fichier
     initSystemeFichier();
 
-
+    Serial.println("2");
     //LED
     initLED();
-    bool truc = initTaskLED();
+    Serial.println("2.5");
+    //bool truc = initTaskLED();
     
     delay(100);
-    
+    Serial.println("3");
     // Récupère les informations du point d'accès 
     String nomAP = recupererValeur("/infoap.txt","nom_ap");
     String motDePasseAP = recupererValeur("/infoap.txt","mot_de_passe");
-    
+    Serial.println("4");
     // Initialisation reseau en mode STATION et POINT D'ACCES
     initReseauStationEtPointAcces();
     creerPointAcces(nomAP,motDePasseAP);
-
+    Serial.println("5");
     //Initialise le serveur web et le serveur DNS
     setupServeurWeb();
     setupServeurDNS();
