@@ -104,16 +104,22 @@ class PlanExpController extends AbstractController
         $salle = $salleRepository->findOneBy(['id' => $id_salle]);
 
         if ($salle == null) {
-            throw $this->createNotFoundException("La salle n'existe pas");
+            return $this->render('bundles/TwigBundle/Exception/error405.html.twig', [
+                "message" => "Vous ne pouvez pas demander l'installation d'un système d'acquisition à une salle qui n'existe pas"
+            ], new Response("La salle n'existe pas", 405));
         } else if ($salle->getSystemeAcquisition() != null) {
-            throw $this->createNotFoundException("La salle dispose déjà d'un système d'acquisition");
+            return $this->render('bundles/TwigBundle/Exception/error405.html.twig', [
+                "message" => "Vous ne pouvez pas demander l'installation d'un système d'acquisition à une salle qui en possède déjà un"
+            ], new Response("La salle dispose déjà d'un système d'acquisition", 405));
         }
 
         $demandeTravaux = $entityManager->getRepository('App\Entity\DemandeTravaux');
         $demandeTravauxSalleNonTerminee = $demandeTravaux->findOneBy(['salle' => $salle->getId(), 'type' => 'Installation', 'terminee' => false]);
 
         if($demandeTravauxSalleNonTerminee != null){
-            throw $this->createNotFoundException("La salle dispose déjà d'une demande d'installation en cours");
+            return $this->render('bundles/TwigBundle/Exception/error405.html.twig', [
+                "message" => "Vous ne pouvez pas demander l'installation d'un système d'acquisition à une salle qui a déjà une demande d'installation en cours"
+            ], new Response("Une demande d'installation est déjà en cours pour cette salle", 405));
         }
 
         $demandeTravaux = new DemandeTravaux();
@@ -208,6 +214,11 @@ class PlanExpController extends AbstractController
             $entityManager->remove($salle);
             $entityManager->flush();
         }
+        else{
+            return $this->render('bundles/TwigBundle/Exception/error405.html.twig', [
+                "message" => "Vous ne pouvez pas supprimer une salle qui n'existe pas"
+            ], new Response("La salle n'existe pas", 405));
+        }
         return $this->redirectToRoute('cdm_lister_salles');
     }
 
@@ -217,6 +228,12 @@ class PlanExpController extends AbstractController
         $entityManager = $doctrine->getManager();
         $salleRepository = $entityManager->getRepository('App\Entity\Salle');
         $salle = $salleRepository->findOneBy(['id' => $id]);
+
+        if ($salle == null) {
+            return $this->render('bundles/TwigBundle/Exception/error405.html.twig', [
+                "message" => "Vous ne pouvez pas modifier une salle qui n'existe pas"
+            ], new Response("La salle n'existe pas", 405));
+        }
 
         $formSalle = $this->createFormBuilder($salle)
             ->add('nombreFenetre', IntegerType::class, [
@@ -325,13 +342,6 @@ class PlanExpController extends AbstractController
             'erreurs' => $erreurs,
             'form' => $form
         ]);
-    }
-
-    #[Route('/plan/{id_salle}/demander-reparation', name: 'cdm_demander_reparation')]
-    public function cdm_demander_reparation(ManagerRegistry $doctrine, int $id_salle)
-    {
-        // full redirect
-        throw $this->createNotFoundException('Page ou US non implémentée pour le moment');
     }
 
     #[IsGranted("ROLE_TECHNICIEN")]
@@ -517,8 +527,14 @@ class PlanExpController extends AbstractController
             // On supprime le S.A
             $entityManager->remove($sa);
             $entityManager->flush();
+            return $this->redirect("/plan/lister-sa");
         }
-        return $this->redirect("/plan/lister-sa");
+        else{
+            return $this->render('bundles/TwigBundle/Exception/error405.html.twig', [
+                "message" => "Vous ne pouvez pas supprimer un système d'acquisition qui n'existe pas"
+            ], new Response("Le système d'acquisition n'existe pas", 405));
+        }
+
     }
 
 
@@ -638,6 +654,13 @@ class PlanExpController extends AbstractController
 
         $systemeAcquisitionRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
         $systemeAcquisition = $systemeAcquisitionRepository->findOneBy(['id' => $demandeTravaux->getSystemeAcquisition()]);
+
+        if ($systemeAcquisition == null){
+            return $this->render('bundles/TwigBundle/Exception/error405.html.twig', [
+                "message" => "Vous ne pouvez pas déclarer opérationnel un système d'acquisition qui n'existe pas"
+            ], new Response("Le système d'acquisition n'existe pas", 405));
+        }
+
         $systemeAcquisition->setEtat("Opérationnel");
 
         $salleRepository = $entityManager->getRepository('App\Entity\Salle');

@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Erreur 404{% endblock %}
+
+{% block body %}
+
+    <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6 mt-4">
+        <div class="mx-auto max-w-screen-sm text-center">
+            <h1 class="mb-4 text-7xl tracking-tight font-extrabold lg:text-9xl">Erreur 404</h1>
+            <p class="mb-4 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl">La page demandée est introuvable :(</p>
+            {% if message is defined and message is not null %}
+                <p class="mb-8 text-lg text-red-700">{{ message }}</p>
+            {% endif %}
+        </div>
+
+        <div class="flex lg:flex-row flex-col lg:justify-between mx-auto my-12 w-2/3">
+            <a href="/" class="w-max lg:mx-0 mx-auto h-max flex px-4 py-2 text-sm font-medium leading-5 text-center text-white  transition bg-blue-700 rounded-full shadow ripple hover:shadow-lg hover:bg-blue-800 focus:outline-none">
+                <box-icon name='home' type='solid' color='#efefef' class="mr-2"></box-icon>
+                <span class="my-auto">Retour à l'accueil</span>
+            </a>
+            <a href="/releves" class="w-max h-max lg:mx-0 mx-auto lg:my-0 my-12 flex px-4 py-2 text-sm font-medium leading-5 text-center text-white  transition bg-blue-700 rounded-full shadow ripple hover:shadow-lg hover:bg-blue-800 focus:outline-none">
+                <box-icon name='stats' type='solid' color='#efefef' class="mr-2"></box-icon>
+                <span class="my-auto">Voir les relevés</span>
+            </a>
+
+            {% if is_granted('ROLE_TECHNICIEN') %}
+                <a href="/plan/lister-sa" class="w-max h-max lg:mx-0 mx-auto flex px-4 py-2 text-sm font-medium leading-5 text-center text-white  transition bg-blue-700 rounded-full shadow ripple hover:shadow-lg hover:bg-blue-800 focus:outline-none">
+                    <box-icon name='thermometer' type='solid' color='#efefef' class="mr-2"></box-icon>
+                    <span class="my-auto">Systèmes d'acquisition</span>
+                </a>
+            {% elseif is_granted('ROLE_CHARGE_DE_MISSION') %}
+                <a href="/plan/lister-salle" class="w-max h-max lg:mx-0 mx-auto flex px-4 py-2 text-sm font-medium leading-5 text-center text-white  transition bg-blue-700 rounded-full shadow ripple hover:shadow-lg hover:bg-blue-800 focus:outline-none">
+                    <box-icon name='buildings' type='solid' color='#efefef' class="mr-2"></box-icon>
+                    <span class="my-auto">Salles du plan</span>
+                </a>
+            {% endif %}
+        </div>
+
+    </div>
+{% endblock %}
