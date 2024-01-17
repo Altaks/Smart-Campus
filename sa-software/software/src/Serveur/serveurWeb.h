@@ -2,12 +2,12 @@
 #define SERVEURWEB_H
 
 /**
- * initialise le serveur web
+ * Initialise le serveur Web
 */
 void setupServeurWeb();
 
 /**
- * initialise le serveur DNS
+ * Initialise le serveur DNS
  */
 void setupServeurDNS();
 

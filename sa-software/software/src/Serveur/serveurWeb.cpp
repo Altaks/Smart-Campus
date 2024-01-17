@@ -15,25 +15,25 @@ AsyncWebServer server(80);
 
 void setupServeurWeb()
 {
-    // Permet de recupérer le fichier main
+    // Permet de récupérer le fichier main
     server.on("/main.css", HTTP_GET, [](AsyncWebServerRequest *request)
     {
         request->send(SPIFFS, "/main.css", "text/css");
         Serial.println("Page envoyée");
     });
 
-    // Permet d'accéder a la page d'accueil
+    // Permet d'accéder à la page d'accueil
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
     {
-        Serial.println("Requete recue sur /");
+        Serial.println("Requête recue sur /");
         request->send(SPIFFS, "/index.html","text/html");
         Serial.println("Page envoyée");
     });
 
-    // Permet d'accéder a la page de configuration de la base de données
+    // Permet d'accéder à la page de configuration de la base de données
     server.on("/config-base-de-donnees", HTTP_GET, [](AsyncWebServerRequest *request)
     {
-        Serial.println("Requete recue sur /config-base-de-donnees");
+        Serial.println("Requête recue sur /config-base-de-donnees");
         modifierFormPageConfigbd();
         Serial.println("Page modifiée");
         request->send(SPIFFS, "/configbd.html","text/html");
@@ -43,7 +43,7 @@ void setupServeurWeb()
     // Permet de récupérer les informations de la base de données et de les enregistrer dans le fichier /infobd.txt
     server.on("/config-base-de-donnees", HTTP_POST, [] (AsyncWebServerRequest *request) 
     {
-        Serial.println("Requete recue sur /config-base-de-donnees");
+        Serial.println("Requête recue sur /config-base-de-donnees");
         modifierFormPageReseau();
         
         String nom_sa = ""; 
@@ -67,7 +67,7 @@ void setupServeurWeb()
             } 
             else if(p->name() == "mot_de_passe"){
                 mot_de_passe = p->value();
-            } 
+            }
         }
         Serial.println("nom_sa: " + nom_sa);
         Serial.println("localisation: " + localisation);
@@ -85,10 +85,10 @@ void setupServeurWeb()
         request->redirect("http://"+getIP()+"/");  
     });
 
-    // Permet d'accéder a la page de configuration du réseau
+    // Permet d'accéder à la page de configuration du réseau
     server.on("/config-reseau", HTTP_GET, [](AsyncWebServerRequest *request)
     {
-        Serial.println("Requete recue sur /config-reseau");
+        Serial.println("Requête recue sur /config-reseau");
         modifierListeReseauxPageReseau();
         Serial.println("Page modifiée");
         request->send(SPIFFS, "/reseau.html","text/html");
@@ -98,7 +98,7 @@ void setupServeurWeb()
     // Permet de récupérer les informations du wifi auquel connecter le SA et de les enregistrer dans le fichier /inforeseau.txt
     server.on("/config-reseau", HTTP_POST, [] (AsyncWebServerRequest *request) 
     {
-        Serial.println("Requette recue sur /config-reseau");
+        Serial.println("Requête recue sur /config-reseau");
 
         String nom_reseau = "";
         String type_eap = "";
@@ -143,7 +143,7 @@ void setupServeurWeb()
     // Permet de récupérer les informations du point d'accès wifi et de les enregistrer dans le fichier /infoap.txt
     server.on("/config-acces-point", HTTP_POST, [] (AsyncWebServerRequest *request) 
     {
-        Serial.println("Requette recue sur /config-acces-point");
+        Serial.println("Requête recue sur /config-acces-point");
 
         String ssid = "";
         String mot_de_passe = "";
@@ -181,7 +181,7 @@ void setupServeurWeb()
         
     });
 
-    // Permet de renvoyer les requetes ou la route n'a pas été initialisé vers la page d'accueil
+    // Permet de renvoyer les requêtes ou la route n'a pas été initialisée vers la page d'accueil
     server.onNotFound ( [](AsyncWebServerRequest *request)
     {
         request->redirect("http://"+getIP()+"/");
@@ -198,7 +198,7 @@ void loopServeurDNS()
     dnsServer.processNextRequest();
 }
 
-void taskServeurDNS(void * parameter){
+[[noreturn]] void taskServeurDNS(__attribute__((unused)) void * parameter){
     while(true){
         loopServeurDNS();
         vTaskDelay(100);
@@ -215,8 +215,8 @@ void activerServeurDNS()
         taskServeurDNS,
         "loopServeurWeb",
         10000,
-        NULL,
+        nullptr,
         5,
-        NULL
+        nullptr
     );
 }
