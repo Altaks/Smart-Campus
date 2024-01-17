@@ -20,7 +20,7 @@ bool initTaskLED() {
     xTaskCreate( //création de la tâche
       taskLED,
       "Gestion des LEDs",
-      10000,
+      5000,
       NULL,
       1,
         &ledTaskHandle

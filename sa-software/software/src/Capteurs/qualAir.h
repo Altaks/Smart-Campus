@@ -6,12 +6,7 @@
 #define SOFTWARE_QUALAIR_H
 
 // Inclusion des librairies principales
-#include <Arduino.h>
-#include <EEPROM.h>
 
-// Inclusion des librairies du module
-#include "sensirion_common.h"
-#include "sgp30.h"
 
 // Inclusion des librairies du projet
 #include "typeDef.h"
