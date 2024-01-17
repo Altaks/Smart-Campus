@@ -5,7 +5,7 @@ DHTesp CapteurTempEtHum;
 
 void initTempEtHum()
 {
-    CapteurTempEtHum.setup(pinTempEtHum, DHTesp::AM2302); //configuration du capteur avec pin et type
+    CapteurTempEtHum.setup(pinTempEtHum, DHTesp::AM2302); // Configuration du capteur avec pin et type
 }
 
 double getTemperature()

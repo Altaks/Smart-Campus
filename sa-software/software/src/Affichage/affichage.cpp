@@ -17,7 +17,7 @@ bool initAffichage()
     Serial.println("Début de l'initialisation de l'écran :");
     Serial.println("______________________________________");
 
-    Serial.println("Definition de la variable de lécran ...");
+    Serial.println("Définition de la variable de l'écran ...");
     display = new SSD1306Wire(0x3c, SDA, SCL);
     Serial.println("Variable de l'écran définie.");
 
@@ -27,12 +27,12 @@ bool initAffichage()
         return false;
     }
 
-    Serial.println("Paramètrage de l'affichage ...");
+    Serial.println("Paramétrage de l'affichage ...");
     display->setFont(ArialMT_Plain_16);
     display->setTextAlignment(TEXT_ALIGN_LEFT);
 
-    Serial.println("Variable initialisee.");
-    Serial.println("Ecran Initialise.");
+    Serial.println("Variable initialisée.");
+    Serial.println("Ecran initialise.");
     Serial.println("______________________________________");
 
     return true;
@@ -45,12 +45,12 @@ bool initTacheAffichage()
       taskAffichage,
       "Affichage des données en local",
       3000,
-      NULL,
+      nullptr,
       1,
         &affichageTaskHandle
     );
 
-    return affichageTaskHandle != NULL;
+    return affichageTaskHandle != nullptr;
 }
 
 void afficher(PAGE &page){
@@ -81,19 +81,19 @@ void afficher(PAGE &page){
         switch (page) {
             case TEMPERATURE :
                 donneesString = "Temp :";
-                donnees = getTemperature();
+                donnees = (float) getTemperature();
                 format = "%s %.2f°C";
                 page = HUMIDITE;
                 break;
             case HUMIDITE :
                 donneesString = "Hum :";
-                donnees = getHumidite();
+                donnees = (float) getHumidite();
                 format = "%s %.2f%%";
                 page = CO2;
                 break;
             case CO2 :
                 donneesString = "CO2 :";
-                donnees = (float)getCO2();
+                donnees = (float) getCO2();
                 format = "%s %.0fppm";
                 page = TEMPERATURE;
                 break;
@@ -101,7 +101,7 @@ void afficher(PAGE &page){
 
         if (donnees != -1) {
             char temp[20];
-            sprintf(temp, format, donneesString, donnees);
+            sprintf(temp, format, donneesString.c_str(), donnees);
             displayResetInfos(dateTime, ip);
             display->drawString(0, 25, temp);
             display->display();
@@ -109,7 +109,7 @@ void afficher(PAGE &page){
         }
         else {
             char tempErr[20];
-            sprintf(tempErr, "%s Err", donneesString);
+            sprintf(tempErr, "%s Err", donneesString.c_str());
             for(int flick=0; flick<flicker; flick++) {
                 displayResetInfos(dateTime, ip);
                 display->display();
@@ -123,7 +123,7 @@ void afficher(PAGE &page){
     }
 }
 
-void taskAffichage(void *pvParameters) {
+[[noreturn]] void taskAffichage(__attribute__((unused)) void *pvParameters) {
 
     PAGE page = TEMPERATURE;
     while(true){
@@ -131,7 +131,7 @@ void taskAffichage(void *pvParameters) {
     }
 }
 
-void displayText(String text, int x, int y, int fontSize, bool centered){
+void displayText(const String& text, int x, int y, int fontSize, bool centered){
     display->clear();
     switch (fontSize)
     {
@@ -148,16 +148,16 @@ void displayText(String text, int x, int y, int fontSize, bool centered){
     display->setTextAlignment(TEXT_ALIGN_LEFT);
 
     if (centered){        
-        int w = text.length() * fontSize / 2;
+        int w = ((int)text.length()) * fontSize / 2;
         x = (display->getWidth() - w) / 2;
         y = (display->getHeight() - fontSize) / 2;
     }
 
-    display->drawString(x, y, text);
+    display->drawString((short) x, (short) y, text);
     display->display();
 }
 
-void displayResetInfos(String dateTime, String ip) {
+void displayResetInfos(const String& dateTime, const String& ip) {
     // reset de l'écran
     display->clear();
 
