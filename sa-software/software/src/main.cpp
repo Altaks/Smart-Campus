@@ -103,7 +103,7 @@ void setup() {
     Serial.print("Initilisation de la date en cours");
     displayText("Initilisation de la\ndate en cours...");
 
-    while (! dateEstInitilaisee())
+    while (!dateEstInitialisee())
     {
         Serial.print(".");
         delay(250);
