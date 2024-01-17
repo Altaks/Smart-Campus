@@ -7,21 +7,7 @@ void initSystemeFichier()
     SPIFFS.begin();
 }
 
-void afficherFichiers()
-{
-    File root = SPIFFS.open("/");
-    File file = root.openNextFile();
-
-    while(file)
-    {
-        Serial.print("File: ");
-        Serial.println(file.name());
-        file.close();
-        file = root.openNextFile();
-    }
-}
-
-void afficherContenuFichier(String nomFichier)
+void afficherContenuFichier(const String& nomFichier)
 {
     File file = SPIFFS.open(nomFichier);
 
@@ -40,7 +26,7 @@ void afficherContenuFichier(String nomFichier)
     file.close();
 }
 
-void modifierFichier(String nomFichier, String baliseDebut, String baliseFin, String contenu)
+void modifierFichier(const String& nomFichier, const String& baliseDebut, const String& baliseFin, const String& contenu)
 {
     File file = SPIFFS.open(nomFichier);
     
@@ -82,7 +68,7 @@ void modifierFichier(String nomFichier, String baliseDebut, String baliseFin, St
         file.close();
 }
 
-String recupererValeur(String nomFichier, String nomValeur)
+String recupererValeur(const String& nomFichier, String nomValeur)
 {
     File file = SPIFFS.open(nomFichier);
     nomValeur+=':';
@@ -97,7 +83,7 @@ String recupererValeur(String nomFichier, String nomValeur)
     char lastChar = '0'; 
     while(file.available() && nomValeur != debutLigne)
     {
-        lastChar = file.read();
+        lastChar = (char) file.read();
         debutLigne += lastChar;
         if(lastChar == '\n')
         {
@@ -107,7 +93,7 @@ String recupererValeur(String nomFichier, String nomValeur)
 
     while(file.available())
     {
-        lastChar = file.read();
+        lastChar = (char) file.read();
         if(lastChar =='\n') break;
         valeur += lastChar;
     }
@@ -115,7 +101,7 @@ String recupererValeur(String nomFichier, String nomValeur)
     return valeur;
 }
 
-bool estDansFichier(String nomFichier, String texte)
+bool estDansFichier(const String& nomFichier, const String& texte)
 {
     File file = SPIFFS.open(nomFichier);
 
@@ -135,7 +121,7 @@ bool estDansFichier(String nomFichier, String texte)
     return contenuFichier.indexOf(texte) >= 0;    
 }
 
-void ecrireFichier(String nomFichier, String contenu)
+void ecrireFichier(const String& nomFichier, const String& contenu)
 {
     if(SPIFFS.exists(nomFichier)) SPIFFS.remove(nomFichier);
     File file = SPIFFS.open(nomFichier,FILE_WRITE,true);

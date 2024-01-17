@@ -13,7 +13,7 @@ void modifierFormPageConfigbd();
 void modifierFormPageReseau();
 
 /**
- * Ajoute les reseau alentour au select du fichier /reseau.html
+ * Ajoute les réseau alentour au select du fichier /reseau.html
 */
 void modifierListeReseauxPageReseau();
 

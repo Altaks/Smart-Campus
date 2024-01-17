@@ -20,7 +20,7 @@ bool initEnvois();
  * Effectue les érificationde la connexion au réseau et de l'envoi des données
  * @param pvParameters paramètre de la tâche, non utilisés ici
 */
-void taskEnvois(void *pvParameters);
+[[noreturn]] void taskEnvois(void *pvParameters);
 
 /**
  * Fonction permettant d'envoyer les données
@@ -32,7 +32,7 @@ int envoyer();
  * Fonction permettant de convertir un code d'erreur en String
  * @param code le code d'erreur
 */
-String errreurToString(int);
+String erreurToString(int);
 
 const String nomsValeurs[] = {"temp", "hum", "co2", "pres"};
 

@@ -4,11 +4,9 @@
 #include <SSD1306Wire.h>
 #include "typeDef.h"
 
-
-
 /**
  * @brief Initialise l'affichage
- * Initialise l'affichage 
+ * Initialise l'affichage
  * @return true si l'initialisation s'est bien passée
 */
 bool initAffichage();
@@ -24,7 +22,7 @@ bool initTacheAffichage();
  * @brief Tâche d'affichage
  * Tâche d'affichage qui affiche les données sur l'écran toutes les 3 secondes en carrousel
 */
-void taskAffichage(void *pvParameters);
+[[noreturn]] void taskAffichage(void *pvParameters);
 
 /**
  * @brief Affiche les données sur l'écran
@@ -44,8 +42,8 @@ void afficher(PAGE &);
  * \param fontSize taille de la police (16, 24, 32) par défaut 16
  * \param centered si le texte doit être centré ou non
  */
-void displayText(String text, int x = 0, int y = 0, int fontSize = 16, bool centered = false);
+void displayText(const String& text, int x = 0, int y = 0, int fontSize = 16, bool centered = false);
 
-void displayResetInfos(String dateTime, String ip);
+void displayResetInfos(const String& dateTime, const String& ip);
 
 #endif
