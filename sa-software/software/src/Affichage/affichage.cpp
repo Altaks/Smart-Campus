@@ -55,9 +55,6 @@ bool initTacheAffichage()
 
 void afficher(PAGE &page){
 
-    int temperature = getTemperature();
-    int humidite = getHumidite();
-    int co2 = getCO2();
 
     // selectionne la police d'écriture
     display->setFont(ArialMT_Plain_16);
@@ -65,7 +62,7 @@ void afficher(PAGE &page){
     // affichage de la date et de l'heure
     String dateTime;
     String ip = getIP();
-
+  
     if (getDate() == "Date Error"){
         dateTime = "Erreur de date";
         Serial.println("Erreur lors de la récupération de la date pour l'affichage");
@@ -74,80 +71,55 @@ void afficher(PAGE &page){
         dateTime = String(getJour()) + "/" + String(getMois()) + "/" + String(getAnnee()) + " " + String(getHeure()) + ":" + String(getMinute());
     }
 
-    // affichage des données
-    switch (page) {
-        case TEMPERATURE :
-            // vérification de la présence des données
-            if (temperature != -1) {
-                char temp[20];
-                sprintf(temp, "Temp : %.2f°C", getTemperature());
-                displayResetInfos(dateTime, ip);
-                display->drawString(0, 25, temp);
-                display->display();
+    for(int carrousel=0; carrousel<3; carrousel++)
+    {
+        float donnees;
+        String donneesString;
+        const char* format;
+        
+        // affichage des données
+        switch (page) {
+            case TEMPERATURE :
+                donneesString = "Temp :";
+                donnees = getTemperature();
+                format = "%s %.2f°C";
                 page = HUMIDITE;
-                delay(carrouselDelay);
-            }
-            else {
-                for(int i=0; i<flicker; i++) {
-                    displayResetInfos(dateTime, ip);
-                    display->display();
-                    delay(carrouselDelay/flicker);
-                    displayResetInfos(dateTime, ip);
-                    display->drawString(0, 25, "Temp : Err");
-                    display->display();
-                    delay(carrouselDelay/flicker);
-                }
-                page = HUMIDITE;
-            }
-            break;
-        case HUMIDITE :
-            // vérification de la présence des données
-            if (humidite != -1) {
-                char temp[17];
-                sprintf(temp, "Hum : %.2f%s", getHumidite(), "%");
-                displayResetInfos(dateTime, ip);
-                display->drawString(0, 25, temp);
-                display->display();
+                break;
+            case HUMIDITE :
+                donneesString = "Hum :";
+                donnees = getHumidite();
+                format = "%s %.2f%%";
                 page = CO2;
-                delay(carrouselDelay);
-            }
-            else {
-                for(int i=0; i<flicker; i++) {
-                    displayResetInfos(dateTime, ip);
-                    display->display();
-                    delay(carrouselDelay/flicker);
-                    displayResetInfos(dateTime, ip);
-                    display->drawString(0, 25, "Hum : Err");
-                    display->display();
-                    delay(carrouselDelay/flicker);
-                }
-                page = CO2;
-            }
-            break;
-        case CO2 :
-            // vérification de la présence des données
-            if (co2 != -1) {
-                char temp[17];
-                sprintf(temp, "CO2 : %d ppm", getCO2());
+                break;
+            case CO2 :
+                donneesString = "CO2 :";
+                donnees = (float)getCO2();
+                format = "%s %.0fppm";
+                page = TEMPERATURE;
+                break;
+        }
+
+        if (donnees != -1) {
+            char temp[20];
+            sprintf(temp, format, donneesString, donnees);
+            displayResetInfos(dateTime, ip);
+            display->drawString(0, 25, temp);
+            display->display();
+            delay(carrouselDelay);
+        }
+        else {
+            char tempErr[20];
+            sprintf(tempErr, "%s Err", donneesString);
+            for(int flick=0; flick<flicker; flick++) {
                 displayResetInfos(dateTime, ip);
-                display->drawString(0, 25, temp);
                 display->display();
-                page = TEMPERATURE;
-                delay(carrouselDelay);
+                delay(carrouselDelay/flicker);
+                displayResetInfos(dateTime, ip);
+                display->drawString(0, 25, tempErr);
+                display->display();
+                delay(carrouselDelay/flicker);
             }
-            else {
-                for(int i=0; i<flicker; i++) {
-                    displayResetInfos(dateTime, ip);
-                    display->display();
-                    delay(carrouselDelay/flicker);
-                    displayResetInfos(dateTime, ip);
-                    display->drawString(0, 25, "CO2 : Err");
-                    display->display();
-                    delay(carrouselDelay/flicker);
-                }
-                page = TEMPERATURE;
-            }
-            break;
+        }
     }
 }
 
