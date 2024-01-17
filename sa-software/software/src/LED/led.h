@@ -10,5 +10,6 @@ void taskLED(void *PvParameters);
 
 void setEnvoieState(bool envoie);
 
+void setLEDColor(int r, int g, int b);
 
 #endif //LED_H

@@ -8,6 +8,7 @@
 #include "typeDef.h"
 #include "Fichiers/fichierSPIFFS.h"
 #include "Heure/heureLocal.h"
+#include "LED/led.h"
 
 void initReseauStation()
 {
@@ -89,7 +90,7 @@ bool connexionWifi(const String& ssid, wpa2_auth_method_t methodeAutentification
     }
 
     Serial.println("Connexion au réseau "+ssid);
-    
+    setLEDColor(0,0,255);
     // Vérifie si le SA se connecte pendant 60 secondes
     // retourne true s'il arrive à se connecter ; false sinon
     for(int counter = 0 ; counter <= 60 && WiFi.status() != WL_CONNECTED ; counter++)
@@ -98,7 +99,7 @@ bool connexionWifi(const String& ssid, wpa2_auth_method_t methodeAutentification
         Serial.println("Connexion en cours...");
         if(counter >= 60)
         {
-
+            setLEDColor(0,255,255);
             return false;
         }
     }

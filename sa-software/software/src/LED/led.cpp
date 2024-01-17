@@ -8,13 +8,15 @@
 
 Adafruit_NeoPixel * led;
 
+bool tempError, humError, co2Error, envoieError;
+
 const int RED[3] = {255,0,0};
-const int ORANGE[3] = {255,60,0};
+const int ORANGE[3] = {255,50,0};
 const int YELLOW[3] = {255,255,0};
 const int GREEN[3] = {0,255,0};
 const int BLUE[3] = {0,0,255};
 const int PURPLE[3] = {255,0,255};
-const int MAGENTA[3] = {187,38,73};
+const int PINK[3] = {187,38,73};
 const int WHITE[3] = {255,255,255};
 const int OFF[3] = {0,0,0};
 
@@ -24,8 +26,8 @@ void initLED() {
     //Single NeoPixel
     led = new Adafruit_NeoPixel(1, PIN, NEO_GRB + NEO_KHZ800);
     led->begin(); // INITIALIZE NeoPixel (REQUIRED)
-    led->setBrightness(10);
-    led->setPixelColor(0, led->Color(ORANGE[0],ORANGE[1],ORANGE[2]));
+    led->setBrightness(5);
+    led->setPixelColor(0, led->Color(WHITE[0],WHITE[1],WHITE[2]));
     led->show();
 }
 
@@ -49,29 +51,60 @@ void taskLED(void *PvParameters) {
             led->setPixelColor(0, led->Color(RED[0],RED[1],RED[2]));
             led->show();
             delay(250); 
+            led->setPixelColor(0, led->Color(OFF[0],OFF[1],OFF[2]));
+            led->show();
+            delay(250);
+            tempError = true;
+        }
+        else {
+            tempError = false;
         }
 
         if(getHumidite() == -1) {
             led->setPixelColor(0, led->Color(ORANGE[0],ORANGE[1],ORANGE[2]));
             led->show();
             delay(250); 
+            led->setPixelColor(0, led->Color(OFF[0],OFF[1],OFF[2]));
+            led->show();
+            delay(250);
+            humError = true;
+        }
+        else {
+            humError = false;
         }
 
         if(getCO2() == -1) {
             led->setPixelColor(0, led->Color(YELLOW[0],YELLOW[1],YELLOW[2]));
             led->show();
             delay(250); 
+            led->setPixelColor(0, led->Color(OFF[0],OFF[1],OFF[2]));
+            led->show();
+            delay(250);
+            co2Error = true;
+        }
+        else {
+            co2Error = false;
         }
 
         if(!envoieState) {
-            led->setPixelColor(0, led->Color(MAGENTA[0],MAGENTA[1],MAGENTA[2]));
+            led->setPixelColor(0, led->Color(PINK[0],PINK[1],PINK[2]));
             led->show();
             delay(250);
+            led->setPixelColor(0, led->Color(OFF[0],OFF[1],OFF[2]));
+            led->show();
+            delay(250);
+            envoieError = true;
         }
- 
-        led->setPixelColor(0, led->Color(OFF[0],OFF[1],OFF[2]));
-        led->show();
-        delay(250);
+        else {
+            envoieError = false;
+        }
+
+        if(!tempError and !humError and !co2Error and !envoieError)
+        {
+            led->setPixelColor(0, led->Color(GREEN[0],GREEN[1],GREEN[2]));
+            led->show();
+            delay(500);
+        }
     }
 }
 
@@ -79,3 +112,9 @@ void setEnvoieState(bool envoie)
 {
     envoieState = envoie;
 }
+
+void setLEDColor(int r, int g, int b) {
+    led->setPixelColor(0, led->Color(r,g,b));
+    led->show();
+}
+

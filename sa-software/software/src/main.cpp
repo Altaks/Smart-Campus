@@ -27,12 +27,12 @@ void setup() {
     Serial.begin(9600);
     while(!Serial);
 
+    // LED
+    initLED();
+
     delay(1000);
     // Initilaisation système de fichier
     initSystemeFichier();
-
-    // LED
-    initLED();
     
     delay(100);
     // Récupère les informations du point d'accès 
