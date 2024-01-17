@@ -185,7 +185,7 @@ class PublicController extends AbstractController
                 }
 
             }
-
+            
             // Renvoyer la vue
             return $this->render('public/releves.html.twig', [
                 // data

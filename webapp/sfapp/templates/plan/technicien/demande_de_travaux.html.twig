@@ -27,9 +27,9 @@
             </ol>
         </nav>
     </div>
-    <div class="relative overflow-x-auto w-full flex flex-col items-center">
+    <div class="max-w-screen-xl w-5/6 mx-auto">
         <h1 class="lg:text-4xl text-7xl pb-12 text-center">Demande de travaux en salle {{ salle.nom }}</h1>
-        <div class="flex flex-row justify-between w-5/6 mx-auto">
+        <div class="flex flex-row justify-between mx-auto">
             <div>
                 {{ form_start(formSystemeAcqui) }}
                     <label class="lg:text-xl text-3xl">{{ field_label(formSystemeAcqui.sa) }}</label>
@@ -53,17 +53,17 @@
                 {% endif %}
             </div>
         </div>
-    </div>
+
 
     {% if demandeTravaux.Type == "Réparation" and (demandeTravaux.Commentaire is not null or demandeTravaux.EmailDemandeur is not null)%}
         <div id="envoyer-mail" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
             Envoyer un mail depuis la boite mail par défaut
             <div class="tooltip-arrow" data-popper-arrow></div>
         </div>
-        <div class="flex flex-col w-full items-center mt-5 lg:text-base text-2xl">
-            <p class="w-5/6 flex flex-nowrap items-center p-4 mb-4 text-yellow-800 rounded-xl bg-yellow-100 dark:bg-gray-800 dark:text-yellow-300" id="commentaire">
+        <div class="w-full items-center mt-5 lg:text-base text-2xl">
+            <p class="flex w-full ml-0 flex-nowrap items-center p-4 mb-4 text-yellow-800 rounded-xl bg-yellow-100 dark:bg-gray-800 dark:text-yellow-300" id="commentaire">
         {% if  demandeTravaux.EmailDemandeur is not null and demandeTravaux.Commentaire is not null %}
-                <span class="min-w-max">Demande de {{ demandeTravaux.EmailDemandeur }}</span>
+                <span class="min-w-max hidden lg:inline">Demande de &nbsp</span><span>{{ demandeTravaux.EmailDemandeur }}</span>
                 <a data-tooltip-target="envoyer-mail" class="mx-2" href="mailto:{{ demandeTravaux.EmailDemandeur }}? &subject=Erreur Smart Campus de la salle {{ salle.nom }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(0, 0, 0, 1);transform: ;msFilter:;"><path d="m21.426 11.095-17-8A.999.999 0 0 0 3.03 4.242L4.969 12 3.03 19.758a.998.998 0 0 0 1.396 1.147l17-8a1 1 0 0 0 0-1.81zM5.481 18.197l.839-3.357L12 12 6.32 9.16l-.839-3.357L18.651 12l-13.17 6.197z"></path></svg>
                 </a>
@@ -82,8 +82,8 @@
 
 
 
-    <div class="max-w-screen-xl w-5/6 mx-auto">
-        <h2 class="mt-12 mb-4 lg:text-xl text-4xl">Relevés</h2>
+
+        <h2 class="mt-4 mb-4 lg:text-xl text-4xl">Relevés</h2>
         {% if listeReleves is not null %}
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table class="w-full lg:text-sm text-xl text-left rtl:text-right text-gray-500 dark:text-gray-400">
