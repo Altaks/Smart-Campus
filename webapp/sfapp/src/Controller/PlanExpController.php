@@ -527,8 +527,14 @@ class PlanExpController extends AbstractController
             // On supprime le S.A
             $entityManager->remove($sa);
             $entityManager->flush();
+            return $this->redirect("/plan/lister-sa");
         }
-        return $this->redirect("/plan/lister-sa");
+        else{
+            return $this->render('bundles/TwigBundle/Exception/error405.html.twig', [
+                "message" => "Vous ne pouvez pas supprimer un système d'acquisition qui n'existe pas"
+            ], new Response("Le système d'acquisition n'existe pas", 405));
+        }
+
     }
 
 
