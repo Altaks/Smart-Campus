@@ -108,14 +108,14 @@ void afficher(PAGE &page){
             delay(carrouselDelay);
         }
         else {
-            char tempErr[20];
-            sprintf(tempErr, "%s Err", donneesString.c_str());
+            char err_buf[20];
+            sprintf(err_buf, "%s Err", donneesString.c_str());
             for(int flick=0; flick<flicker; flick++) {
                 displayResetInfos(dateTime, ip);
                 display->display();
                 delay(carrouselDelay/flicker);
                 displayResetInfos(dateTime, ip);
-                display->drawString(0, 25, tempErr);
+                display->drawString(0, 25, err_buf);
                 display->display();
                 delay(carrouselDelay/flicker);
             }

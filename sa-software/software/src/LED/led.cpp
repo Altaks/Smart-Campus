@@ -23,7 +23,7 @@ const int OFF[3] = {0,0,0};
 bool envoieState = true;
 
 void initLED() {    
-    //Single NeoPixel
+    // Single NeoPixel
     led = new Adafruit_NeoPixel(1, PIN, NEO_GRB + NEO_KHZ800);
     led->begin(); // INITIALIZE NeoPixel (REQUIRED)
     led->setBrightness(5);
@@ -33,7 +33,7 @@ void initLED() {
 
 bool initTaskLED() {
     xTaskHandle ledTaskHandle;
-    xTaskCreate( //création de la tâche
+    xTaskCreate( // Création de la tâche
       taskLED,
       "Gestion des LEDs",
       5000,
@@ -45,7 +45,7 @@ bool initTaskLED() {
     return ledTaskHandle != NULL;
 }
 
-void taskLED(void *PvParameters) {
+void taskLED(__attribute__((unused)) void *PvParameters) {
     while(true){
         if(getTemperature() == -1) {
             led->setPixelColor(0, led->Color(RED[0],RED[1],RED[2]));

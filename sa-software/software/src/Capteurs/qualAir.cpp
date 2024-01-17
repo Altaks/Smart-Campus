@@ -4,7 +4,7 @@
 #include <EEPROM.h>
 
 #include <Wire.h>
-#include "Adafruit_SGP30.h"
+#include <Adafruit_SGP30.h>
 
 Adafruit_SGP30 sgp;
 
@@ -15,7 +15,7 @@ void initQualAir() {
 
   if (! sgp.begin()){
     Serial.println("Capteur CO2 non trouvé");
-    while (1);
+    while (true);
   }
   Serial.println("Capteur CO2 connecté");
 }
@@ -23,7 +23,7 @@ void initQualAir() {
 
 int getCO2() {
   if (! sgp.IAQmeasure()) {
-    Serial.println("Mesure échoué");
+    Serial.println("Mesure échouée");
     return -1;
   } else
         return sgp.eCO2;
