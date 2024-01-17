@@ -8,15 +8,10 @@
 void initSystemeFichier();
 
 /**
- * Affiche tout les fichier enregistrer dan le système de fichier
-*/
-void afficherFichiers();
-
-/**
  * Affiche le contenu d'un fichier
  * @param nomFichier 
 */
-void afficherContenuFichier(String nomFichier);
+void afficherContenuFichier(const String& nomFichier);
 
 /**
  * Modifie le contenu d'un fichier
@@ -25,16 +20,16 @@ void afficherContenuFichier(String nomFichier);
  * @param baliseFin 
  * @param contenu 
 */
-void modifierFichier(String nomFichier, String baliseDebut, String baliseFin, String contenu);
+void modifierFichier(const String& nomFichier, const String& baliseDebut, const String& baliseFin, const String& contenu);
 
 /**
- * Permet de recuppérer une valeur dans un fichier donné
- * la ligne doit etre au format "nomvaleur:valeur"
+ * Permet de récupérer une valeur dans un fichier donné
+ * la ligne doit être au format "nomvaleur:valeur"
  * @param nomFichier nom du fichier où une valeur est cherchée
- * @param nomValeur nom de la valeur à recupérer 
- * @return la valeur associé | un chaine de charactère vide si la valeur n'est pas trouvé
+ * @param nomValeur nom de la valeur à récupérer
+ * @return la valeur associé | un chaine de caractère vide si la valeur n'est pas trouvé
 */
-String recupererValeur(String nomFichier, String nomValeur);
+String recupererValeur(const String& nomFichier, String nomValeur);
 
 /**
  * Vérifie si un texte est trouvable dans un fichier donné
@@ -42,14 +37,14 @@ String recupererValeur(String nomFichier, String nomValeur);
  * @param texte texte a chercher
  * @return true si le texte est trouvable dans le fichier | false sinon
 */
-bool estDansFichier(String nomFichier, String texte);
+bool estDansFichier(const String& nomFichier, const String& texte);
 
 /**
  * Réécrit le contenu d'un fichier
- * Crée le fichier si nécéssaire
+ * Crée le fichier si nécessaire
  * @param nomFichier nom du fichier où une valeur est cherchée
  * @param contenu nouveau contenu du fichier  
 */
-void ecrireFichier(String nomFichier, String contenu);
+void ecrireFichier(const String& nomFichier, const String& contenu);
 
 #endif
