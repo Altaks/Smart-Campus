@@ -547,60 +547,15 @@ class PlanExpController extends AbstractController
         $saRepository = $entityManager->getRepository('App\Entity\SystemeAcquisition');
         $demandeTravauxRepository = $entityManager->getRepository('App\Entity\DemandeTravaux');
 
-        $listeChoix = ["Tous les SA" , "En cours d'installation", "Non installés", "Opérationnels", "Réparations"];
 
-        $formEtats = $this->createFormBuilder()->add('choix', ChoiceType::class, [
-            'choices' => array(
-                "Tous les SA" => 0,
-                "En cours d'installation" => 1,
-                "Non installés" => 2,
-                "Opérationnels" => 3,
-                "Réparations" => 4),
-            'required' => true,
-        ])->getForm();
-
-
-        $formEtats->handleRequest($request);
-        $listeSa = [];
         $listeSalleSaIntall = [];
-        $listeEtatsCapteurs = [];
-        $choix = "Tous les SA";
         $choixParDefault = 0;
         date_default_timezone_set("Europe/Paris");
 
-        if($formEtats->isSubmitted() && $formEtats->isValid())
-        {
-            $choixParDefault = $formEtats->getData()['choix'];
-            $choix = $listeChoix[$choixParDefault];
-            switch($choix)
-            {
-                case "Tous les SA":
-                    $listeSa = $saRepository->findAll();
-                    $dateMoins5minet30secondes = time() - 5*60 - 30;
-                    $listeEtatsCapteurs = $this->recupererEtatsCapteurs($listeSa, $dateMoins5minet30secondes, $service);
-                    break;
-                case "En cours d'installation":
-                    $listeSa = $saRepository->findBy(['etat' => "Installation"]);
-                    break;
-                case "Non installés":
-                    $listeSa = $saRepository->findBy(['etat' => "Non installé"]);
-                    break;
-                case "Opérationnels":
-                    $listeSa = $saRepository->findBy(['etat' => "Opérationnel"]);
-                    $dateMoins5minet30secondes = time() - 5*60 - 30;
-                    $listeEtatsCapteurs = $this->recupererEtatsCapteurs($listeSa, $dateMoins5minet30secondes, $service);
-                    break;
-                case "Réparations":
-                    $listeSa = $saRepository->findBy(['etat' => "Réparation"]);
-                    break;
-            }
-        }
-        else
-        {
-            $listeSa = $saRepository->findAll();
-            $dateMoins5minet30secondes = time() - 5*60 - 30;
-            $listeEtatsCapteurs = $this->recupererEtatsCapteurs($listeSa, $dateMoins5minet30secondes, $service);
-        }
+        $listeSa = $saRepository->findAll();
+        $dateMoins5minet30secondes = time() - 5*60 - 30;
+        $listeEtatsCapteurs = $this->recupererEtatsCapteurs($listeSa, $dateMoins5minet30secondes, $service);
+
 
         foreach ($listeSa as $sa)
         {
@@ -620,8 +575,6 @@ class PlanExpController extends AbstractController
 
         return $this->render('plan/technicien/liste_sa.html.twig', [
             'listeSa' => $listeSa,
-            'form' => $formEtats,
-            'choix' => $choix,
             'defaut' => $choixParDefault,
             'listeEtatCapteurs' => $listeEtatsCapteurs,
             'listeSalleSaDT' => $listeSalleSaIntall

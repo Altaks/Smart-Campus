@@ -26,45 +26,30 @@
             </ol>
         </nav>
     </div>
-    <div class="overflow max-w-7xl mx-auto">
-        <h1 class="lg:text-4xl text-7xl pb-12 text-center">Liste des systèmes d'acquisition</h1>
-        <div class="flex flex-row justify-between">
-            <div class="lg:w-1/6 lg:mr-auto">
-                {{ form_start(form) }}
-                <select id="option" name="{{ field_name(form.choix) }}" class="lg:text-base text-2xl form-control w-max bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onchange='this.form.submit()'>
 
-                    {% for label, value in field_choices(form.choix) %}
-                        {% if value == defaut %}
-                            <option value="{{ value }}" selected>{{ label }}</option>
-                        {% else %}
-                            <option value="{{ value }}">{{ label }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-                {{ form_end(form) }}
+
+
+    <div class="flex flex-col xl:w-2/3 w-11/12 items-center mx-auto">
+        <div class="w-full">
+            <h1 class="lg:text-4xl text-7xl pb-12 text-center">Liste des systèmes d'acquisition</h1>
+            <div class="flex flex-row justify-between mb-5">
+                <input type="text" id="searchInput" class="my-auto w-max h-full bg-gray-50 border border-gray-300 text-gray-900 lg:text-sm text-3xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onkeyup="search()" placeholder="Rechercher un système">
+
+                <button
+                        type="button"
+                        class="my-auto text-white h-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg lg:text-sm text-3xl px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                        onclick="window.location.href='/plan/ajouter-sa'"
+                >
+                    Ajouter un système
+                </button>
             </div>
-
-            <button
-                    type="button"
-                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg lg:text-sm text-2xl px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                    onclick="window.location.href='/plan/ajouter-sa'"
-            >
-                Ajouter un système
-            </button>
         </div>
-    </div>
 
-
-    <div class="max-w-screen-xl mx-auto my-10">
-
-        <input type="text" id="searchInput" class="mb-5 w-max bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onkeyup="search()" placeholder="Rechercher un système">
-
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <div class="shadow-md sm:rounded-lg w-full">
 
             <table id="liste-sa" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="lg:text-xs text-xl text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
 
-                {% if choix == "Tous les SA" %}
                 <tr >
                     <th scope="col" class="py-3 px-6">
                         Nom
@@ -86,9 +71,9 @@
                     </th>
                 </tr>
                 </thead>
-                <thead>
+                <tbody>
                 {% for systemeAcquisition in listeSa %}
-                    <tr class="lg:text-base text-2xl odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                    <tr class="lg:text-base text-2xl bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ systemeAcquisition.nom }}
                         </th>
@@ -100,11 +85,11 @@
                             {% endif %}
                         </td>
                         <td class="py-4 lg:table-row hidden">
-                                {% if systemeAcquisition.etat == 'Installation' or (systemeAcquisition.etat == 'Réparation' and systemeAcquisition.Salle is null ) %}
-                                    {{ attribute(listeSalleSaDT, systemeAcquisition.id).Batiment|default('-') }}
-                                {% else %}
-                                    {{ systemeAcquisition.Salle.Batiment|default('-') }}
-                                {% endif %}
+                            {% if systemeAcquisition.etat == 'Installation' or (systemeAcquisition.etat == 'Réparation' and systemeAcquisition.Salle is null ) %}
+                                {{ attribute(listeSalleSaDT, systemeAcquisition.id).Batiment|default('-') }}
+                            {% else %}
+                                {{ systemeAcquisition.Salle.Batiment|default('-') }}
+                            {% endif %}
                         </td>
                         <td id="etat-capteur" class="py-4">
                             <div class="flex-row justify-center w-max text-center lg:flex hidden">
@@ -180,7 +165,7 @@
 
                             {% if systemeAcquisition.etat == "Opérationnel" %}
                                 <a class="" data-tooltip-target="tooltip-erreur-{{systemeAcquisition.id}}" href="/signaler-erreur/{{ systemeAcquisition.salle.id }}/1">
-                                    <box-icon name='bug' type='solid' color='#ff9b00' ></box-icon>
+                                    <box-icon name='bug' type='solid' color='#ff9b00' class="lg:w-6 lg:h-6 w-9 h-9" ></box-icon>
                                 </a>
 
                                 <div id="tooltip-erreur-{{systemeAcquisition.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
@@ -191,7 +176,7 @@
                             {% endif %}
 
                             <a data-tooltip-target="tooltip-delete-{{systemeAcquisition.id}}" href="/plan/retirer-sa/{{ systemeAcquisition.id }}">
-                                <box-icon name='trash' type='solid' color='rgba(255,0,0,0.85)'></box-icon>
+                                <box-icon name='trash' type='solid' color='rgba(255,0,0,0.85)' class="lg:w-6 lg:h-6 w-9 h-9"></box-icon>
                             </a>
 
                             <div id="tooltip-delete-{{systemeAcquisition.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
@@ -201,144 +186,6 @@
                         </td>
                     </tr>
                 {% endfor %}
-
-
-                {% elseif choix == "En cours d'installation" or choix == "Opérationnels" or choix == "Réparations"%}
-                <tr >
-                    <th scope="col" class="px-6 py-3">
-                        Nom
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Salle
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Bâtiment
-                    </th>
-                    {% if choix == "Opérationnels" %}
-                        <th scope="col" class="px-6 py-3">
-                            Etat des capteurs
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                        </th>
-                    {% endif %}
-                    <th scope="col" class="py-3 text-center">
-                        Actions
-                    </th>
-                </tr>
-                </thead>
-                <thead>
-
-                {% for systemeAcquisition in listeSa %}
-                <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {{ systemeAcquisition.nom }}
-                    </th>
-                    <td class="px-6 py-4">
-                        {% if systemeAcquisition.etat == 'Installation' or (systemeAcquisition.etat == 'Réparation' and systemeAcquisition.Salle is null )%}
-                            {{ attribute(listeSalleSaDT, systemeAcquisition.id).nom|default('-') }}
-                        {% else %}
-                            {{ systemeAcquisition.Salle.nom|default('-') }}
-                        {% endif %}
-                    </td>
-                    <td class="px-6 py-4">
-                        {% if systemeAcquisition.etat == 'Installation' or (systemeAcquisition.etat == 'Réparation' and systemeAcquisition.Salle is null ) %}
-                            {{ attribute(listeSalleSaDT, systemeAcquisition.id).Batiment|default('-') }}
-                        {% else %}
-                            {{ systemeAcquisition.Salle.Batiment|default('-') }}
-                        {% endif %}
-                    </td>
-                    {% if choix == "Opérationnels" %}
-                        <td id="etat-capteur" class="px-6 py-4 flex flex-row w-max">
-                            {% if attribute(listeEtatCapteurs, systemeAcquisition.id) is null %}
-                                <p class="my-auto">Non concerné</p>
-                            {% else %}
-                                <div class="flex flex-row">
-                                    <p class="my-auto">Température : </p>
-                                    {% if attribute(attribute(listeEtatCapteurs, systemeAcquisition.id), "temp") == false %}
-                                        <box-icon name='x' color='#ff1d1d' class="my-auto mx-auto"></box-icon>
-                                    {% else %}
-                                        <box-icon name='check' color='#05d409' class="my-auto mx-auto" ></box-icon>
-                                    {% endif %}
-                                </div>
-                                <div class="flex flex-row mx-2">
-                                    <p class="my-auto">Humidité : </p>
-                                    {% if attribute(attribute(listeEtatCapteurs, systemeAcquisition.id), "hum") == false %}
-                                        <box-icon name='x' color='#ff1d1d' class="my-auto mx-auto"></box-icon>
-                                    {% else %}
-                                        <box-icon name='check' color='#05d409' class="my-auto mx-auto" ></box-icon>
-                                    {% endif %}
-                                </div>
-                                <div class="flex flex-row">
-                                    <p class="my-auto">Co2 : </p>
-                                    {% if attribute(attribute(listeEtatCapteurs, systemeAcquisition.id), "co2") == false %}
-                                        <box-icon name='x' color='#ff1d1d' class="my-auto mx-auto"></box-icon>
-                                    {% else %}
-                                        <box-icon name='check' color='#05d409' class="my-auto mx-auto" ></box-icon>
-                                    {% endif %}
-                                </div>
-                            {% endif %}
-                        </td>
-                        <td></td>
-                    {% endif %}
-
-                    <td class="py-4 flex flex-row justify-center">
-
-                        {% if systemeAcquisition.etat == "Opérationnel" %}
-                            <a class="" data-tooltip-target="tooltip-erreur-{{systemeAcquisition.id}}" href="/signaler-erreur/{{ systemeAcquisition.salle.id }}/1">
-                                <box-icon name='bug' type='solid' color='#ff9b00' ></box-icon>
-                            </a>
-
-                            <div id="tooltip-erreur-{{systemeAcquisition.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-                                Signaler une erreur
-                                <div class="tooltip-arrow" data-popper-arrow></div>
-                            </div>
-                            <div class="mx-2"></div>
-                        {% endif %}
-
-                        <a data-tooltip-target="tooltip-delete-{{systemeAcquisition.id}}" href="/plan/retirer-sa/{{ systemeAcquisition.id }}">
-                            <box-icon name='trash' type='solid' color='rgba(255,0,0,0.85)'></box-icon>
-                        </a>
-
-                        <div id="tooltip-delete-{{systemeAcquisition.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-                            Supprimer le SA
-                            <div class="tooltip-arrow" data-popper-arrow></div>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-
-                {% elseif choix == "Non installés" %}
-
-                <tr>
-                    <th scope="col" class="px-6 py-3">
-                        Nom
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                        Actions
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-
-                {% for systemeAcquisition in listeSa %}
-                    <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ systemeAcquisition.nom }}
-                        </th>
-                        <td class="py-4 flex flex-row justify-center">
-                            <a data-tooltip-target="tooltip-delete-{{systemeAcquisition.id}}" href="/plan/retirer-sa/{{ systemeAcquisition.id }}">
-                                <box-icon name='trash' type='solid' color='rgba(255,0,0,0.85)'></box-icon>
-                            </a>
-
-                            <div id="tooltip-delete-{{systemeAcquisition.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-                                Supprimer le SA
-                                <div class="tooltip-arrow" data-popper-arrow></div>
-                            </div>
-                        </td>
-                    </tr>
-                {% endfor %}
-
-                {% endif %}
 
                 </tbody>
             </table>
@@ -368,26 +215,35 @@
                     filter = txt.toUpperCase();
                     // Loop through all table rows, and hide those who don't match the search query
 
-                    let salle, nom;
-                    td1 = tr[i].getElementsByTagName("th")[0];
-                    if (td1) {
-                        txtValue = td1.textContent || td1.innerText;
+                    let salle, nom, etat;
+                    td = tr[i].getElementsByTagName("th")[0];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
                         if (txtValue.toUpperCase().indexOf(filter) > -1) {
                             nom = true;
                         } else {
                             nom = false;
                         }
                     }
-                    td2 = tr[i].getElementsByTagName("td")[0];
-                    if (td2) {
-                        txtValue = td2.textContent || td2.innerText;
+                    td = tr[i].getElementsByTagName("td")[0];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
                         if (txtValue.toUpperCase().indexOf(filter) > -1) {
                             salle = true;
                         } else {
                             salle = false;
                         }
                     }
-                    if (nom || salle) {
+                    td = tr[i].getElementsByTagName("td")[3];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            etat = true;
+                        } else {
+                            etat = false;
+                        }
+                    }
+                    if (nom || salle || etat){
                         nb++;
                     }
                 }
