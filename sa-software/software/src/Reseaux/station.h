@@ -15,19 +15,14 @@
 void initReseauStation();
 
 /**
- * Permet de recupérer l'adresse IP du SA
- * @return l'adresse IP du SA sur le reseau
+ * Permet de récupérer l'adresse IP du SA
+ * @return l'adresse IP du SA sur le réseau
 */
 String getIP();
 
 /**
- * Enregistre la liste des reseaux dans le fichier listereseaux.txt
-*/
-void activerEnregistrerListeReseau();
-
-/**
- *  Permet d'enregistrer la liste des reseaux dans le fichier listereseaux.txt 
- *  la première ligne correspond au nombre de reseaux
+ *  Permet d'enregistrer la liste des réseaux dans le fichier listereseaux.txt
+ *  la première ligne correspond au nombre de réseaux
  *  les autres lignes contiennent les réseaux
  *  exemple du fichier listereseaux.txt :
  *  nb_reseaux:2
@@ -37,14 +32,14 @@ void activerEnregistrerListeReseau();
 void enregistrerListeReseaux();
 
 /**
- * Verifie si l'ESP est connecté a un reseau
+ * Vérifie si l'ESP est connecté a un réseau
  * @return true si est connecté
 */
-bool estConnecte(String nomReseau);
+bool estConnecte(const String& nomReseau);
 
 /**
- * Connecte l'ESP a un reseau 
- * @return true si connexion reussie
+ * Connecte l'ESP a un réseau
+ * @return true si connexion réussie
  */
 bool connexionWifi(const String& ssid, wpa2_auth_method_t methodeAutentification = WPA2_AUTH_TLS, const String& password = "", const String& identifiant = "", const String& nomUtilisateur = "");
 

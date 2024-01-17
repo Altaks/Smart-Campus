@@ -11,7 +11,7 @@
 
 void initReseauStation()
 {
-    // Pour pouvoir connecter le SA a un wifi
+    // Pour pouvoir connecter le SA à un WiFi
     WiFi.mode(WIFI_STA);
     WiFi.disconnect();
     WiFi.begin();
@@ -22,7 +22,7 @@ String getIP()
     return (WiFi.getMode() == WIFI_STA)? WiFi.localIP().toString():WiFi.softAPIP().toString();
 }
 
-void taskEnregistrerListeReseau(void * parameter){
+[[noreturn]] void taskEnregistrerListeReseau(__attribute__((unused)) void * parameter){
     while(true){
         vTaskDelay(10 * 1000);
         enregistrerListeReseaux();
@@ -36,19 +36,19 @@ void activerEnregistrerListeReseau()
         taskEnregistrerListeReseau,
         "Connexion au reseau wifi",
         10000,
-        NULL,
+        nullptr,
         11,
-        NULL
+        nullptr
     );
 }
 
 void enregistrerListeReseaux()
 {
-    // scan les reseaux alentours 
+    // scan les réseaux alentours
     int n = WiFi.scanNetworks();
     
     /*
-     * Enregistre la liste des reseaux dans la varible listeReseauxDisponiblesStr au format :
+     * Enregistre la liste des réseaux dans la variable listeReseauxDisponiblesStr au format :
      *  nb_reseaux:2
      *  1:reseau1
      *  2:reseau2
@@ -66,7 +66,7 @@ void enregistrerListeReseaux()
     ecrireFichier("/listereseaux.txt", listeReseauxDisponiblesStr);
 }
 
-bool estConnecte(String nomReseau)
+bool estConnecte(const String& nomReseau)
 {
 
     return (WiFi.SSID() == nomReseau && WiFi.status() == WL_CONNECTED);
@@ -74,7 +74,7 @@ bool estConnecte(String nomReseau)
 
 bool connexionWifi(const String& ssid, wpa2_auth_method_t methodeAutentification, const String& password, const String& identifiant, const String& nomUtilisateur)
 {
-    // Réalise la connexxion du SA a un reseau en wifi avec le mode de connexion choisi
+    // Réalise la connexion du SA à un réseau en wifi avec le mode de connexion choisi
     switch(methodeAutentification)
     {
         case WPA2_AUTH_PEAP:
@@ -90,8 +90,8 @@ bool connexionWifi(const String& ssid, wpa2_auth_method_t methodeAutentification
 
     Serial.println("Connexion au réseau "+ssid);
     
-    // Verifie si le sa se connecte pendant 60 secondes
-    // retourne true si il arrive a se connecté; false sinon 
+    // Vérifie si le SA se connecte pendant 60 secondes
+    // retourne true s'il arrive à se connecter ; false sinon
     for(int counter = 0 ; counter <= 60 && WiFi.status() != WL_CONNECTED ; counter++)
     {
         delay(500);
