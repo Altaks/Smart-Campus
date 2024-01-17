@@ -6,6 +6,7 @@
 #include "Capteurs/presence.h"
 #include "Capteurs/tempEtHum.h"
 #include "Capteurs/qualAir.h"
+#include "LED/led.h"
 
 // Décommenter/Commenter les Serial.println pour voir/ne pas voir les informations de debug en usb
 
@@ -18,10 +19,12 @@ void taskEnvois(void *pvParameters){
         int codeRetour = envoyer();
         if (codeRetour == 0){
             Serial.println("Donnees envoyees");
+            setEnvoieState(true);
         }
         else{
             Serial.println("Erreur lors de l'envoi des donnees");
             Serial.println("Code d'erreur : " + String(codeRetour) + " : " + errreurToString(codeRetour));
+            setEnvoieState(false);
         }
         Serial.println("______________________________________");
         // 5 minutes - 2 secondes pour laisser le temps à la tâche de récupérer la date (d'après mes tests, la récupération de la date prend 2 secondes de plus que le délai de 5 minutes)

@@ -93,7 +93,7 @@ void afficher(PAGE &page){
                 break;
             case CO2 :
                 donneesString = "CO2 :";
-                donnees = (float)getCO2();
+                donnees = getCO2WithoutMeasure();
                 format = "%s %.0fppm";
                 page = TEMPERATURE;
                 break;

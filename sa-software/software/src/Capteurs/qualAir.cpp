@@ -11,20 +11,24 @@ Adafruit_SGP30 sgp;
 void initQualAir() {
   while (!Serial) { delay(10); } // Wait for serial console to open!
 
-  Serial.println("SGP30 test");
+  Serial.println("Initialisation capteur CO2");
 
   if (! sgp.begin()){
-    Serial.println("Sensor not found :(");
+    Serial.println("Capteur CO2 non trouvé");
     while (1);
   }
-  Serial.print("Found SGP30 serial #");
+  Serial.println("Capteur CO2 connecté");
 }
 
 
 int getCO2() {
   if (! sgp.IAQmeasure()) {
-    Serial.println("Measurement failed");
+    Serial.println("Mesure échoué");
     return -1;
   } else
         return sgp.eCO2;
+}
+
+int getCO2WithoutMeasure() {
+  return sgp.eCO2;
 }

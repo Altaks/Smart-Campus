@@ -26,4 +26,6 @@ void initQualAir();
 */
 int getCO2();
 
+int getCO2WithoutMeasure();
+
 #endif //SOFTWARE_QUALAIR_H

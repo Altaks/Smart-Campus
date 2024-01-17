@@ -8,5 +8,7 @@ bool initTaskLED();
 
 void taskLED(void *PvParameters);
 
+void setEnvoieState(bool envoie);
+
 
 #endif //LED_H
