@@ -1,0 +1,121 @@
+{% extends 'base.html.twig'%}
+
+{% block title %}Smart Campus{% endblock %}
+
+{% block body %}
+
+    <div class="w-2/3 mx-auto my-12">
+        <nav class="flex" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+                <li class="inline-flex items-center">
+                    <a href="/accueil" class="inline-flex items-center lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                        <svg class="lg:w-3 lg:h-3 lg:me-2.5 w-6 h-6 me-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
+                        </svg>
+                        Accueil
+                    </a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    {# Partie chargé de mission #}
+    {% if is_granted('ROLE_CHARGE_DE_MISSION') %}
+        <h1 class="lg:text-4xl text-7xl pb-12 text-center">Bienvenue Yacine</h1>
+
+        <div class="mx-auto w-3/4 min-h-64 flex lg:flex-row flex-col justify-evenly items-center">
+            <a href="/releves" id="releves">
+                <div class="lg:w-64 lg:h-64 w-96 h-96 flex flex-row justify-center items-center rounded-lg border-2 border-gray-900 shadow-lg">
+                    <box-icon name='stats' class="w-1/3 h-1/3"></box-icon>
+                </div>
+                <h2 class="lg:w-64 w-96 text-center mt-5 lg:text-xl text-4xl mb-10">Relevés</h2>
+            </a>
+            <a href="/plan/lister-salles" id="infra">
+                <div class="lg:w-64 lg:h-64 w-96 h-96 flex flex-row justify-center items-center rounded-lg border-2 border-gray-900 shadow-lg">
+                    <box-icon name='buildings' type='solid' class="w-1/3 h-1/3"></box-icon>
+                </div>
+                <h2 class="lg:w-64 w-96 text-center mt-5 lg:text-xl text-4xl mb-10">Plan d'expérimentation</h2>
+            </a>
+            <a href="/plan/seuils-alertes" id="seuils_alerte">
+                <div class="lg:w-64 lg:h-64 w-96 h-96 flex flex-row justify-center items-center rounded-lg border-2 border-gray-900 shadow-lg">
+                    <box-icon name='reflect-horizontal' type='solid' class="w-1/3 h-1/3"></box-icon>
+                </div>
+                <h2 class="lg:w-64 w-96 text-center mt-5 lg:text-xl text-4xl mb-10">Seuils d'alertes</h2>
+            </a>
+        </div>
+
+        {# Partie technicien #}
+    {% elseif is_granted('ROLE_TECHNICIEN') %}
+        <h1 class="lg:text-4xl text-7xl pb-12 text-center">Bienvenue Jamal</h1>
+
+        <div class="flex lg:flex-row flex-col w-full lg:items-start items-center mb-10">
+
+            {# US Technicien : Consulter la liste des demandes d'installation #}
+            <div class="lg:border-r-4 text-center lg:w-1/3 w-2/3 mb-10 flex flex-col items-center">
+
+                <h2 class="mb-2 lg:text-2xl text-6xl font-semibold text-gray-900 dark:text-white text-center lg:ml-6">Systèmes à installer</h2>
+
+                <p class="text-gray-600 lg:text-lg text-4xl lg:my-0 my-3">Date de demande - salle</p>
+
+                <ul id="listeDemandesInstallation" class="lg:text-xl text-5xl space-y-1 text-gray-800 list-none list-inside dark:text-gray-400">
+
+                    {% for demande in demandesInstall %}
+                        <li class="my-2" id="demandeInstallation"><a href="/plan/demande-travaux/{{ demande.id }}" class="hover:underline">{{ demande.date | date('d M Y')}}  -  {{ demande.salle.nom }}</a></li>
+                    {% endfor %}
+                </ul>
+                <hr class="lg:hidden w-72 h-3 bg-gray-300 mt-10 rounded-2xl">
+            </div>
+            <div class="text-center lg:w-1/3 w-2/3 mb-10 flex flex-col items-center">
+                <h2 class="mb-2 lg:text-2xl text-6xl font-semibold text-gray-900 dark:text-white text-center ml-3">Systèmes à réparer</h2>
+
+                <p class="text-gray-600 lg:text-lg text-4xl lg:my-0 my-3">Date de demande - salle</p>
+
+                <ul id="listeDemandesReparation" class="lg:text-xl text-5xl space-y-1 text-gray-800 list-none list-inside dark:text-gray-400">
+
+                    {% for demande in demandesRepar %}
+                        <li class="my-2" id="demandeReparation"><a href="/plan/demande-travaux/{{ demande.id }}" class="hover:underline">{{ demande.date | date('d M Y')}}  -  {{ demande.salle.nom }}</a></li>
+                    {% endfor %}
+                </ul>
+                <hr class="lg:hidden w-72 h-3 bg-gray-300 mt-10 rounded-2xl">
+            </div>
+
+            <div class="flex flex-col lg:border-l-4 text-center w-1/3 items-center">
+            {# US Technicien : Voir les alertes de niveaux et conseils d'action #}
+                <a href="/releves" id="releves">
+                    <div class="lg:w-64 lg:h-64 w-96 h-96 flex flex-row justify-center items-center rounded-lg border-2 border-gray-900 shadow-lg">
+                        <box-icon name='stats' class="w-1/3 h-1/3"></box-icon>
+                    </div>
+                    <h2 class="lg:w-64 w-96 text-center mt-5 lg:text-xl text-4xl">Relevés</h2>
+                </a>
+            {# US Technicien : Consulter la liste des systèmes d'acquisition #}
+                <a href="/plan/lister-sa" id="Lister les sysytemes d'aquisition" class="mt-16">
+                    <div class="lg:w-64 lg:h-64 w-96 h-96 flex flex-row justify-center items-center rounded-lg border-2 border-gray-900 shadow-lg">
+                        <box-icon type='solid' name='thermometer' class="w-1/3 h-1/3"></box-icon>
+                    </div>
+                    <h2 class="lg:w-64 w-96 text-center mt-5 lg:text-xl text-4xl">Systemes d'acquisition</h2>
+                </a>
+            </div>
+        </div>
+
+        {# Partie Usager #}
+    {% else %}
+        <h1 class="lg:text-4xl text-5xl pb-12 text-center">Bienvenue sur le site Smart Campus</h1>
+
+        <div class="mx-auto w-3/4 min-h-64 flex lg:flex-row flex-col justify-evenly items-center">
+            <a href="/releves" id="releves">
+                <div class="lg:w-64 lg:h-64 w-96 h-96 flex flex-row justify-center items-center rounded-lg border-2 border-gray-900 shadow-lg">
+                    <box-icon name='stats' class="w-1/3 h-1/3"></box-icon>
+                </div>
+                <h2 class="lg:w-64 w-96 text-center mt-5 lg:text-xl text-4xl mb-10">Relevés</h2>
+            </a>
+            <a href="/connexion" id="infra">
+                <div class="lg:w-64 lg:h-64 w-96 h-96  flex flex-row justify-center items-center rounded-lg border-2 border-gray-900 shadow-lg">
+                    <box-icon name='log-in' type='solid' class="w-1/3 h-1/3"></box-icon>
+                </div>
+                <h2 class="lg:w-64 w-96 text-center mt-5 lg:text-xl text-4xl mb-10">Connexion</h2>
+            </a>
+        </div>
+    {% endif %}
+
+{% endblock %}
+
+

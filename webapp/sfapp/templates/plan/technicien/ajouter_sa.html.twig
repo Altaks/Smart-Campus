@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un systèmes{% endblock %}
+
+{% block body %}
+    <main>
+        <div class="w-2/3 mx-auto my-12">
+            <nav class="flex" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+                    <li class="inline-flex items-center">
+                        <a href="/accueil" class="inline-flex items-center lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                            <svg class="lg:w-3 lg:h-3 lg:me-2.5 w-6 h-6 me-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
+                            </svg>
+                            Accueil
+                        </a>
+                    </li>
+                    <li>
+                        <div class="flex items-center lg:text-sm text-2xl">
+                            <svg class="rtl:rotate-180 lg:w-3 lg:h-3 w-6 h-6 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                            </svg>
+                            <a href="/plan/lister-sa" class="ms-1 lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Liste des systèmes d'acquisition</a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex items-center lg:text-sm text-2xl">
+                            <svg class="rtl:rotate-180 lg:w-3 lg:h-3 w-6 h-6 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                            </svg>
+                            <a href="/plan/ajouter-sa" class="ms-1 lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Ajouter un système d'acquisition</a>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+
+        <h1 class="lg:text-4xl text-7xl pb-12 text-center">Ajouter un système d'acquisition</h1>
+
+        {{ form_start(form) }}
+        <div class="max-w-screen-xl w-5/6 mx-auto flex flex-col items-center">
+            <span class="lg:text-2xl text-5xl">{{ form_label(form.nom, "Nom du système") }}</span>
+            {{ form_widget(form.nom, {  'attr': {'placeholder': 'Ex: ESP-001', 'class': 'mt-5 lg:text-xl text-4xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg px-4 py-3', 'id': 'nom'}}) }}
+            {{ form_errors(form.nom, {
+                error_item_class: 'text-red-600 text-sm mt-1',
+            }) }}
+            <span class="lg:text-2xl text-5xl lg:mt-8 mt-16">{{ form_label(form.nom, "Nom de la base de données") }}</span>
+            {{ form_widget(form.baseDonnees, { 'attr': {'placeholder': 'Ex: sae34bdk2eq1', 'class': 'mt-5 lg:text-xl text-4xl bg-gray-50 border border-gray-300 text-gray-900 rounded-lg px-4 py-3', 'id': 'baseDonnees'} })  }}
+            {{ form_errors(form.baseDonnees, {
+                error_item_class: 'text-red-600 text-sm mt-1',
+            }) }}
+            {% if errorBaseDonnees %}
+                <p class="text-red-600 text-sm mt-1">{{ errorBaseDonnees }}</p>
+            {% endif %}
+            {{ form_widget(form.save, { 'label': 'Ajouter le système',  'attr': {'class': 'cursor-not-allowed font-bold text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg lg:text-sm text-4xl px-5 lg:mt-5 mt-20 py-2.5 focus:outline-none', 'id': 'submit'}  })  }}
+
+        </div>
+        {{ form_end(form) }}
+
+
+    </main>
+
+    <script>
+        let sa = document.getElementById('form_nom');
+        let baseDonnees = document.getElementById('form_baseDonnees');
+
+        sa.addEventListener('input',verifierEntrees)
+        baseDonnees.addEventListener('input',verifierEntrees)
+
+        function verifierEntrees(){
+            let sa = document.getElementById('form_nom');
+            let baseDonnees = document.getElementById('form_baseDonnees');
+
+            if(sa.value.length > 0 && baseDonnees.value.length > 0 ) enableSubmitButton()
+            else disableSubmitButton()
+        }
+
+        function enableSubmitButton(){
+            let button = document.getElementById("form_save");
+            if (button.disabled){
+                button.disabled = false;
+                button.classList.remove("cursor-not-allowed");
+                button.classList.add("hover:bg-sky-600");
+            }
+        }
+        function disableSubmitButton(){
+            let button = document.getElementById("form_save");
+            if (!button.disabled){
+                button.disabled = true;
+                button.classList.add("cursor-not-allowed");
+                button.classList.remove("hover:bg-sky-600");
+            }
+        }
+    </script>
+
+
+{% endblock %}

@@ -1,0 +1,216 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des salles{% endblock %}
+
+{% set orientation  = {
+    "No" : "Nord",
+    "Su" : "Sud",
+    "Es" : "Est",
+    "Ou" : "Ouest",
+    "NE" : "Nord-Est",
+    "NO" : "Nord-Ouest",
+    "SE" : "Sud-Est",
+    "SO" : "Sud-Ouest",
+} %}
+
+{% block body %}
+
+    <div class="w-2/3 mx-auto my-12">
+        <nav class="flex" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+                <li class="inline-flex items-center">
+                    <a href="/accueil" class="inline-flex items-center lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                        <svg class="lg:w-3 lg:h-3 lg:me-2.5 w-6 h-6 me-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
+                        </svg>
+                        Accueil
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center lg:text-sm text-2xl">
+                        <svg class="rtl:rotate-180 lg:w-3 lg:h-3 w-6 h-6 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+                        <a href="/plan/lister-salles" class="ms-1 lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Liste des salles</a>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="flex flex-col xl:w-2/3 w-11/12 items-center mx-auto">
+        <h1 class="lg:text-4xl text-7xl pb-12 text-center">Plan d'expérimentation</h1>
+            <div class="flex flex-row w-full justify-between mb-5">
+                <input type="text" id="searchInput" class="my-auto w-max bg-gray-50 border border-gray-300 text-gray-900 lg:text-sm text-3xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onkeyup="search()" placeholder="Rechercher une salle">
+
+                <button
+                        type="button"
+                        class="font-bold h-max my-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg lg:text-sm text-3xl px-5 py-2.5 focus:outline-none"
+                        onclick="window.location.href='/plan/ajouter-salle'"
+                >
+                    Ajouter une salle
+                </button>
+
+            </div>
+
+        <div class="relative overflow-x-auto w-full shadow-md sm:rounded-lg mb-12">
+            <table id="liste-salles" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="lg:text-xs text-xl text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        Nom
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Bâtiment
+                    </th>
+                    <th scope="col" class="px-6 py-3 hidden lg:table-cell">
+                        Orientation
+                    </th>
+                    <th scope="col" class="px-6 py-3 hidden lg:table-cell">
+                        Contient PC
+                    </th>
+                    <th scope="col" class="px-6 py-3 hidden lg:table-cell">
+                        Portes
+                    </th>
+                    <th scope="col" class="px-6 py-3 hidden lg:table-cell">
+                        Fenêtres
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        État du système d'acquisition
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Actions
+                    </th>
+                </tr>
+                </thead>
+
+                {% for salle in salle %}
+                    <tbody>
+                    <tr class="lg:text-base text-2xl bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ salle.nom }}
+                        </th>
+                        <td class="px-6 py-4">
+                            {{ salle.batiment }}
+                        </td>
+                        <td class="px-6 py-4 hidden lg:table-cell">
+                            {{ orientation[salle.orientation] }}
+                        </td>
+                        <td class="px-6 py-4 hidden lg:table-cell">
+                            {% if salle.contientPc %}
+                                Oui
+                            {% else %}
+                                Non
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 hidden lg:table-cell">
+                            {{ salle.nombrePorte }}
+                        </td>
+                        <td class="px-6 py-4 hidden lg:table-cell">
+                            {{ salle.nombreFenetre }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if etat[salle.id] == 'Installation demandée' %}
+                                <div class="p-1 bg-amber-500 text-white rounded-lg flex flex-row justify-between items-center">
+                                    <box-icon name='time-five' color='rgba(255,255,255,0.85)' class="mx-4"></box-icon>
+                                    <span class="text-center w-full">Installation demandée</span>
+                                </div>
+                            {% elseif etat[salle.id] == 'Réparation demandée' %}
+                                <div class="p-1 bg-red-600 text-white rounded-lg flex flex-row justify-between items-center">
+                                    <box-icon name='wrench' color='rgba(255,255,255,0.85)' class="mx-4"></box-icon>
+                                    <span class="text-center w-full">Réparation demandée</span>
+                                </div>
+                            {% elseif etat[salle.id] == 'Opérationnel' %}
+                                <div class="p-1 bg-emerald-500 text-white rounded-lg flex flex-row justify-start items-center">
+                                    <box-icon name='check-double' color='rgba(255,255,255,0.85)' class="mx-4"></box-icon>
+                                    <span class="text-center w-full">Opérationnel</span>
+                                </div>
+                            {% elseif etat[salle.id] == 'Non installé' %}
+                                <a href="/plan/{{ salle.id }}/demander-installation" class="p-1 bg-blue-500 hover:bg-blue-700 duration-300 text-white rounded-lg flex flex-row justify-start items-center">
+                                    <box-icon name='right-arrow-alt' color='#ffffff' class="mx-4"></box-icon>
+                                    <span class="text-center w-full">Demander une installation</span>
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a data-tooltip-target="tooltip-modifier-{{salle.id}}" href="/plan/modifier-salle/{{ salle.id }}" class="mx-2">
+                                <box-icon name='edit' color='#000000' class="lg:w-6 lg:h-6 w-9 h-9"></box-icon>
+                            </a>
+                            <div id="tooltip-modifier-{{salle.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                Modifier la salle
+                                <div class="tooltip-arrow" data-popper-arrow></div>
+                            </div>
+                            <a data-tooltip-target="tooltip-delete-{{salle.id}}" href="/plan/retirer-salle/{{ salle.id }}" class="mx-2">
+                                <box-icon name='trash' type='solid' color='rgba(255,0,0,0.85)' class="lg:w-6 lg:h-6 w-9 h-9"></box-icon>
+                            </a>
+                            <div id="tooltip-delete-{{salle.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                Supprimer la salle
+                                <div class="tooltip-arrow" data-popper-arrow></div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function search() {
+            // Declare variables
+            let input, filter, table, tr, i, txtValue;
+            input = document.getElementById("searchInput");
+            txt = input.value;
+            let array = txt.split(" ");
+            array.forEach(function (element, index) {
+                if (element.length >= 2){
+                    array[index] = element.toUpperCase();
+                }
+            });
+
+            table = document.getElementById("liste-salles");
+            tr = table.getElementsByTagName("tr");
+            for (i = 1; i < tr.length; i++) {
+                let nb = 0;
+                let nbFilter = array.length;
+
+                for (txt of array) {
+                    filter = txt.toUpperCase();
+                    // Loop through all table rows, and hide those who don't match the search query
+
+                    let bat, nom, ori;
+                    td = tr[i].getElementsByTagName("th")[0];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            nom = true;
+                        } else {
+                            nom = false;
+                        }
+                    }
+                    td = tr[i].getElementsByTagName("td")[0];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            bat = true;
+                        } else {
+                            bat = false;
+                        }
+                    }
+                    if (nom || bat) {
+                        nb++;
+                    }
+                }
+
+                if (nb === nbFilter) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+
+        }
+    </script>
+
+
+{% endblock %}

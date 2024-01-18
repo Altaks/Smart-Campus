@@ -1,0 +1,170 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la salle {{ salle.nom }}{% endblock %}
+
+{% set orientation  = {
+    "No" : "Nord",
+    "Su" : "Sud",
+    "Es" : "Est",
+    "Ou" : "Ouest",
+    "NE" : "Nord-Est",
+    "NO" : "Nord-Ouest",
+    "SE" : "Sud-Est",
+    "SO" : "Sud-Ouest",
+} %}
+
+{% block body %}
+
+    <div class="w-2/3 mx-auto my-12">
+        <nav class="flex" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+                <li class="inline-flex items-center">
+                    <a href="/accueil" class="inline-flex items-center lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                        <svg class="lg:w-3 lg:h-3 lg:me-2.5 w-6 h-6 me-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
+                        </svg>
+                        Accueil
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center lg:text-sm text-2xl">
+                        <svg class="rtl:rotate-180 lg:w-3 lg:h-3 w-6 h-6 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+                        <a href="/plan/lister-salles" class="ms-1 lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Liste des salles</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center lg:text-sm text-2xl">
+                        <svg class="rtl:rotate-180 lg:w-3 lg:h-3 w-6 h-6 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+                        <a href="/plan/modifier-salle/{{ salle.id }}" class="ms-1 lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Modifier une salle</a>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="relative overflow-x-auto lg:max-w-7xl mx-auto">
+        <h1 class="lg:text-4xl text-7xl pb-12 text-center">Modifier la salle {{ salle.nom }}</h1>
+        {{ form_start(formSalle) }}
+        <div class="m-auto lg:grid lg:grid-cols-3 flex flex-col items-center w-full lg:text-center">
+
+            <div class="lg:mb-5 mb-16 lg:w-full w-5/6">
+                <label class="block mb-2 lg:text-sm text-6xl font-medium text-gray-900 dark:text-white">Nom de la salle</label>
+                <p class="text-gray-900 lg:text-sm text-5xl block w-full py-2.5 dark:placeholder-gray-400 dark:text-white">{{ salle.nom }}</p>
+            </div>
+            <div class="lg:mb-5 mb-16 lg:w-full w-5/6">
+                <label class="block mb-2 lg:text-sm text-6xl font-medium text-gray-900 dark:text-white">Nom du bâtiment</label>
+                <p class="text-gray-900 lg:text-sm text-5xl block w-full py-2.5 dark:placeholder-gray-400 dark:text-white">{{ salle.batiment }}</p>
+            </div>
+            <div class="lg:mb-5 mb-16 lg:w-full w-5/6">
+                <label class="block mb-2 lg:text-sm text-6xl font-medium text-gray-900 dark:text-white">Orientation</label>
+                <p class="text-gray-900 lg:text-sm text-5xl block w-full py-2.5 dark:placeholder-gray-400 dark:text-white">{{ orientation[salle.orientation] }}</p>
+            </div>
+            <div class="lg:mb-5 mb-16 lg:w-full w-5/6">
+                <label for="fenetre-input" class="block mb-2 lg:text-sm text-6xl font-medium text-gray-900 dark:text-white">{{ field_label(formSalle.nombreFenetre) }}</label>
+                <div class="relative flex lg:mx-auto lg:items-center lg:max-w-[8rem] max-w-[12rem]">
+                    <button type="button" id="decrement-button" data-input-counter-decrement="fenetre-input" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 lg:h-11 h-[4.25rem] focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="lg:w-3 lg:h-3 w-9 h-9 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                        </svg>
+                    </button>
+                    <input type="text" id="fenetre-input" name="{{ field_name(formSalle.nombreFenetre) }}" data-input-counter data-input-counter-min="0" aria-describedby="helper-text-explanation" class="bg-gray-50 border-x-0 border-gray-300 lg:h-11 h-[4.25rem] text-center text-gray-900 lg:text-sm text-4xl focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" value="0" required>
+                    <button type="button" id="increment-button" data-input-counter-increment="fenetre-input" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 lg:h-11 h-[4.25rem] focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="lg:w-3 lg:h-3 w-9 h-9 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="lg:mb-5 mb-16 lg:w-full w-5/6">
+                <label for="porte-input" class="block mb-2 lg:text-sm text-6xl font-medium text-gray-900 dark:text-white">{{ field_label(formSalle.nombrePorte) }}</label>
+                <div class="relative flex lg:mx-auto lg:items-center lg:max-w-[8rem] max-w-[12rem]">
+                    <button type="button" id="decrement-button" data-input-counter-decrement="porte-input" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 lg:h-11 h-[4.25rem] focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="lg:w-3 lg:h-3 w-9 h-9 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                        </svg>
+                    </button>
+                    <input type="text" id="porte-input" name="{{ field_name(formSalle.nombrePorte) }}" data-input-counter data-input-counter-min="1" aria-describedby="helper-text-explanation" class="bg-gray-50 border-x-0 border-gray-300 lg:h-11 h-[4.25rem] text-center text-gray-900 lg:text-sm text-4xl focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="1" value="1" required>
+                    <button type="button" id="increment-button" data-input-counter-increment="porte-input" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 lg:h-11 h-[4.25rem] focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="lg:w-3 lg:h-3 w-9 h-9 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="lg:mb-5 mb-16 lg:w-full w-5/6 lg:text-center">
+                <label class="block mb-2 lg:text-sm text-6xl font-medium text-gray-900 dark:text-white">{{ field_label(formSalle.contientPc) }}</label>
+                <div class="flex flex-row">
+                    {% for contientPc, value in field_choices(formSalle.contientPc) %}
+                        <div class="flex lg:content-center lg:justify-center w-full">
+                            <input id="inline-radio" type="radio" value="{{ value }}" name="{{ field_name(formSalle.contientPc) }}" class="lg:w-4 lg:h-4 w-12 h-12 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                {% if salle.contientPc == 1 and contientPc == 'Oui' %}
+                                    checked
+                                {% elseif salle.contientPc == 0 and contientPc == 'Non'%}
+                                    checked
+                                {% endif %}
+                            >
+                            <label for="inline-radio" class="ms-2 {{ (contientPc == 'Oui' ) ? 'me-4' : '' }} lg:text-sm text-5xl font-medium text-gray-900 dark:text-gray-300">{{ contientPc }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                {{ form_errors(formSalle.contientPc, {
+                    error_item_class: 'text-red-600 text-sm mt-1',
+                }) }}
+            </div>
+            <div class="grid grid-cols-subgrid gap-4 col-span-3 mt-5">
+                <div class="mx-auto col-start-1">
+                    <button id="submit" type="submit" name="{{ field_name(formSalle.modifier) }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg lg:text-sm text-5xl px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        {{ field_label(formSalle.modifier) }}</button>
+                </div>
+            </div>
+        </div>
+        {{ form_end(formSalle) }}
+    </div>
+    <script>
+        let fenetre = document.getElementById('fenetre-input');
+        let porte = document.getElementById('porte-input');
+        let radios = document.querySelectorAll("[id='inline-radio']");
+        let decrements = document.querySelectorAll("[id='decrement-button']");
+        let increments = document.querySelectorAll("[id='increment-button']");
+
+        fenetre.addEventListener('input',verifierEntrees)
+        porte.addEventListener('input',verifierEntrees)
+        for(const radio of radios) radio.addEventListener('input',verifierEntrees)
+        for(const decrement of decrements) decrement.addEventListener('click',attendreVerifierEntrees)
+        for(const increment of increments) increment.addEventListener('click',attendreVerifierEntrees)
+
+        function attendreVerifierEntrees()
+        {
+            setTimeout(function(){verifierEntrees()}, 100)
+        }
+
+        function verifierEntrees(){
+            let fenetre = document.getElementById('fenetre-input');
+            let porte = document.getElementById('porte-input');
+            let radios = document.querySelectorAll("[id='inline-radio']");
+
+            if(fenetre.value.length > 0 && porte.value.length > 0 && (radios[0].checked || radios[1].checked)) enableSubmitButton()
+            else disableSubmitButton()
+        }
+
+        function enableSubmitButton(){
+            let button = document.getElementById("submit");
+            if (button.disabled){
+                button.disabled = false;
+                button.classList.remove("cursor-not-allowed");
+                button.classList.add("hover:bg-blue-800");
+            }
+        }
+        function disableSubmitButton(){
+            let button = document.getElementById("submit");
+            if (!button.disabled){
+                button.disabled = true;
+                button.classList.add("cursor-not-allowed");
+                button.classList.remove("hover:bg-blue-800");
+            }
+        }
+    </script>
+{% endblock %}

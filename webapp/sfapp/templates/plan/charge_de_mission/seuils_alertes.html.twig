@@ -1,0 +1,188 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier les seuils d'alertes{% endblock %}
+
+
+{% block body %}
+
+    <div class="w-2/3 mx-auto my-12">
+        <nav class="flex" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+                <li class="inline-flex items-center">
+                    <a href="/accueil" class="inline-flex items-center lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                        <svg class="lg:w-3 lg:h-3 lg:me-2.5 w-6 h-6 me-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
+                        </svg>
+                        Accueil
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center lg:text-sm text-2xl">
+                        <svg class="rtl:rotate-180 lg:w-3 lg:h-3 w-6 h-6 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+                        <a href="/plan/seuils-alertes" class="ms-1 lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Seuils d'alertes</a>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="relative overflow-x-auto lg:max-w-7xl mx-auto">
+        <h1 class="lg:text-4xl text-7xl pb-12 text-center">Seuils d'alertes</h1>
+        {{ form_start(form) }}
+
+        <h2 class="lg:text-2xl text-6xl text-center">Température</h2>
+
+        <div class="m-auto grid grid-cols-2 self-center lg:w-1/2 w-full">
+            <div class="flex flex-col items-center w-full">
+                <label for="temp_min" class="block lg:mb-2 mb-6 lg:text-lg text-5xl font-medium text-gray-900 dark:text-white">{{ field_label(form.temp_min) }}</label>
+                <div class="relative flex items-center lg:max-w-[8rem] max-w-[12rem]">
+                    <button type="button" id="decrement-button" data-input-counter-decrement="temp_min" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 lg:h-11 h-[4.25rem] focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="lg:w-3 lg:h-3 w-9 h-9 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                        </svg>
+                    </button>
+                    <input type="text" id="temp_min" name="{{ field_name(form.temp_min) }}" data-input-counter data-input-counter-min="0" aria-describedby="helper-text-explanation" class="bg-gray-50 border-x-0 border-gray-300 lg:h-11 h-[4.25rem] text-center text-gray-900 lg:text-sm text-4xl focus:ring-blue-500 focus:border-blue-500 block lg:w-14 w-32 py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ form.temp_min.vars.data }}" value="{{ form.temp_min.vars.data }}" required>
+                    <button type="button" id="increment-button" data-input-counter-increment="temp_min" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 lg:h-11 h-[4.25rem] focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="lg:w-3 lg:h-3 w-9 h-9 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="flex flex-col items-center w-full">
+                <label for="temp_max" class="block lg:mb-2 mb-6 lg:text-lg text-5xl font-medium text-gray-900 dark:text-white">{{ field_label(form.temp_max) }}</label>
+                <div class="relative flex items-center lg:max-w-[8rem] max-w-[12rem]">
+                    <button type="button" id="decrement-button" data-input-counter-decrement="temp_max" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 lg:h-11 h-[4.25rem] focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="lg:w-3 lg:h-3 w-9 h-9 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                        </svg>
+                    </button>
+                    <input type="text" id="temp_max" name="{{ field_name(form.temp_max) }}" data-input-counter data-input-counter-min="0" aria-describedby="helper-text-explanation" class="bg-gray-50 border-x-0 border-gray-300 lg:h-11 h-[4.25rem] text-center text-gray-900 lg:text-sm text-4xl focus:ring-blue-500 focus:border-blue-500 block lg:w-14 w-32 py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ form.temp_max.vars.data }}" value="{{ form.temp_max.vars.data }}" required>
+                    <button type="button" id="increment-button" data-input-counter-increment="temp_max" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 lg:h-11 h-[4.25rem] focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="lg:w-3 lg:h-3 w-9 h-9 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <p class="text-red-600 text-center text-sm mt-1">{{ erreurs.temp|default }}</p>
+
+        <h2 class="lg:text-2xl text-6xl text-center mt-10">Humidité</h2>
+
+        <div class="m-auto grid grid-cols-2 self-center lg:w-1/2 w-full">
+            <div class="flex flex-col items-center w-full">
+                <label for="humidite_max" class="block lg:mb-2 mb-6 lg:text-lg text-5xl font-medium text-gray-900 dark:text-white">{{ field_label(form.humidite_max) }}</label>
+                <div class="relative flex items-center lg:max-w-[8rem] max-w-[12rem]">
+                    <button type="button" id="decrement-button" data-input-counter-decrement="humidite_max" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 lg:h-11 h-[4.25rem] focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="lg:w-3 lg:h-3 w-9 h-9 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                        </svg>
+                    </button>
+                    <input type="text" id="humidite_max" name="{{ field_name(form.humidite_max) }}" data-input-counter data-input-counter-min="0" aria-describedby="helper-text-explanation" class="bg-gray-50 border-x-0 border-gray-300 lg:h-11 h-[4.25rem] text-center text-gray-900 lg:text-sm text-4xl focus:ring-blue-500 focus:border-blue-500 block lg:w-14 w-32 py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ form.humidite_max.vars.data }}" value="{{ form.humidite_max.vars.data }}" required>
+                    <button type="button" id="increment-button" data-input-counter-increment="humidite_max" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 lg:h-11 h-[4.25rem] focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="lg:w-3 lg:h-3 w-9 h-9 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div></div>
+        </div>
+
+        <h2 class="lg:text-2xl text-6xl text-center mt-10">CO2</h2>
+
+        <div class="m-auto grid grid-cols-2 self-center lg:w-1/2 w-full">
+            <div class="flex flex-col items-center w-full">
+                <label for="co2_premier_palier" class="block lg:mb-2 mb-6 lg:text-lg text-5xl font-medium text-gray-900 dark:text-white">{{ field_label(form.co2_premier_palier) }}</label>
+                <div class="relative flex items-center lg:max-w-[8rem] max-w-[12rem]">
+                    <button type="button" id="decrement-button" data-input-counter-decrement="co2_premier_palier" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 lg:h-11 h-[4.25rem] focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="lg:w-3 lg:h-3 w-9 h-9 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                        </svg>
+                    </button>
+                    <input type="text" id="co2_premier_palier" name="{{ field_name(form.co2_premier_palier) }}" data-input-counter data-input-counter-min="0" aria-describedby="helper-text-explanation" class="bg-gray-50 border-x-0 border-gray-300 lg:h-11 h-[4.25rem] text-center text-gray-900 lg:text-sm text-4xl focus:ring-blue-500 focus:border-blue-500 block lg:w-14 w-32 py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ form.co2_premier_palier.vars.data }}" value="{{ form.co2_premier_palier.vars.data }}" required>
+                    <button type="button" id="increment-button" data-input-counter-increment="co2_premier_palier" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 lg:h-11 h-[4.25rem] focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="lg:w-3 lg:h-3 w-9 h-9 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="flex flex-col items-center w-full">
+                <label for="co2_second_palier" class="block lg:mb-2 mb-6 lg:text-lg text-5xl font-medium text-gray-900 dark:text-white">{{ field_label(form.co2_second_palier) }}</label>
+                <div class="relative flex items-center lg:max-w-[8rem] max-w-[12rem]">
+                    <button type="button" id="decrement-button" data-input-counter-decrement="co2_second_palier" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 lg:h-11 h-[4.25rem] focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="lg:w-3 lg:h-3 w-9 h-9 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                        </svg>
+                    </button>
+                    <input type="text" id="co2_second_palier" name="{{ field_name(form.co2_second_palier) }}" data-input-counter data-input-counter-min="0" aria-describedby="helper-text-explanation" class="bg-gray-50 border-x-0 border-gray-300 lg:h-11 h-[4.25rem] text-center text-gray-900 lg:text-sm text-4xl focus:ring-blue-500 focus:border-blue-500 block lg:w-14 w-32 py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ form.co2_second_palier.vars.data }}" value="{{ form.co2_second_palier.vars.data }}" required>
+                    <button type="button" id="increment-button" data-input-counter-increment="co2_second_palier" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 lg:h-11 h-[4.25rem] focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                        <svg class="lg:w-3 lg:h-3 w-9 h-9 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <p class="text-red-600 text-center text-sm mt-1">{{ erreurs.co2|default }}</p>
+        <div class="grid grid-cols-subgrid gap-4 col-span-3 lg:mt-5 mt-16">
+            <div class="mx-auto col-start-1">
+                <button id="submit" type="submit" name="{{ field_name(form.ajouter) }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg lg:text-sm text-5xl px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                    {{ field_label(form.ajouter) }}</button>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+    <script>
+        let temp_min = document.getElementById('temp_min');
+        let temp_max = document.getElementById('temp_max');
+        let humidite_max = document.getElementById('humidite_max');
+        let co2_premier_palier = document.getElementById('co2_premier_palier');
+        let co2_second_palier = document.getElementById('co2_second_palier');
+        let decrements = document.querySelectorAll("[id='decrement-button']");
+        let increments = document.querySelectorAll("[id='increment-button']");
+        temp_min.addEventListener('input',verifierEntrees)
+        temp_max.addEventListener('input',verifierEntrees)
+        humidite_max.addEventListener('input',verifierEntrees)
+        co2_premier_palier.addEventListener('input',verifierEntrees)
+        co2_second_palier.addEventListener('input',verifierEntrees)
+        for(const decrement of decrements) decrement.addEventListener('click',attendreVerifierEntrees)
+        for(const increment of increments) increment.addEventListener('click',attendreVerifierEntrees)
+
+        function attendreVerifierEntrees() {
+            setTimeout(function(){verifierEntrees()}, 100)
+        }
+
+        function verifierEntrees(){
+            let temp_min = document.getElementById('temp_min');
+            let temp_max = document.getElementById('temp_max');
+            let humidite_max = document.getElementById('humidite_max');
+            let co2_premier_palier = document.getElementById('co2_premier_palier');
+            let co2_second_palier = document.getElementById('co2_second_palier');
+
+            if(temp_min.value.length > 0 && temp_max.value.length > 0 && humidite_max.value.length > 0 && co2_premier_palier.value.length > 0 && co2_second_palier.value.length > 0) enableSubmitButton()
+            else disableSubmitButton()
+        }
+
+        function enableSubmitButton(){
+            let button = document.getElementById("submit");
+            if (button.disabled){
+                button.disabled = false;
+                button.classList.remove("cursor-not-allowed");
+                button.classList.add("hover:bg-blue-800");
+            }
+        }
+        function disableSubmitButton(){
+            let button = document.getElementById("submit");
+            if (!button.disabled){
+                button.disabled = true;
+                button.classList.add("cursor-not-allowed");
+                button.classList.remove("hover:bg-blue-800");
+            }
+        }
+    </script>
+
+{% endblock %}

@@ -1,0 +1,261 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Systemes d'acquisition{% endblock %}
+
+{% block body %}
+
+    <div class="w-2/3 mx-auto my-12">
+        <nav class="flex" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+                <li class="inline-flex items-center">
+                    <a href="/accueil" class="inline-flex items-center lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                        <svg class="lg:w-3 lg:h-3 lg:me-2.5 w-6 h-6 me-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
+                        </svg>
+                        Accueil
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center lg:text-sm text-2xl">
+                        <svg class="rtl:rotate-180 lg:w-3 lg:h-3 w-6 h-6 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+                        <a href="/plan/lister-sa" class="ms-1 lg:text-sm text-2xl font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Liste des systèmes d'acquisition</a>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+
+
+    <div class="flex flex-col xl:w-2/3 w-11/12 items-center mx-auto mb-12">
+        <div class="w-full">
+            <h1 class="lg:text-4xl text-7xl pb-12 text-center">Liste des systèmes d'acquisition</h1>
+            <div class="flex flex-row justify-between mb-5">
+                <input type="text" id="searchInput" class="my-auto w-max h-full bg-gray-50 border border-gray-300 text-gray-900 lg:text-sm text-3xl rounded-lg focus:ring-blue-500 focus:border-blue-500 block ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onkeyup="search()" placeholder="Rechercher un système">
+
+                <button
+                        type="button"
+                        class="my-auto text-white h-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg lg:text-sm text-3xl px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                        onclick="window.location.href='/plan/ajouter-sa'"
+                >
+                    Ajouter un système
+                </button>
+            </div>
+        </div>
+
+        <div class="shadow-md sm:rounded-lg w-full">
+
+            <table id="liste-sa" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="lg:text-xs text-xl text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+
+                <tr >
+                    <th scope="col" class="py-3 px-6">
+                        Nom
+                    </th>
+                    <th scope="col" class="py-3">
+                        Salle
+                    </th>
+                    <th scope="col" class="lg:table hidden py-3 mt-3">
+                        Bâtiment
+                    </th>
+                    <th scope="col" class="py-3">
+                        Etat des capteurs
+                    </th>
+                    <th scope="col" class="py-3 px-6">
+                        Etat
+                    </th>
+                    <th scope="col" class="py-3 text-center">
+                        Actions
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for systemeAcquisition in listeSa %}
+                    <tr class="lg:text-base text-2xl bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ systemeAcquisition.nom }}
+                        </th>
+                        <td class="py-4">
+                            {% if systemeAcquisition.etat == 'Installation' or (systemeAcquisition.etat == 'Réparation' and systemeAcquisition.Salle is null )%}
+                                {{ attribute(listeSalleSaDT, systemeAcquisition.id).nom|default('-') }}
+                            {% else %}
+                                {{ systemeAcquisition.Salle.nom|default('-') }}
+                            {% endif %}
+                        </td>
+                        <td class="py-4 lg:table-row hidden">
+                            {% if systemeAcquisition.etat == 'Installation' or (systemeAcquisition.etat == 'Réparation' and systemeAcquisition.Salle is null ) %}
+                                {{ attribute(listeSalleSaDT, systemeAcquisition.id).Batiment|default('-') }}
+                            {% else %}
+                                {{ systemeAcquisition.Salle.Batiment|default('-') }}
+                            {% endif %}
+                        </td>
+                        <td id="etat-capteur" class="py-4">
+                            <div class="flex-row justify-center w-max text-center lg:flex hidden">
+                                {% if attribute(listeEtatCapteurs, systemeAcquisition.id) is null %}
+                                    <p class="my-auto">Non concerné</p>
+                                {% else %}
+                                    <div class="flex flex-row">
+                                        <p class="my-auto text-center">Température : </p>
+                                        {% if attribute(attribute(listeEtatCapteurs, systemeAcquisition.id), "temp") == false %}
+                                            <box-icon name='x' color='#ff1d1d' class="my-auto mx-auto"></box-icon>
+                                        {% else %}
+                                            <box-icon name='check' color='#05d409' class="my-auto mx-auto" ></box-icon>
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex flex-row mx-2">
+                                        <p class="my-auto text-center">Humidité : </p>
+                                        {% if attribute(attribute(listeEtatCapteurs, systemeAcquisition.id), "hum") == false %}
+                                            <box-icon name='x' color='#ff1d1d' class="my-auto mx-auto"></box-icon>
+                                        {% else %}
+                                            <box-icon name='check' color='#05d409' class="my-auto mx-auto" ></box-icon>
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex flex-row text-center">
+                                        <p class="my-auto">Co2 : </p>
+                                        {% if attribute(attribute(listeEtatCapteurs, systemeAcquisition.id), "co2") == false %}
+                                            <box-icon name='x' color='#ff1d1d' class="my-auto mx-auto"></box-icon>
+                                        {% else %}
+                                            <box-icon name='check' color='#05d409' class="my-auto mx-auto" ></box-icon>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="flex-row justify-center w-max text-center lg:hidden flex">
+                                {% if attribute(listeEtatCapteurs, systemeAcquisition.id) is null %}
+                                    <p class="my-auto">Non concerné</p>
+                                {% else %}
+                                    <p class="my-auto">Status : </p>
+                                    {% if attribute(attribute(listeEtatCapteurs, systemeAcquisition.id), "temp") == false and attribute(attribute(listeEtatCapteurs, systemeAcquisition.id), "hum") == false and attribute(attribute(listeEtatCapteurs, systemeAcquisition.id), "co2") == false %}
+                                        <box-icon name='x' color='#ff1d1d' class="my-auto mx-auto w-10 h-10"></box-icon>
+                                    {% elseif attribute(attribute(listeEtatCapteurs, systemeAcquisition.id), "temp") == true and attribute(attribute(listeEtatCapteurs, systemeAcquisition.id), "hum") == true and attribute(attribute(listeEtatCapteurs, systemeAcquisition.id), "co2") == true %}
+                                        <box-icon name='check' color='#05d409' class="my-auto mx-auto w-10 h-10"></box-icon>
+                                    {% else %}
+                                        <box-icon name='error' color='#ffa500' type="solid" class="ml-0.5 mx-auto w-9 h-9" ></box-icon>
+                                    {% endif %}
+
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="py-4">
+                            {% if systemeAcquisition.etat == 'Installation' %}
+                                <div class="p-1 bg-amber-500 text-white rounded-lg flex flex-row justify-evenly items-center">
+                                    <box-icon name='time-five' color='rgba(255,255,255,0.85)' class="mx-4"></box-icon>
+                                    <span class="text-center w-full">Installation</span>
+                                </div>
+                            {% elseif systemeAcquisition.etat == 'Opérationnel' %}
+                                <div class="p-1 bg-emerald-500 text-white rounded-lg flex flex-row justify-evenly items-center">
+                                    <box-icon name='check-double' color='rgba(255,255,255,0.85)' class="mx-4"></box-icon>
+                                    <span class="text-center w-full">Opérationnel</span>
+                                </div>
+                            {% elseif systemeAcquisition.etat == 'Non installé' %}
+                                <div class="p-1 bg-slate-400 text-white rounded-lg flex flex-row justify-evenly items-center">
+                                    <box-icon name='right-arrow-alt' color='#ffffff' class="mx-4"></box-icon>
+                                    <span class="text-center w-full">Non installé</span>
+                                </div>
+                            {% elseif systemeAcquisition.etat == 'Réparation' %}
+                                <div class="p-1 bg-red-600 text-white rounded-lg flex flex-row justify-evenly items-center">
+                                    <box-icon name='wrench' color='rgba(255,255,255,0.85)' class="mx-4"></box-icon>
+                                    <span class="text-center w-full">Réparation</span>
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td class="py-4 flex flex-row justify-center">
+
+                            {% if systemeAcquisition.etat == "Opérationnel" %}
+                                <a class="" data-tooltip-target="tooltip-erreur-{{systemeAcquisition.id}}" href="/signaler-erreur/{{ systemeAcquisition.salle.id }}/1">
+                                    <box-icon name='bug' type='solid' color='#ff9b00' class="lg:w-6 lg:h-6 w-9 h-9" ></box-icon>
+                                </a>
+
+                                <div id="tooltip-erreur-{{systemeAcquisition.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                    Signaler une erreur
+                                    <div class="tooltip-arrow" data-popper-arrow></div>
+                                </div>
+                                <div class="mx-2"></div>
+                            {% endif %}
+
+                            <a data-tooltip-target="tooltip-delete-{{systemeAcquisition.id}}" href="/plan/retirer-sa/{{ systemeAcquisition.id }}">
+                                <box-icon name='trash' type='solid' color='rgba(255,0,0,0.85)' class="lg:w-6 lg:h-6 w-9 h-9"></box-icon>
+                            </a>
+
+                            <div id="tooltip-delete-{{systemeAcquisition.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                Supprimer le SA
+                                <div class="tooltip-arrow" data-popper-arrow></div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function search() {
+            // Declare variables
+            let input, filter, table, tr, i, txtValue;
+            input = document.getElementById("searchInput");
+            txt = input.value;
+            let array = txt.split(" ");
+            array.forEach(function (element, index) {
+                if (element.length >= 2){
+                    array[index] = element.toUpperCase();
+                }
+            });
+
+            table = document.getElementById("liste-sa");
+            tr = table.getElementsByTagName("tr");
+            for (i = 1; i < tr.length; i++) {
+                let nb = 0;
+                let nbFilter = array.length;
+
+                for (txt of array) {
+                    filter = txt.toUpperCase();
+                    // Loop through all table rows, and hide those who don't match the search query
+
+                    let salle, nom, etat;
+                    td = tr[i].getElementsByTagName("th")[0];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            nom = true;
+                        } else {
+                            nom = false;
+                        }
+                    }
+                    td = tr[i].getElementsByTagName("td")[0];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            salle = true;
+                        } else {
+                            salle = false;
+                        }
+                    }
+                    td = tr[i].getElementsByTagName("td")[3];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            etat = true;
+                        } else {
+                            etat = false;
+                        }
+                    }
+                    if (nom || salle || etat){
+                        nb++;
+                    }
+                }
+
+                if (nb === nbFilter) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+
+        }
+    </script>
+
+{% endblock %}
