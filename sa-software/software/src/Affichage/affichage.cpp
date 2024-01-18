@@ -82,13 +82,13 @@ void afficher(PAGE &page){
             case TEMPERATURE :
                 donneesString = "Temp :";
                 donnees = (float) getTemperature();
-                format = "%s %.2f°C";
+                format = "%s %.1f°C";
                 page = HUMIDITE;
                 break;
             case HUMIDITE :
                 donneesString = "Hum :";
                 donnees = (float) getHumidite();
-                format = "%s %.2f%%";
+                format = "%s %.1f%%";
                 page = CO2;
                 break;
             case CO2 :

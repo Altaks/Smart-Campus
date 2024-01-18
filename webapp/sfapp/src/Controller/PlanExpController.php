@@ -210,6 +210,13 @@ class PlanExpController extends AbstractController
             foreach ($demandesSalle as $demande){
                 $entityManager->remove($demande);
             }
+            $sa = $salle->getSystemeAcquisition();
+            if($sa != null)
+            {   $sa->setSalle(null);
+                $sa->setEtat("Non installé");
+            }
+
+            $salle->setSystemeAcquisition(null);
 
             $entityManager->remove($salle);
             $entityManager->flush();

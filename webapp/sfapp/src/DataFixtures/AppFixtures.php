@@ -162,8 +162,8 @@ class AppFixtures extends Fixture
             ->setOrientation("No");
 
 
-        $secreteriat = new Salle();
-        $secreteriat->setNom("Secreteriat")
+        $secretariat = new Salle();
+        $secretariat->setNom("Secrétariat")
             ->setBatiment("Bâtiment D")
             ->setNombrePorte(2)
             ->setNombreFenetre(2)
@@ -310,6 +310,7 @@ class AppFixtures extends Fixture
             ->setCommentaire("Le système d'acquisition ne fonctionne pas")
             ->setDate($maintenant); // maintenant
         $esp_007->setEtat("Réparation");
+        $esp_007->setSalle($D304);
 
         $demandeRep2 = new DemandeTravaux();
         $demandeRep2->setSalle($D101)
@@ -319,8 +320,8 @@ class AppFixtures extends Fixture
             ->setEmailDemandeur("ksimon@etudiant.univ-lr.fr")
             ->setCommentaire("Le système d'acquisition ne fonctionne pas")
             ->setDate($sept_jours_cinq_heures_trente_minutes_avant); // 7 jours, 5h et 30 minutes avant
-
         $esp_008->setEtat("Réparation");
+        $esp_008->setSalle($D101);
 
         $demandeRep3 = new DemandeTravaux();
         $demandeRep3->setSalle($D109)
@@ -331,6 +332,7 @@ class AppFixtures extends Fixture
             ->setCommentaire("Le système d'acquisition ne fonctionne pas")
             ->setDate($quatres_jours_dis_heures_dix_minutes_avant); // 14 jours, 10h et 10 minutes avant
         $esp_009->setEtat("Réparation");
+        $esp_009->setSalle($D109);
 
 
         // 6 esp opérationnels (18 obligatoire)
@@ -344,7 +346,7 @@ class AppFixtures extends Fixture
 
         // mise en place dans les salles
 
-        $secreteriat->setSystemeAcquisition($esp_010);
+        $dec->setSystemeAcquisition($esp_010);
         $D001->setSystemeAcquisition($esp_011);
         $D002->setSystemeAcquisition($esp_012);
         $D004->setSystemeAcquisition($esp_013);
@@ -373,7 +375,7 @@ class AppFixtures extends Fixture
         $manager->persist($D304);
         $manager->persist($D101);
         $manager->persist($D109);
-        $manager->persist($secreteriat);
+        $manager->persist($secretariat);
         $manager->persist($D001);
         $manager->persist($D002);
         $manager->persist($D004);

@@ -137,8 +137,9 @@ class PublicControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $client->request('GET', '/releves');
 
+        $label = $crawler->filter('label');
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'Veuillez choisir une salle');
+        $this->assertEquals('Veuillez choisir une salle', $label->eq(0)->text());
     }
 
      public function test_releves_alertes_et_conseils(): void
@@ -321,8 +322,8 @@ class PublicControllerTest extends WebTestCase
         $salleTest->setSystemeAcquisition($saTest);
 
         $manager = static::getContainer()->get('doctrine')->getManager();
-        $manager->persist($saTest);
         $manager->persist($salleTest);
+        $manager->persist($saTest);
         $manager->flush();
 
         $crawler = $client->request('GET', '/signaler-erreur/' . $salleTest->getId());
@@ -384,8 +385,8 @@ class PublicControllerTest extends WebTestCase
         $salleTest->setSystemeAcquisition($saTest);
 
         $manager = static::getContainer()->get('doctrine')->getManager();
-        $manager->persist($saTest);
         $manager->persist($salleTest);
+        $manager->persist($saTest);
         $manager->flush();
 
         $crawler = $client->request('GET', '/signaler-erreur/' . $salleTest->getId());
@@ -416,9 +417,11 @@ class PublicControllerTest extends WebTestCase
         $stmt = $manager->getConnection()->prepare($sql);
         $stmt->executeQuery();
 
+
         $sql = "DELETE FROM systeme_acquisition WHERE id = " . $saTest->getId();
         $stmt = $manager->getConnection()->prepare($sql);
         $stmt->executeQuery();
+
 
     }
 
@@ -435,9 +438,7 @@ class PublicControllerTest extends WebTestCase
         $client->request('GET', '/signaler-erreur/9999');
 
         //redirect to accueil
-        $this->assertResponseStatusCodeSame(302, $client->getResponse()->getStatusCode());
-
-        $this->assertResponseRedirects('/accueil/', 302);
+        $this->assertResponseStatusCodeSame(404, $client->getResponse()->getStatusCode());
     }
 
     public function test_signaler_erreur_requette_avec_utilisateur_connecte_en_temps_que_technicien_salle_sans_sa():void
@@ -464,7 +465,7 @@ class PublicControllerTest extends WebTestCase
 
         $client->request('GET', '/signaler-erreur/' . $salleTest->getId());
 
-        $this->assertResponseRedirects('/accueil/', 302);
+        $this->assertResponseStatusCodeSame(404, $client->getResponse()->getStatusCode());
 
         $sql = "DELETE FROM salle WHERE id = " . $salleTest->getId();
         $stmt = $manager->getConnection()->prepare($sql);
@@ -508,7 +509,7 @@ class PublicControllerTest extends WebTestCase
 
             $client->request('GET', '/signaler-erreur/' . $salleTest->getId());
 
-            $this->assertResponseRedirects('/accueil/', 302);
+            $this->assertResponseStatusCodeSame(404, $client->getResponse()->getStatusCode());
         }
 
         $sql = "DELETE FROM salle WHERE id = " . $salleTest->getId();

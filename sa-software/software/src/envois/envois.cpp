@@ -74,8 +74,8 @@ int envoyer(){
     
     // recupérer les données
     // si une donnée n'est pas disponible, on met une chaine de caractère vide
-    getTemperature() == -1 ? sprintf(s_donnees[0], "%c", EOF) : sprintf(s_donnees[0], "%.2f", getTemperature()); //donnees->tempEtHum->temperature); // %2.f pour  2 chiffres après la virgule
-    getHumidite() == -1 ? sprintf(s_donnees[1], "%c", EOF) : sprintf(s_donnees[1], "%2.f", getHumidite()); //donnees->tempEtHum->humidite); // %2.f pour avoir 2 chiffres après la virgule
+    getTemperature() == -1 ? sprintf(s_donnees[0], "%c", EOF) : sprintf(s_donnees[0], "%.1f", getTemperature()); //donnees->tempEtHum->temperature); // %2.f pour  2 chiffres après la virgule
+    getHumidite() == -1 ? sprintf(s_donnees[1], "%c", EOF) : sprintf(s_donnees[1], "%.1f", getHumidite()); //donnees->tempEtHum->humidite); // %2.f pour avoir 2 chiffres après la virgule
     getCO2() == 0 ? sprintf(s_donnees[2], "%c", EOF) : sprintf(s_donnees[2], "%hu", getCO2()); //*donnees->co2); // %hu pour avoir un unsigned short
 
     // presence est un booléen, on le convertit en string
