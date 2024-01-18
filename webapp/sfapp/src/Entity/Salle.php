@@ -40,7 +40,7 @@ class Salle
     #[Assert\NotBlank(message: 'Une salle doit avoir un bâtiment')]
     private ?string $batiment = null;
 
-    #[ORM\OneToOne(inversedBy: 'salle', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'salle', cascade: ['persist'])]
     private ?SystemeAcquisition $systemeAcquisition = null;
 
     #[ORM\OneToMany(mappedBy: 'salle', targetEntity: DemandeTravaux::class)]

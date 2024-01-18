@@ -19,7 +19,7 @@ class SystemeAcquisition
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(mappedBy: 'systemeAcquisition', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'systemeAcquisition', cascade: ['persist'])]
     private ?Salle $salle = null;
 
     #[ORM\Column(length: 7, unique: true)]
