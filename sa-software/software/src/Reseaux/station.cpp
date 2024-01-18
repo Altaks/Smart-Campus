@@ -91,15 +91,15 @@ bool connexionWifi(const String& ssid, wpa2_auth_method_t methodeAutentification
 
     Serial.println("Connexion au réseau "+ssid);
     setLEDColor(0,0,255);
-    // Vérifie si le SA se connecte pendant 60 secondes
+    // Vérifie si le SA se connecte pendant 30 secondes
     // retourne true s'il arrive à se connecter ; false sinon
-    for(int counter = 0 ; counter <= 60 && WiFi.status() != WL_CONNECTED ; counter++)
+    for(int counter = 0 ; counter <= 30 && WiFi.status() != WL_CONNECTED ; counter++)
     {
         delay(500);
         Serial.println("Connexion en cours...");
-        if(counter >= 60)
+        if(counter >= 30)
         {
-            setLEDColor(0,255,255);
+            setLEDColor(60,0,255);
             return false;
         }
     }

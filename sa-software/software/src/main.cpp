@@ -71,7 +71,7 @@ void setup() {
         // si le nom du réseau auquel se connecter est configuré
         // et que le réseau auquel se connecter est capté par le SA (enregistrer dans le fichier listereseaux.txt)
         if (!nomReseau.isEmpty() 
-            && estDansFichier("/listereseaux.txt",nomReseau))
+            && estDansFichier("/listereseaux.txt",nomReseau)) 
         {
             // Récupère les valeurs dans le fichier inforeseau.txt
             int type_eap          = recupererValeur("/inforeseau.txt","type_eap").toInt();
@@ -87,9 +87,11 @@ void setup() {
             else
             {
                 Serial.println("Echec de la connexion a "+nomReseau);
+                ecrireFichier("/inforeseau.txt",
+                    "nom_reseau:\ntype_eap:\nnom_utilisateur:\nidentifiant:\nmot_de_passe:");
             }
         }
-        delay(1000);
+        delay(10000);
     }
     while(!estConnecte(nomReseau));
     

@@ -7,7 +7,7 @@
 void modifierFormPageConfigbd()
 {
     String ip = getIP() ;
-    modifierFichier("/configbd.html", "<!--DebutFormHead-->", "<!--FinFormHead-->", "<form action=\"http://" + ip + R"(/config-base-de-donnees" method="POST">)");
+    modifierFichier("/configbd.html", "<!--DebutFormHead-->", "<!--FinFormHead-->", "<form action=\"/config-base-de-donnees\" method=\"POST\">)");
     modifierFichier("/configbd.html","<!--DebutNomSA-->", "<!--FinNomSA-->",R"(<input type="text" name="nom_sa" id="nom_sa" value=")"+recupererValeur("/infobd.txt","nom_sa")+"\">");
     modifierFichier("/configbd.html","<!--DebutLocalisation-->", "<!--FinLocalisation-->",R"(<input type="text" name="localisation" id="localisation" value=")"+recupererValeur("/infobd.txt","localisation")+"\">");
     modifierFichier("/configbd.html","<!--DebutNomBd-->", "<!--FinNomBd-->",R"(<input type="text" name="nom_bd" id="nom_bd" value=")"+recupererValeur("/infobd.txt","nom_bd")+"\">");
@@ -18,8 +18,8 @@ void modifierFormPageConfigbd()
 void modifierFormPageReseau()
 {
     String ip = getIP() ;
-    modifierFichier("/reseau.html", "<!--DebutFormHeadReseau-->", "<!--FinFormHeadReseau-->", "<form action=\"http://" + ip + R"(/config-reseau" method="POST">)");
-    modifierFichier("/reseau.html", "<!--DebutFormHeadAp-->", "<!--FinFormHeadAp-->", "<form action=\"http://" + ip + R"(/config-acces-point" method="POST">)");
+    modifierFichier("/reseau.html", "<!--DebutFormHeadReseau-->", "<!--FinFormHeadReseau-->", "<form action=\"/config-reseau\" method=\"POST\">)");
+    modifierFichier("/reseau.html", "<!--DebutFormHeadAp-->", "<!--FinFormHeadAp-->", "<form action=\"/config-acces-point\" method=\"POST\">)");
 }
 
 void modifierListeReseauxPageReseau()

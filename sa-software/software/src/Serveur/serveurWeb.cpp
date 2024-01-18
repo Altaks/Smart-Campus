@@ -89,6 +89,7 @@ void setupServeurWeb()
     server.on("/config-reseau", HTTP_GET, [](AsyncWebServerRequest *request)
     {
         Serial.println("Requête recue sur /config-reseau");
+        modifierFormPageReseau();
         modifierListeReseauxPageReseau();
         Serial.println("Page modifiée");
         request->send(SPIFFS, "/reseau.html","text/html");
