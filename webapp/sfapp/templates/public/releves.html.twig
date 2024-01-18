@@ -90,12 +90,12 @@
                     </div>
                     {% if temp_diff > 0 %}
                         <div class="flex items-center px-2.5 py-0.5 lg:text-base text-xl font-semibold text-green-500 dark:text-green-400 text-center">
-                            + {{ temp_diff | number_format(2) }} °C
+                            + {{ temp_diff | number_format(1) }} °C
                             <box-icon name='up-arrow-alt' color="#16a34a"></box-icon>
                         </div>
                     {% elseif temp_diff < 0 %}
                         <div class="flex items-center px-2.5 py-0.5 lg:text-base text-xl font-semibold text-red-500 dark:text-red-400 text-center">
-                            {{ temp_diff | number_format(2) }} °C
+                            {{ temp_diff | number_format(1) }} °C
                             <box-icon name='down-arrow-alt' color="#ef4444"></box-icon>
                         </div>
                     {% else %}
@@ -126,7 +126,7 @@
                         series: [
                             {
                                 name: "Températures locales",
-                                data: [{% for val in temp_releves %}"{{ val }}"{% if loop.last == false %},{% endif %}{% endfor %}],
+                                data: [{% for val in temp_releves %}"{{ val | number_format(1) }}"{% if loop.last == false %},{% endif %}{% endfor %}],
                                 color: "#1A56DB",
                             }
                         ],
